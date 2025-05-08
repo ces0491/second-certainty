@@ -8,24 +8,22 @@ from sqlalchemy import pool
 
 from alembic import context
 
-# Add the parent directory to the path so we can import app modules
+# Add the parent directory to the path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 
-# Import our models
-from app.db.base import Base
+# Import from the base_class file for the Base definition
+from app.db.base_class import Base
 from app.core.config import settings
 
-# This is the Alembic Config object
-config = context.config
+# Make sure all models are imported to register with Base.metadata
+# This import needs to come after the Base import
+import app.db.base  # This imports all models
 
-# Set the DB URL from our settings
+# Set up Alembic configuration
+config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
-# Interpret the config file for Python logging
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
-
-# Add your model's MetaData object here for 'autogenerate' support
+# Rest of the file remains the same...
 target_metadata = Base.metadata
 
 def run_migrations_offline():

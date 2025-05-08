@@ -1,11 +1,10 @@
 # app/models/tax_models.py
 from sqlalchemy import Column, Integer, String, Float, Boolean, Date, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from typing import Optional, List
 
-Base = declarative_base()
+from app.db.base_class import Base  # Import from the new location
 
 class TaxBracket(Base):
     """Tax bracket for personal income tax."""
