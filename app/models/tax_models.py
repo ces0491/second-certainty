@@ -67,6 +67,7 @@ class UserProfile(Base):
     name = Column(String)
     surname = Column(String)
     date_of_birth = Column(Date)
+    hashed_password = Column(String) 
     is_provisional_taxpayer = Column(Boolean, default=False)
     created_at = Column(Date, default=datetime.utcnow)
     updated_at = Column(Date, default=datetime.utcnow, onupdate=datetime.utcnow)

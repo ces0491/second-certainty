@@ -1,0 +1,71 @@
+# app/api/routes/auth.py
+from datetime import timedelta
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+
+from app.core.auth import authenticate_user, create_access_token, get_password_hash
+from app.core.config import settings, get_db
+from app.models.tax_models import UserProfile
+from pydantic import BaseModel, EmailStr
+
+router = APIRouter()
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    name: str
+    surname: str
+    date_of_birth: str
+    is_provisional_taxpayer: Optional[bool] = False
+
+@router.post("/token", response_model=Token)
+async def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/register", status_code=status.HTTP_201_CREATED)
+async def register_user(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(UserProfile).filter(UserProfile.email == user.email).first()
+    if db_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+    
+    # Convert string date to date object
+    from datetime import datetime
+    date_of_birth = datetime.strptime(user.date_of_birth, "%Y-%m-%d").date()
+    
+    hashed_password = get_password_hash(user.password)
+    db_user = UserProfile(
+        email=user.email,
+        hashed_password=hashed_password,
+        name=user.name,
+        surname=user.surname,
+        date_of_birth=date_of_birth,
+        is_provisional_taxpayer=user.is_provisional_taxpayer
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return {"message": "User created successfully"}

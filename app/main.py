@@ -12,6 +12,7 @@ from app.core.data_scraper import SARSDataScraper
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
+    description="South African tax liability management API",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json"
@@ -62,3 +63,8 @@ async def startup_event():
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+
+def run_app():
+    """Entry point for the application when used as a package."""
+    import uvicorn
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000)

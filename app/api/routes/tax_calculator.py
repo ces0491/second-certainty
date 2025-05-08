@@ -1,83 +1,37 @@
 # app/api/routes/tax_calculator.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List, Optional, Dict, Any
-from datetime import date
+from typing import List, Optional
 
 from app.core.config import get_db
 from app.core.tax_calculator import TaxCalculator
 from app.core.data_scraper import SARSDataScraper
 from app.models.tax_models import UserProfile, IncomeSource, UserExpense, DeductibleExpenseType
 from app.utils.tax_utils import get_tax_year
-
-from pydantic import BaseModel, Field
+from app.core.auth import get_current_user
+from app.schemas.tax_schemas import (
+    IncomeCreate, IncomeResponse, ExpenseCreate, ExpenseResponse, 
+    TaxBracketResponse, TaxCalculationResponse, ProvisionalTaxResponse, 
+    DeductibleExpenseTypeResponse
+)
 
 router = APIRouter()
 
-# Pydantic models for request/response
-class IncomeSourceCreate(BaseModel):
-    source_type: str
-    description: Optional[str] = None
-    annual_amount: float
-    is_paye: bool = True
-    tax_year: Optional[str] = None
-
-class ExpenseCreate(BaseModel):
-    expense_type_id: int
-    description: Optional[str] = None
-    amount: float
-    tax_year: Optional[str] = None
-
-class UserProfileCreate(BaseModel):
-    email: str
-    name: str
-    surname: str
-    date_of_birth: date
-    is_provisional_taxpayer: bool = False
-
-class TaxBracketResponse(BaseModel):
-    lower_limit: int
-    upper_limit: Optional[int] = None
-    rate: float
-    base_amount: int
-    tax_year: str
-
-class TaxCalculationResponse(BaseModel):
-    gross_income: float
-    taxable_income: float
-    tax_before_rebates: float
-    rebates: float
-    medical_credits: float
-    final_tax: float
-    effective_tax_rate: float
-    monthly_tax_rate: float
-
-class ProvisionalTaxResponse(BaseModel):
-    annual_tax: float
-    first_payment: float
-    second_payment: float
-    final_payment: float
-
-class DeductibleExpenseTypeResponse(BaseModel):
-    id: int
-    name: str
-    description: Optional[str] = None
-    max_deduction: Optional[float] = None
-    max_percentage: Optional[float] = None
-
-
-@router.post("/users/", status_code=status.HTTP_201_CREATED)
-def create_user(user: UserProfileCreate, db: Session = Depends(get_db)):
-    """Create a new user profile."""
-    db_user = UserProfile(**user.dict())
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
-@router.post("/users/{user_id}/income/", status_code=status.HTTP_201_CREATED)
-def add_income_source(user_id: int, income: IncomeSourceCreate, db: Session = Depends(get_db)):
+@router.post("/users/{user_id}/income/", response_model=IncomeResponse, status_code=status.HTTP_201_CREATED)
+def add_income_source(
+    user_id: int, 
+    income: IncomeCreate, 
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
     """Add an income source for a user."""
+    # Security: Ensure users can only add income to their own profile
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to add income to this user"
+        )
+    
     # Check if user exists
     db_user = db.query(UserProfile).filter(UserProfile.id == user_id).first()
     if not db_user:
@@ -94,9 +48,47 @@ def add_income_source(user_id: int, income: IncomeSourceCreate, db: Session = De
     db.refresh(db_income)
     return db_income
 
-@router.post("/users/{user_id}/expenses/", status_code=status.HTTP_201_CREATED)
-def add_expense(user_id: int, expense: ExpenseCreate, db: Session = Depends(get_db)):
+@router.get("/users/{user_id}/income/", response_model=List[IncomeResponse])
+def get_user_income(
+    user_id: int,
+    tax_year: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
+    """Get all income sources for a user."""
+    # Security: Ensure users can only view their own income
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to view this user's income"
+        )
+    
+    # Set default tax year if not provided
+    if not tax_year:
+        tax_year = get_tax_year()
+    
+    income_sources = db.query(IncomeSource).filter(
+        IncomeSource.user_id == user_id,
+        IncomeSource.tax_year == tax_year
+    ).all()
+    
+    return income_sources
+
+@router.post("/users/{user_id}/expenses/", response_model=ExpenseResponse, status_code=status.HTTP_201_CREATED)
+def add_expense(
+    user_id: int, 
+    expense: ExpenseCreate, 
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
     """Add a deductible expense for a user."""
+    # Security: Ensure users can only add expenses to their own profile
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to add expenses to this user"
+        )
+    
     # Check if user exists
     db_user = db.query(UserProfile).filter(UserProfile.id == user_id).first()
     if not db_user:
@@ -119,6 +111,32 @@ def add_expense(user_id: int, expense: ExpenseCreate, db: Session = Depends(get_
     db.commit()
     db.refresh(db_expense)
     return db_expense
+
+@router.get("/users/{user_id}/expenses/", response_model=List[ExpenseResponse])
+def get_user_expenses(
+    user_id: int,
+    tax_year: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
+    """Get all expenses for a user."""
+    # Security: Ensure users can only view their own expenses
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to view this user's expenses"
+        )
+    
+    # Set default tax year if not provided
+    if not tax_year:
+        tax_year = get_tax_year()
+    
+    expenses = db.query(UserExpense).filter(
+        UserExpense.user_id == user_id,
+        UserExpense.tax_year == tax_year
+    ).all()
+    
+    return expenses
 
 @router.get("/tax-brackets/", response_model=List[TaxBracketResponse])
 def get_tax_brackets(tax_year: Optional[str] = None, db: Session = Depends(get_db)):
@@ -153,8 +171,20 @@ def get_deductible_expense_types(db: Session = Depends(get_db)):
     return expense_types
 
 @router.get("/users/{user_id}/tax-calculation/", response_model=TaxCalculationResponse)
-def calculate_tax(user_id: int, tax_year: Optional[str] = None, db: Session = Depends(get_db)):
+def calculate_tax(
+    user_id: int, 
+    tax_year: Optional[str] = None, 
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
     """Calculate tax liability for a user."""
+    # Security: Ensure users can only calculate their own tax
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to calculate tax for this user"
+        )
+    
     if not tax_year:
         tax_year = get_tax_year()
     
@@ -166,8 +196,20 @@ def calculate_tax(user_id: int, tax_year: Optional[str] = None, db: Session = De
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/users/{user_id}/provisional-tax/", response_model=ProvisionalTaxResponse)
-def calculate_provisional_tax(user_id: int, tax_year: Optional[str] = None, db: Session = Depends(get_db)):
+def calculate_provisional_tax(
+    user_id: int, 
+    tax_year: Optional[str] = None, 
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
     """Calculate provisional tax for a provisional taxpayer."""
+    # Security: Ensure users can only calculate their own provisional tax
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to calculate provisional tax for this user"
+        )
+    
     if not tax_year:
         tax_year = get_tax_year()
     
@@ -179,14 +221,73 @@ def calculate_provisional_tax(user_id: int, tax_year: Optional[str] = None, db: 
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/update-tax-data/")
-async def update_tax_data(db: Session = Depends(get_db)):
+async def update_tax_data(
+    db: Session = Depends(get_db), 
+    current_user: UserProfile = Depends(get_current_user)
+):
     """
     Update tax data by scraping the SARS website.
     This should be run periodically to ensure tax data is current.
     """
+    # This is an admin operation, so we should have a check that the user is an admin
+    # For now, we'll just allow any authenticated user to update tax data
     scraper = SARSDataScraper()
     try:
         result = await scraper.update_tax_data(db)
         return {"status": "success", "data": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to update tax data: {str(e)}")
+
+@router.delete("/users/{user_id}/income/{income_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_income(
+    user_id: int,
+    income_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
+    """Delete an income source."""
+    # Security: Ensure users can only delete their own income
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to delete this income"
+        )
+    
+    income = db.query(IncomeSource).filter(
+        IncomeSource.id == income_id,
+        IncomeSource.user_id == user_id
+    ).first()
+    
+    if not income:
+        raise HTTPException(status_code=404, detail="Income source not found")
+    
+    db.delete(income)
+    db.commit()
+    return None
+
+@router.delete("/users/{user_id}/expenses/{expense_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_expense(
+    user_id: int,
+    expense_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
+    """Delete an expense."""
+    # Security: Ensure users can only delete their own expenses
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to delete this expense"
+        )
+    
+    expense = db.query(UserExpense).filter(
+        UserExpense.id == expense_id,
+        UserExpense.user_id == user_id
+    ).first()
+    
+    if not expense:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    
+    db.delete(expense)
+    db.commit()
+    return None
