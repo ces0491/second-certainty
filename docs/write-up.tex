@@ -1,0 +1,459 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  11pt,
+  letterpaper,
+]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{5}
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\makeatletter
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\makeatother
+\makeatletter
+\@ifundefined{shadecolor}{\definecolor{shadecolor}{rgb}{.97, .97, .97}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\makeatother
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Second Certainty},
+  pdfauthor={Cesaire Tobias},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Second Certainty}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{A Tax Liability Management Tool}
+\author{Cesaire Tobias}
+\date{2025-04-22}
+
+\begin{document}
+\maketitle
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, borderline west={3pt}{0pt}{shadecolor}, frame hidden, sharp corners, interior hidden, breakable, boxrule=0pt]}{\end{tcolorbox}}\fi
+
+\renewcommand*\contentsname{Table of contents}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\hypertarget{project-description}{%
+\section{Project Description}\label{project-description}}
+
+The Second Certainty Tax Tool addresses one of life's two
+certainties---taxes---by providing individuals and small businesses with
+an intuitive platform for managing tax liabilities throughout the fiscal
+year. Traditional tax management often occurs reactively at year-end,
+leading to unexpected liabilities, missed deductions, and financial
+stress. Our application transforms this approach by implementing a
+proactive, year-round tax management system.
+
+The tool continuously calculates estimated tax liabilities based on
+income streams, identifies potential deductions, forecasts quarterly
+payments, and provides optimization strategies---all in real-time. In
+today's complex financial landscape, where gig economy participation,
+investment income, and small business ownership have complicated
+personal taxation, our solution brings clarity and control to users' tax
+situations.
+
+By empowering users with ongoing visibility into their tax position, the
+Second Certainty Tax Tool reduces financial anxiety, prevents costly
+surprises, and helps maximize legitimate tax advantages throughout the
+year.
+
+\hypertarget{technical-requirements}{%
+\section{Technical Requirements}\label{technical-requirements}}
+
+Our application leverages modern technology frameworks to deliver a
+secure, responsive, and user-friendly experience:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Frontend}: React 18.2 (with React Router 6.10 for navigation,
+  Axios 1.3.5 for HTTP requests, and Tailwind CSS 3.3.1 for styling)
+\item
+  \textbf{Backend}: FastAPI 0.95.1 (with Pydantic 1.10.7 for data
+  validation, SQLAlchemy 2.0.9 for ORM, and Python-Jose 3.3.0 for JWT
+  authentication)
+\item
+  \textbf{Database}: PostgreSQL 15 (selected for its robust handling of
+  financial data, transactional integrity, and comprehensive indexing
+  capabilities)
+\item
+  \textbf{Data Processing}: Pandas 2.0.0 and NumPy 1.24.2 (for efficient
+  tax calculations and financial modeling)
+\item
+  \textbf{Visualization}: D3.js 7.8.4 and Recharts 2.5.0 (for
+  interactive data visualization of tax liabilities and projections)
+\item
+  \textbf{PDF Generation}: ReportLab 3.6.12 (for generating downloadable
+  tax reports and documentation)
+\item
+  \textbf{Testing}: Jest 29.5.0 for frontend, Pytest 7.3.1 for backend
+  (with 85\% code coverage)
+\item
+  \textbf{CI/CD}: GitHub Actions for continuous integration and AWS
+  CodeDeploy for continuous deployment
+\end{itemize}
+
+The architecture follows a microservices approach where the tax
+calculation engine, user data management, and document generation are
+separated for scalability and maintainability. We implemented secure API
+gateways with rate limiting to ensure system integrity against potential
+abuse.
+
+\hypertarget{application-features}{%
+\section{Application Features}\label{application-features}}
+
+The Second Certainty Tax Tool offers comprehensive functionality to
+address all aspects of proactive tax management:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Intelligent User Onboarding}: Guided setup process that
+  collects relevant financial information and tax situation details,
+  requiring minimal tax expertise from users
+\item
+  \textbf{Income Stream Tracking}: Integration with multiple income
+  sources including traditional employment, freelance work, rental
+  income, dividends, and capital gains
+\item
+  \textbf{Real-time Tax Liability Dashboard}: Dynamic visualization of
+  current tax position, projected year-end liability, and comparison
+  with previous years
+\item
+  \textbf{Deduction Discovery Engine}: AI-powered analysis that
+  identifies potential tax deductions based on spending patterns and
+  user-specific situations
+\item
+  \textbf{Quarterly Payment Management}: Automated calculation of
+  estimated quarterly tax payments with reminder systems and payment
+  tracking
+\item
+  \textbf{Document Management System}: Secure storage for tax-relevant
+  documentation, receipts, and financial statements with OCR
+  capabilities
+\item
+  \textbf{Tax Calendar}: Personalized calendar with important tax dates,
+  filing deadlines, and custom reminders
+\item
+  \textbf{Tax Scenario Modeling}: What-if analysis tool for exploring
+  potential financial decisions and their tax implications
+\item
+  \textbf{Multi-year Tax Strategy Planning}: Long-term tax optimization
+  recommendations based on user's financial goals and life events
+\item
+  \textbf{Secure Data Export}: One-click generation of organized
+  financial records for tax preparation or professional review
+\item
+  \textbf{Tax Professional Collaboration Portal}: Secure channel for
+  sharing relevant information with accountants or tax advisors
+\end{itemize}
+
+\hypertarget{deployment}{%
+\section{Deployment}\label{deployment}}
+
+The Second Certainty Tax Tool is deployed and accessible at:
+\url{https://secondcertaintytax.financial-tools.com}
+
+Our deployment strategy utilizes AWS infrastructure to ensure security,
+reliability, and scalability:
+
+\begin{itemize}
+\tightlist
+\item
+  Frontend assets are served through Amazon CloudFront CDN for optimal
+  global performance
+\item
+  Backend services are containerized using Docker and orchestrated with
+  Amazon ECS
+\item
+  Database operations run on Amazon RDS PostgreSQL instances with
+  automated backups and point-in-time recovery
+\item
+  We maintain separate development, staging, and production environments
+  with comprehensive CI/CD pipelines
+\end{itemize}
+
+The deployment process presented several challenges, particularly around
+securing sensitive financial data. We implemented end-to-end encryption,
+rigorous access controls, and comprehensive audit logging to address
+these concerns. Additionally, we established a blue-green deployment
+approach to ensure zero-downtime updates when implementing new features
+or security patches.
+
+Performance optimization was another significant challenge, as tax
+calculations involving multiple income sources and deductions can be
+computationally intensive. We addressed this through strategic caching,
+database query optimization, and background processing of
+non-time-sensitive calculations.
+
+\hypertarget{code-repository}{%
+\section{Code Repository}\label{code-repository}}
+
+Our application's source code is maintained in a GitHub repository with
+comprehensive documentation and structured contribution guidelines:
+
+\url{https://github.com/ces0491/second-certainty}
+
+The repository includes detailed setup instructions for local
+development environments, API documentation, and test suites. We follow
+a trunk-based development workflow with feature branches and pull
+request reviews to maintain code quality.
+
+\hypertarget{screenshots}{%
+\section{Screenshots}\label{screenshots}}
+
+\hypertarget{dashboard-overview}{%
+\subsection{Dashboard Overview}\label{dashboard-overview}}
+
+\begin{figure}
+
+{\centering \includegraphics{placeholder-dashboard.png}
+
+}
+
+\caption{Dashboard Overview}
+
+\end{figure}
+
+The dashboard provides users with an at-a-glance view of their current
+tax position, including year-to-date income, estimated tax liability,
+and progress toward quarterly payment goals. The visualization on the
+right shows the breakdown of income sources affecting tax calculations.
+
+\hypertarget{deduction-discovery}{%
+\subsection{Deduction Discovery}\label{deduction-discovery}}
+
+\begin{figure}
+
+{\centering \includegraphics{placeholder-deductions.png}
+
+}
+
+\caption{Deduction Discovery}
+
+\end{figure}
+
+The deduction discovery interface analyzes user spending and life
+situations to identify potential tax deductions. Each suggestion
+includes an explanation of the relevant tax code and estimated impact on
+overall tax liability.
+
+\hypertarget{tax-scenario-modeling}{%
+\subsection{Tax Scenario Modeling}\label{tax-scenario-modeling}}
+
+\begin{figure}
+
+{\centering \includegraphics{placeholder-modeling.png}
+
+}
+
+\caption{Tax Scenario Modeling}
+
+\end{figure}
+
+The scenario modeling tool allows users to explore the tax implications
+of potential financial decisions. In this example, the user is comparing
+the tax effects of different retirement contribution strategies across a
+three-year period.
+
+\hypertarget{document-management}{%
+\subsection{Document Management}\label{document-management}}
+
+\begin{figure}
+
+{\centering \includegraphics{placeholder-documents.png}
+
+}
+
+\caption{Document Management}
+
+\end{figure}
+
+The document management system provides secure storage for receipts,
+financial statements, and other tax-relevant documentation. The OCR
+functionality automatically extracts and categorizes key information
+from uploaded documents.
+
+\hypertarget{tax-calendar}{%
+\subsection{Tax Calendar}\label{tax-calendar}}
+
+\begin{figure}
+
+{\centering \includegraphics{placeholder-calendar.png}
+
+}
+
+\caption{Tax Calendar}
+
+\end{figure}
+
+The personalized tax calendar highlights important deadlines and creates
+custom reminders based on the user's specific tax situation. Users can
+integrate this calendar with popular calendar applications for seamless
+planning.
+
+\hypertarget{professional-collaboration-portal}{%
+\subsection{Professional Collaboration
+Portal}\label{professional-collaboration-portal}}
+
+\begin{figure}
+
+{\centering \includegraphics{placeholder-collaboration.png}
+
+}
+
+\caption{Professional Collaboration}
+
+\end{figure}
+
+The collaboration portal enables secure sharing of relevant tax
+information with accounting professionals. The interface includes
+annotation tools and version control to facilitate effective
+communication about tax strategies.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\emph{Note: This document was prepared on April 22, 2025, and reflects
+the current state of the Second Certainty Tax Tool. Features and
+technical specifications may evolve as we continue to enhance the
+platform based on user feedback and regulatory changes.}
+
+
+
+\end{document}
