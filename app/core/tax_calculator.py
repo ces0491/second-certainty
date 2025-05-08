@@ -1,4 +1,4 @@
-# app/core/tax_calculator.py
+# app/core/tax_calculator.py (updated with logging)
 from sqlalchemy.orm import Session
 from typing import Dict, List, Optional, Tuple, Any
 import math
@@ -9,6 +9,10 @@ from app.models.tax_models import (
     UserProfile, IncomeSource, UserExpense, TaxCalculation
 )
 from app.utils.tax_utils import get_tax_year, calculate_age
+from app.utils.logging_utils import get_logger
+
+# Get module logger
+logger = get_logger("tax_calculator")
 
 class TaxCalculator:
     """
@@ -17,14 +21,16 @@ class TaxCalculator:
     
     def __init__(self, db: Session):
         self.db = db
+        logger.debug("TaxCalculator initialized")
     
     def get_tax_brackets(self, tax_year: str) -> List[Dict[str, Any]]:
         """Get tax brackets for the specified tax year."""
+        logger.debug(f"Getting tax brackets for {tax_year}")
         brackets = self.db.query(TaxBracket).filter(
             TaxBracket.tax_year == tax_year
         ).order_by(TaxBracket.lower_limit).all()
         
-        return [
+        result = [
             {
                 "lower_limit": bracket.lower_limit,
                 "upper_limit": bracket.upper_limit,
@@ -33,14 +39,19 @@ class TaxCalculator:
             }
             for bracket in brackets
         ]
+        
+        logger.debug(f"Found {len(result)} tax brackets for {tax_year}")
+        return result
     
     def get_tax_rebates(self, tax_year: str) -> Dict[str, float]:
         """Get tax rebates for the specified tax year."""
+        logger.debug(f"Getting tax rebates for {tax_year}")
         rebate = self.db.query(TaxRebate).filter(
             TaxRebate.tax_year == tax_year
         ).first()
         
         if not rebate:
+            logger.warning(f"No tax rebates found for {tax_year}")
             return {"primary": 0, "secondary": 0, "tertiary": 0}
         
         return {
@@ -51,11 +62,13 @@ class TaxCalculator:
     
     def get_tax_thresholds(self, tax_year: str) -> Dict[str, int]:
         """Get tax thresholds for the specified tax year."""
+        logger.debug(f"Getting tax thresholds for {tax_year}")
         threshold = self.db.query(TaxThreshold).filter(
             TaxThreshold.tax_year == tax_year
         ).first()
         
         if not threshold:
+            logger.warning(f"No tax thresholds found for {tax_year}")
             return {"below_65": 0, "age_65_to_74": 0, "age_75_plus": 0}
         
         return {
@@ -66,11 +79,13 @@ class TaxCalculator:
     
     def get_medical_tax_credits(self, tax_year: str) -> Dict[str, float]:
         """Get medical tax credits for the specified tax year."""
+        logger.debug(f"Getting medical tax credits for {tax_year}")
         credit = self.db.query(MedicalTaxCredit).filter(
             MedicalTaxCredit.tax_year == tax_year
         ).first()
         
         if not credit:
+            logger.warning(f"No medical tax credits found for {tax_year}")
             return {"main_member": 0, "additional_member": 0}
         
         return {
@@ -83,10 +98,13 @@ class TaxCalculator:
         Calculate income tax based on taxable income and tax brackets.
         Does not include rebates or credits.
         """
+        logger.debug(f"Calculating income tax for {taxable_income} in {tax_year}")
         brackets = self.get_tax_brackets(tax_year)
         
         if not brackets:
-            raise ValueError(f"No tax brackets found for tax year {tax_year}")
+            error_msg = f"No tax brackets found for tax year {tax_year}"
+            logger.error(error_msg)
+            raise ValueError(error_msg)
         
         # Find the applicable bracket
         applicable_bracket = None
@@ -98,7 +116,9 @@ class TaxCalculator:
                 break
         
         if not applicable_bracket:
-            raise ValueError(f"Could not determine tax bracket for income R{taxable_income}")
+            error_msg = f"Could not determine tax bracket for income R{taxable_income}"
+            logger.error(error_msg)
+            raise ValueError(error_msg)
         
         # Calculate tax
         base_amount = applicable_bracket["base_amount"]
@@ -106,6 +126,7 @@ class TaxCalculator:
         lower_limit = applicable_bracket["lower_limit"]
         
         tax = base_amount + (rate * (taxable_income - lower_limit))
+        logger.debug(f"Calculated tax: R{tax:.2f}")
         return tax
     
     def calculate_rebate(self, age: int, tax_year: str) -> float:

@@ -1,0 +1,50 @@
+---
+title: "Second Certainty Tax API"
+subtitle: "User Guide"
+author: "Cesaire Tobias"
+date: "May 8, 2025"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    highlight-style: github
+    code-fold: false
+    theme: cosmo
+  pdf:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    highlight-style: github
+    geometry:
+      - margin=1in
+---
+
+# Introduction
+
+Second Certainty is a comprehensive South African tax liability management tool designed to help individuals and small businesses proactively manage their tax obligations throughout the fiscal year. Unlike traditional tax management approaches that often occur reactively at year-end, Second Certainty provides continuous real-time tax calculations, allowing you to:
+
+- Track multiple income streams (salary, freelance work, investments)
+- Record and categorize tax-deductible expenses
+- View your current tax position at any time
+- Calculate provisional tax payments
+- Access up-to-date tax brackets, rebates, and thresholds
+
+This guide will walk you through setting up and using Second Certainty to take control of your tax situation.
+
+# Installation and Setup
+
+## Prerequisites
+
+Before installing Second Certainty, ensure you have:
+
+- Python 3.10 or higher
+- PostgreSQL (for production) or SQLite (for development)
+- Git
+
+## Local Development Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ces0491/second-certainty.git
+   cd second-certainty

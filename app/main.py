@@ -3,6 +3,9 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from sqlalchemy.orm import Session
+import logging
+import os
+from pathlib import Path
 
 from app.core.config import settings, get_db, engine
 from app.models.tax_models import Base
@@ -11,6 +14,13 @@ from app.core.data_scraper import SARSDataScraper
 from app.models.tax_models import TaxBracket, TaxRebate, TaxThreshold, MedicalTaxCredit
 from app.utils.tax_utils import get_tax_year
 from app.api.routes import admin
+from app.utils.logging_utils import setup_logging, get_logger
+
+# Set up application logging
+logger = setup_logging(
+    app_name="second_certainty",
+    log_level=logging.DEBUG if settings.DEBUG else logging.INFO
+)
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -50,6 +60,7 @@ app.include_router(
 @app.get("/")
 def read_root():
     """Root endpoint."""
+    logger.info("Root endpoint accessed")
     return {
         "app_name": settings.APP_NAME,
         "version": settings.APP_VERSION,
@@ -59,6 +70,12 @@ def read_root():
 @app.on_event("startup")
 async def startup_event():
     """Run startup tasks."""
+    logger.info("Application starting up")
+    
+    # Create logs directory if it doesn't exist
+    logs_dir = Path("logs")
+    logs_dir.mkdir(exist_ok=True)
+    
     import subprocess
     subprocess.run(["python", "fetch_tax_data.py"])
 
@@ -67,16 +84,17 @@ async def startup_event():
     
     # Initialize tax data
     try:
+        logger.info("Initializing tax data")
         scraper = SARSDataScraper()
         current_tax_year = get_tax_year()
         
         try:
             # First try to get current tax year data
             await scraper.update_tax_data(db)
-            print(f"Successfully initialized tax data for {current_tax_year}")
+            logger.info(f"Successfully initialized tax data for {current_tax_year}")
         except Exception as e:
-            print(f"Could not retrieve current tax year data: {e}")
-            print("Falling back to previous tax year data...")
+            logger.warning(f"Could not retrieve current tax year data: {e}")
+            logger.info("Falling back to previous tax year data...")
             
             # If current year fails, try previous tax year
             previous_year_start = int(current_tax_year.split('-')[0]) - 1
@@ -87,7 +105,7 @@ async def startup_event():
             existing = db.query(TaxBracket).filter(TaxBracket.tax_year == previous_tax_year).first()
             
             if existing:
-                print(f"Using existing {previous_tax_year} tax data")
+                logger.info(f"Using existing {previous_tax_year} tax data")
                 # Copy previous year data to current year
                 await copy_tax_year_data(db, previous_tax_year, current_tax_year)
             else:
@@ -96,19 +114,25 @@ async def startup_event():
                     await scraper.update_tax_data(db, previous_tax_year)
                     await copy_tax_year_data(db, previous_tax_year, current_tax_year)
                 except Exception as e2:
-                    print(f"Could not retrieve previous tax year data: {e2}")
-                    print("Falling back to manual tax data entry...")
+                    logger.error(f"Could not retrieve previous tax year data: {e2}")
+                    logger.info("Falling back to manual tax data entry...")
                     # Use the manual seed function from seed_data.py
                     from scripts.seed_data import seed_tax_data_manually
                     await seed_tax_data_manually(db, current_tax_year)
     except Exception as e:
-        print(f"Error initializing tax data: {e}")
+        logger.error(f"Error initializing tax data: {e}", exc_info=True)
     
     db.close()
+    logger.info("Application startup complete")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Run shutdown tasks."""
+    logger.info("Application shutting down")
 
 async def copy_tax_year_data(db: Session, source_year: str, target_year: str):
     """Copy tax data from one year to another when SARS hasn't updated yet."""
-    print(f"Copying tax data from {source_year} to {target_year}...")
+    logger.info(f"Copying tax data from {source_year} to {target_year}...")
     
     # Get source year tax brackets
     brackets = db.query(TaxBracket).filter(TaxBracket.tax_year == source_year).all()
@@ -164,7 +188,7 @@ async def copy_tax_year_data(db: Session, source_year: str, target_year: str):
     
     # Commit all changes
     db.commit()
-    print(f"Successfully copied tax data from {source_year} to {target_year}")
+    logger.info(f"Successfully copied tax data from {source_year} to {target_year}")
     
     db.close()
 

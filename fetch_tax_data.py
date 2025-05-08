@@ -25,6 +25,7 @@ from sqlalchemy.orm import Session
 import httpx
 from bs4 import BeautifulSoup
 import re
+from pathlib import Path
 
 # Add the parent directory to the path so we can import app modules
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -32,17 +33,17 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from app.models.tax_models import TaxBracket, TaxRebate, TaxThreshold, MedicalTaxCredit
 from app.core.config import get_db
 from app.utils.tax_utils import get_tax_year
+from app.utils.logging_utils import setup_logging
+
+# Create logs directory if it doesn't exist
+logs_dir = Path("logs")
+logs_dir.mkdir(exist_ok=True)
 
 # Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(f"tax_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
-    ]
+logger = setup_logging(
+    app_name="tax_data_fetcher", 
+    log_level=logging.INFO
 )
-logger = logging.getLogger(__name__)
 
 # SARS website URLs
 SARS_BASE_URL = "https://www.sars.gov.za"

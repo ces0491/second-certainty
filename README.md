@@ -241,6 +241,42 @@ For production deployment:
 - **AWS**: Deploy on AWS ECS or EKS
 - **Heroku**: Deploy directly from GitHub
 
+## Logging
+
+Second Certainty uses a comprehensive logging system that captures application events at different severity levels:
+
+- **General Logs**: `logs/second_certainty.log` - Contains all application logs
+- **Error Logs**: `logs/second_certainty_error.log` - Contains only error-level logs
+
+Log files are automatically rotated when they reach 10 MB, and the system keeps the 5 most recent log files.
+
+### Log Levels
+
+The application uses the following log levels:
+
+- `DEBUG`: Detailed information, typically useful for debugging
+- `INFO`: Confirmation that things are working as expected
+- `WARNING`: Indication that something unexpected happened or may happen in the future
+- `ERROR`: An error occurred that should be investigated
+- `CRITICAL`: A critical error that requires immediate attention
+
+### Controlling Log Level
+
+You can control the logging level through the `DEBUG` environment variable:
+- When `DEBUG=True`, the application logs at the `DEBUG` level
+- When `DEBUG=False`, the application logs at the `INFO` level
+
+### Log Format
+
+Each log entry includes:
+- Timestamp
+- Module name
+- Log level
+- Line number
+- Message
+
+Example: 2025-05-08 14:30:22 - second_certainty.tax_calculator - INFO - tax_calculator.py:157 - Calculating tax liability for user 1
+
 ## Contributing
 
 1. Fork the repository
