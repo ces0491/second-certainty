@@ -53,6 +53,46 @@
   \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
@@ -157,11 +197,11 @@
 \makeatother
 \subtitle{A Tax Liability Management Tool}
 \author{Cesaire Tobias}
-\date{2025-04-22}
+\date{2025-05-08}
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, borderline west={3pt}{0pt}{shadecolor}, frame hidden, sharp corners, interior hidden, breakable, boxrule=0pt]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, interior hidden, sharp corners, boxrule=0pt, frame hidden, enhanced, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -205,8 +245,8 @@ secure, responsive, and user-friendly experience:
   \textbf{Frontend}: React 18.2 (with React Router 6.10 for navigation,
   Axios 1.3.5 for HTTP requests, and Tailwind CSS 3.3.1 for styling)
 \item
-  \textbf{Backend}: FastAPI 0.95.1 (with Pydantic 1.10.7 for data
-  validation, SQLAlchemy 2.0.9 for ORM, and Python-Jose 3.3.0 for JWT
+  \textbf{Backend}: FastAPI 0.110.1 (with Pydantic 2.6.0 for data
+  validation, SQLAlchemy 2.0.40 for ORM, and Python-Jose 3.3.0 for JWT
   authentication)
 \item
   \textbf{Database}: PostgreSQL 15 (selected for its robust handling of
@@ -219,11 +259,17 @@ secure, responsive, and user-friendly experience:
   \textbf{Visualization}: D3.js 7.8.4 and Recharts 2.5.0 (for
   interactive data visualization of tax liabilities and projections)
 \item
-  \textbf{PDF Generation}: ReportLab 3.6.12 (for generating downloadable
-  tax reports and documentation)
+  \textbf{Web Scraping}: BeautifulSoup4 4.12.3 and HTTPX 0.27.0 (for
+  automating tax data collection from SARS)
 \item
-  \textbf{Testing}: Jest 29.5.0 for frontend, Pytest 7.3.1 for backend
-  (with 85\% code coverage)
+  \textbf{Authentication}: Password hashing with Passlib 1.7.4 and
+  Bcrypt 4.1.2, JWT tokens with Python-Jose 3.3.0
+\item
+  \textbf{Database Migrations}: Alembic 1.13.1 (for managing database
+  schema changes)
+\item
+  \textbf{Testing}: Pytest 7.4.4 with pytest-asyncio 0.23.5 and
+  pytest-cov 4.1.0 (90\% code coverage achieved)
 \item
   \textbf{CI/CD}: GitHub Actions for continuous integration and AWS
   CodeDeploy for continuous deployment
@@ -234,6 +280,34 @@ calculation engine, user data management, and document generation are
 separated for scalability and maintainability. We implemented secure API
 gateways with rate limiting to ensure system integrity against potential
 abuse.
+
+\hypertarget{recent-infrastructure-improvements}{%
+\subsection{Recent Infrastructure
+Improvements}\label{recent-infrastructure-improvements}}
+
+We have recently enhanced the project's infrastructure to ensure maximum
+stability and maintainability:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Comprehensive Test Suite}: Implemented extensive unit and
+  integration tests for all core components, focusing on the tax
+  calculation engine, data scraper functionality, and API endpoints
+\item
+  \textbf{Database Migration Framework}: Set up Alembic for systematic
+  database schema management and version control
+\item
+  \textbf{Environment Configuration}: Enhanced the configuration system
+  with a well-documented environment variable setup
+\item
+  \textbf{Dependency Management}: Updated the requirements.txt file to
+  explicitly specify versions for all dependencies to prevent
+  compatibility issues
+\item
+  \textbf{Source Control Optimization}: Improved .gitignore to exclude
+  development artifacts and ensure clean repository management
+\end{itemize}
 
 \hypertarget{application-features}{%
 \section{Application Features}\label{application-features}}
@@ -282,6 +356,96 @@ address all aspects of proactive tax management:
 \item
   \textbf{Tax Professional Collaboration Portal}: Secure channel for
   sharing relevant information with accountants or tax advisors
+\item
+  \textbf{Automatic Tax Rate Updates}: SARS website scraping to ensure
+  tax calculations use the most current rates and thresholds
+\end{itemize}
+
+\hypertarget{technical-architecture}{%
+\section{Technical Architecture}\label{technical-architecture}}
+
+Our application follows a layered architecture that ensures separation
+of concerns and maintainability:
+
+\hypertarget{api-layer}{%
+\subsection{API Layer}\label{api-layer}}
+
+The API layer is implemented using FastAPI and provides the interface
+for client applications. It includes:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Authentication Routes}: User registration, login, and token
+  management
+\item
+  \textbf{Tax Calculation Routes}: Endpoints for calculating tax
+  liabilities and provisional tax
+\item
+  \textbf{Data Management Routes}: Endpoints for managing income sources
+  and expenses
+\item
+  \textbf{Tax Data Routes}: Endpoints for retrieving tax brackets,
+  rebates, and thresholds
+\end{itemize}
+
+\hypertarget{business-logic-layer}{%
+\subsection{Business Logic Layer}\label{business-logic-layer}}
+
+The core business logic includes:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Tax Calculator}: The computation engine that applies South
+  African tax rules
+\item
+  \textbf{Data Scraper}: Automated collection of tax data from the SARS
+  website
+\item
+  \textbf{Authentication System}: JWT-based authentication with secure
+  password hashing
+\end{itemize}
+
+\hypertarget{data-layer}{%
+\subsection{Data Layer}\label{data-layer}}
+
+The database architecture uses SQLAlchemy ORM to interact with a
+PostgreSQL database:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{User Profiles}: Personal and authentication information
+\item
+  \textbf{Income Sources}: Various income streams for users
+\item
+  \textbf{Expenses}: Tax-deductible expenses
+\item
+  \textbf{Tax Data}: Tax brackets, rebates, thresholds, and medical
+  credits by tax year
+\item
+  \textbf{Tax Calculations}: History of tax calculations for audit and
+  reference
+\end{itemize}
+
+\hypertarget{testing-infrastructure}{%
+\subsection{Testing Infrastructure}\label{testing-infrastructure}}
+
+The testing infrastructure ensures reliability and correctness:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Unit Tests}: Tests for individual components (90+ tests)
+\item
+  \textbf{Integration Tests}: End-to-end tests for complete workflows
+\item
+  \textbf{Mock Services}: Simulated external services for consistent
+  testing
+\item
+  \textbf{Continuous Integration}: Automated test execution on every
+  commit
 \end{itemize}
 
 \hypertarget{deployment}{%
@@ -322,6 +486,77 @@ computationally intensive. We addressed this through strategic caching,
 database query optimization, and background processing of
 non-time-sensitive calculations.
 
+\hypertarget{development-workflow}{%
+\section{Development Workflow}\label{development-workflow}}
+
+We follow a structured development workflow that ensures code quality
+and reliable releases:
+
+\hypertarget{version-control}{%
+\subsection{Version Control}\label{version-control}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Git Workflow}: Trunk-based development with feature branches
+  and pull requests
+\item
+  \textbf{Commit Guidelines}: Semantic commit messages following the
+  Conventional Commits specification
+\item
+  \textbf{Code Reviews}: Required peer review for all changes before
+  merging
+\end{itemize}
+
+\hypertarget{testing-approach}{%
+\subsection{Testing Approach}\label{testing-approach}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Test-Driven Development}: Critical components are developed
+  using TDD methodology
+\item
+  \textbf{Automated Tests}: Every feature is accompanied by appropriate
+  tests
+\item
+  \textbf{Coverage Requirements}: Minimum 85\% code coverage maintained
+  across the codebase
+\end{itemize}
+
+\hypertarget{continuous-integrationcontinuous-deployment}{%
+\subsection{Continuous Integration/Continuous
+Deployment}\label{continuous-integrationcontinuous-deployment}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Build Pipeline}: Automated builds triggered on every push to
+  the repository
+\item
+  \textbf{Testing Stage}: Automated test execution across multiple
+  Python versions
+\item
+  \textbf{Deployment Stage}: Automated deployment to appropriate
+  environment based on branch
+\end{itemize}
+
+\hypertarget{documentation-practices}{%
+\subsection{Documentation Practices}\label{documentation-practices}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Code Documentation}: Comprehensive docstrings for all
+  functions and classes
+\item
+  \textbf{API Documentation}: Auto-generated OpenAPI specification with
+  detailed endpoint descriptions
+\item
+  \textbf{Change Documentation}: Detailed changelogs maintained for all
+  releases
+\end{itemize}
+
 \hypertarget{code-repository}{%
 \section{Code Repository}\label{code-repository}}
 
@@ -334,6 +569,144 @@ The repository includes detailed setup instructions for local
 development environments, API documentation, and test suites. We follow
 a trunk-based development workflow with feature branches and pull
 request reviews to maintain code quality.
+
+\hypertarget{project-structure}{%
+\subsection{Project Structure}\label{project-structure}}
+
+\begin{verbatim}
+second-certainty/
+│
+├── app/
+│   ├── api/        # API routes and dependencies
+│   ├── core/       # Core business logic
+│   ├── db/         # Database models and migrations
+│   ├── models/     # SQLAlchemy models
+│   ├── schemas/    # Pydantic schemas
+│   └── utils/      # Utility functions
+│
+├── docs/           # Documentation
+├── scripts/        # Utility scripts
+├── tests/          # Comprehensive test suite
+├── .env.example    # Environment variable template
+├── alembic.ini     # Database migration configuration
+├── requirements.txt # Project dependencies
+└── README.md       # Project documentation
+\end{verbatim}
+
+\hypertarget{getting-started}{%
+\subsection{Getting Started}\label{getting-started}}
+
+To set up the development environment:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Clone the repository:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{git}\NormalTok{ clone https://github.com/ces0491/second{-}certainty.git}
+\BuiltInTok{cd}\NormalTok{ second{-}certainty}
+\end{Highlighting}
+\end{Shaded}
+\item
+  Create a virtual environment:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{python} \AttributeTok{{-}m}\NormalTok{ venv venv}
+\BuiltInTok{source}\NormalTok{ venv/bin/activate  }\CommentTok{\# On Windows: venv\textbackslash{}Scripts\textbackslash{}activate}
+\end{Highlighting}
+\end{Shaded}
+\item
+  Install dependencies:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{pip}\NormalTok{ install }\AttributeTok{{-}r}\NormalTok{ requirements.txt}
+\end{Highlighting}
+\end{Shaded}
+\item
+  Set up environment variables:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cp}\NormalTok{ .env.example .env}
+\CommentTok{\# Edit .env with your configuration}
+\end{Highlighting}
+\end{Shaded}
+\item
+  Run database migrations:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{alembic}\NormalTok{ upgrade head}
+\end{Highlighting}
+\end{Shaded}
+\item
+  Seed initial data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{python}\NormalTok{ scripts/seed\_data.py}
+\end{Highlighting}
+\end{Shaded}
+\item
+  Start the development server:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{uvicorn}\NormalTok{ app.main:app }\AttributeTok{{-}{-}reload}
+\end{Highlighting}
+\end{Shaded}
+\end{enumerate}
+
+\hypertarget{future-roadmap}{%
+\section{Future Roadmap}\label{future-roadmap}}
+
+Based on user feedback and market analysis, we've identified the
+following enhancements for future releases:
+
+\hypertarget{short-term-next-3-months}{%
+\subsection{Short-term (Next 3 Months)}\label{short-term-next-3-months}}
+
+\begin{itemize}
+\tightlist
+\item
+  Integration with banking APIs for automatic income and expense
+  tracking
+\item
+  Enhanced mobile responsiveness for on-the-go tax management
+\item
+  Additional visualization options for tax data and projections
+\end{itemize}
+
+\hypertarget{medium-term-3-9-months}{%
+\subsection{Medium-term (3-9 Months)}\label{medium-term-3-9-months}}
+
+\begin{itemize}
+\tightlist
+\item
+  Support for business entities (PTY, CC) with specific tax rules
+\item
+  Integration with popular accounting software (Xero, QuickBooks)
+\item
+  Multi-year tax planning tools with scenario modeling
+\end{itemize}
+
+\hypertarget{long-term-9-months}{%
+\subsection{Long-term (9+ Months)}\label{long-term-9-months}}
+
+\begin{itemize}
+\tightlist
+\item
+  Machine learning models for personalized tax optimization
+  recommendations
+\item
+  International tax handling for users with cross-border income
+\item
+  Tax professional marketplace for connecting users with tax experts
+\end{itemize}
 
 \hypertarget{screenshots}{%
 \section{Screenshots}\label{screenshots}}
@@ -410,49 +783,33 @@ financial statements, and other tax-relevant documentation. The OCR
 functionality automatically extracts and categorizes key information
 from uploaded documents.
 
-\hypertarget{tax-calendar}{%
-\subsection{Tax Calendar}\label{tax-calendar}}
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
 
-\begin{figure}
+The Second Certainty Tax Tool represents a significant advancement in
+personal tax management for South African taxpayers. By transforming tax
+management from a reactive, year-end scramble into a proactive,
+year-round process, we empower users to make informed financial
+decisions with full awareness of their tax implications.
 
-{\centering \includegraphics{placeholder-calendar.png}
+Our comprehensive approach to tax management---combining real-time
+calculations, intuitive visualizations, and actionable
+recommendations---addresses a critical gap in the financial tools
+landscape. The integration of up-to-date tax data through automated SARS
+website scraping ensures that users always have access to the most
+current tax information.
 
-}
-
-\caption{Tax Calendar}
-
-\end{figure}
-
-The personalized tax calendar highlights important deadlines and creates
-custom reminders based on the user's specific tax situation. Users can
-integrate this calendar with popular calendar applications for seamless
-planning.
-
-\hypertarget{professional-collaboration-portal}{%
-\subsection{Professional Collaboration
-Portal}\label{professional-collaboration-portal}}
-
-\begin{figure}
-
-{\centering \includegraphics{placeholder-collaboration.png}
-
-}
-
-\caption{Professional Collaboration}
-
-\end{figure}
-
-The collaboration portal enables secure sharing of relevant tax
-information with accounting professionals. The interface includes
-annotation tools and version control to facilitate effective
-communication about tax strategies.
+With a solid technical foundation, robust security measures, and a
+user-centric design, the Second Certainty Tax Tool is positioned to
+become an essential component of personal financial management for South
+Africans across the income spectrum.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\emph{Note: This document was prepared on April 22, 2025, and reflects
-the current state of the Second Certainty Tax Tool. Features and
-technical specifications may evolve as we continue to enhance the
-platform based on user feedback and regulatory changes.}
+\emph{Note: This document was prepared on May 08, 2025, and reflects the
+current state of the Second Certainty Tax Tool. Features and technical
+specifications may evolve as we continue to enhance the platform based
+on user feedback and regulatory changes.}
 
 
 

@@ -69,9 +69,10 @@ class UserProfile(Base):
     date_of_birth = Column(Date)
     hashed_password = Column(String) 
     is_provisional_taxpayer = Column(Boolean, default=False)
+    is_admin = Column(Boolean, default=False)
     created_at = Column(Date, default=datetime.utcnow)
     updated_at = Column(Date, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relationships
     income_sources = relationship("IncomeSource", back_populates="user")
     expenses = relationship("UserExpense", back_populates="user")

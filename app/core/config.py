@@ -1,6 +1,6 @@
 # app/core/config.py
 import os
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
