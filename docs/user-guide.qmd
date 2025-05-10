@@ -22,7 +22,7 @@ format:
 
 # Introduction
 
-Second Certainty is a comprehensive South African tax liability management tool designed to help individuals and small businesses proactively manage their tax obligations throughout the fiscal year. Unlike traditional tax management approaches that often occur reactively at year-end, Second Certainty provides continuous real-time tax calculations, allowing you to:
+Welcome to the Second Certainty Tax API user guide. This comprehensive South African tax liability management tool is designed to help individuals and small businesses proactively manage their tax obligations throughout the fiscal year. Unlike traditional tax management approaches that often occur reactively at year-end, Second Certainty provides continuous real-time tax calculations, allowing you to:
 
 - Track multiple income streams (salary, freelance work, investments)
 - Record and categorize tax-deductible expenses
@@ -48,3 +48,350 @@ Before installing Second Certainty, ensure you have:
    ```bash
    git clone https://github.com/ces0491/second-certainty.git
    cd second-certainty
+   ```
+
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Create a .env file from the example:
+   ```bash
+   cp .env.example .env
+   ```
+   Edit the .env file with your configuration, especially:
+   - DATABASE_URL: Your database connection string
+   - SECRET_KEY: A strong secret key for JWT generation
+   - DEBUG: Set to "True" for development, "False" for production
+
+5. Initialize the database:
+   ```bash
+   python init_db.py
+   python scripts/seed_data.py
+   ```
+
+6. Start the development server:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+The API will be available at http://localhost:8000.
+
+## Docker Setup
+
+For a containerized deployment:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ces0491/second-certainty.git
+   cd second-certainty
+   ```
+
+2. Create a .env file from the example:
+   ```bash
+   cp .env.example .env
+   ```
+   Edit the .env file with your configuration.
+
+3. Build and start the containers:
+   ```bash
+   docker-compose up -d
+   ```
+
+This will start both the API and a PostgreSQL database. The API will be available at http://localhost:8000.
+
+# Using the API
+
+## Authentication
+
+Authentication is handled through JWT tokens. To access protected endpoints, you need to:
+
+1. Register a user:
+   ```bash
+   curl -X POST http://localhost:8000/api/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{
+       "email": "user@example.com",
+       "password": "secure_password",
+       "name": "John",
+       "surname": "Doe",
+       "date_of_birth": "1980-01-01",
+       "is_provisional_taxpayer": false
+     }'
+   ```
+
+2. Get an access token:
+   ```bash
+   curl -X POST http://localhost:8000/api/auth/token \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "username=user@example.com&password=secure_password"
+   ```
+
+3. Use the token in subsequent requests:
+   ```bash
+   curl -X GET http://localhost:8000/api/tax/tax-brackets/ \
+     -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+   ```
+
+## Managing Income Sources
+
+To track your income, you can add, view, and delete income sources.
+
+### Adding Income
+
+```bash
+curl -X POST http://localhost:8000/api/tax/users/1/income/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source_type": "Salary",
+    "description": "Primary employment",
+    "annual_amount": 450000,
+    "is_paye": true,
+    "tax_year": "2024-2025"
+  }'
+```
+
+### Viewing Income Sources
+
+```bash
+curl -X GET http://localhost:8000/api/tax/users/1/income/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+You can specify a tax year:
+
+```bash
+curl -X GET "http://localhost:8000/api/tax/users/1/income/?tax_year=2024-2025" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+### Deleting Income
+
+```bash
+curl -X DELETE http://localhost:8000/api/tax/users/1/income/1 \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+## Managing Expenses
+
+### Adding Expenses
+
+```bash
+curl -X POST http://localhost:8000/api/tax/users/1/expenses/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "expense_type_id": 1,
+    "description": "Monthly contribution",
+    "amount": 24000,
+    "tax_year": "2024-2025"
+  }'
+```
+
+### Viewing Expenses
+
+```bash
+curl -X GET http://localhost:8000/api/tax/users/1/expenses/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+### Deleting Expenses
+
+```bash
+curl -X DELETE http://localhost:8000/api/tax/users/1/expenses/1 \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+## Tax Calculation
+
+### Calculating Tax Liability
+
+To see your current tax position:
+
+```bash
+curl -X GET http://localhost:8000/api/tax/users/1/tax-calculation/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+This will return a comprehensive breakdown of your tax liability, including:
+- Gross income
+- Taxable income
+- Tax before rebates
+- Applicable rebates
+- Medical credits
+- Final tax
+- Effective tax rate
+- Monthly tax rate
+
+### Calculating Provisional Tax
+
+For provisional taxpayers:
+
+```bash
+curl -X GET http://localhost:8000/api/tax/users/1/provisional-tax/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+This will calculate:
+- Annual tax liability
+- First provisional payment (due August)
+- Second provisional payment (due February)
+- Final payment (due with tax return)
+
+## Accessing Tax Data
+
+### Tax Brackets
+
+```bash
+curl -X GET http://localhost:8000/api/tax/tax-brackets/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+You can specify a tax year:
+
+```bash
+curl -X GET "http://localhost:8000/api/tax/tax-brackets/?tax_year=2024-2025" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+### Deductible Expense Types
+
+```bash
+curl -X GET http://localhost:8000/api/tax/deductible-expenses/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+# API Documentation
+
+Full API documentation is available through:
+
+- Swagger UI: http://localhost:8000/api/docs
+- ReDoc: http://localhost:8000/api/redoc
+
+These interactive documentation pages allow you to explore and test all available endpoints.
+
+# Best Practices
+
+## Regular Updates
+
+For the most accurate tax calculations:
+
+1. Keep income sources up-to-date as amounts change
+2. Record expenses promptly with proper categorization
+3. Check your tax position regularly throughout the year
+
+## Provisional Taxpayers
+
+If you're a provisional taxpayer:
+
+1. Mark your profile accordingly (`is_provisional_taxpayer: true`)
+2. Use the provisional tax endpoint to calculate payments before deadlines
+3. Keep track of payment confirmations for reference
+
+## Security Recommendations
+
+To protect your sensitive financial data:
+
+1. Use strong, unique passwords
+2. Keep your access token secure and never share it
+3. Log out after using the system on shared devices
+4. Regularly update your authentication credentials
+
+# Troubleshooting
+
+## Common Issues
+
+### Authentication Failures
+
+If you receive a 401 Unauthorized error:
+- Ensure you're using a valid, non-expired token
+- Check that you've included the "Bearer" prefix in the Authorization header
+- Try regenerating a new token
+
+### Missing or Incorrect Tax Data
+
+If tax calculations seem incorrect:
+- Verify that you have the latest tax data by checking the tax brackets endpoint
+- If needed, an administrator can update tax data using:
+  ```bash
+  python scripts/update_tax_tables.py --force
+  ```
+
+### Database Connection Issues
+
+If you encounter database errors:
+- Check that your database server is running
+- Verify your DATABASE_URL in the .env file
+- Ensure database migrations have been applied
+
+## Getting Help
+
+If you encounter issues not covered in this guide:
+
+1. Check the logs in the `/logs` directory for detailed error information
+2. Review the API documentation for correct endpoint usage
+3. Contact support at support@secondcertainty.co.za
+
+# Advanced Usage
+
+## Scripting and Automation
+
+You can integrate the Second Certainty API with your own scripts and applications:
+
+```python
+import requests
+import json
+
+# Authentication
+auth_response = requests.post(
+    "http://localhost:8000/api/auth/token",
+    data={
+        "username": "user@example.com",
+        "password": "secure_password"
+    }
+)
+token = auth_response.json()["access_token"]
+headers = {"Authorization": f"Bearer {token}"}
+
+# Get tax calculation
+tax_calc = requests.get(
+    "http://localhost:8000/api/tax/users/1/tax-calculation/",
+    headers=headers
+)
+
+print(json.dumps(tax_calc.json(), indent=2))
+```
+
+## Custom Reports
+
+You can combine various API endpoints to create custom tax reports:
+
+1. Fetch income sources
+2. Fetch expenses
+3. Calculate tax liability
+4. Calculate provisional tax (if applicable)
+5. Compare with previous years or scenarios
+
+## Integrating with Accounting Software
+
+The API can be used alongside accounting software:
+- Export income and expense data to the API
+- Use the calculated tax liability for financial planning
+- Incorporate tax calculations into financial reports
+
+# Conclusion
+
+The Second Certainty Tax API provides a powerful tool for managing your South African tax obligations proactively throughout the year. By keeping your income and expense data current, you can avoid year-end surprises and make informed financial decisions.
+
+For further assistance or to report issues, please contact our support team at support@secondcertainty.co.za.
+
+---
+
+*Note: This guide was last updated on May 8, 2025, and reflects the current state of the Second Certainty Tax API. Features and functionality may evolve as we continue to enhance the platform based on user feedback and regulatory changes.*

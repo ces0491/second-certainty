@@ -1,6 +1,6 @@
 ---
 title: "Second Certainty"
-subtitle: "A Tax Liability Management Tool"
+subtitle: "A South African Tax Liability Management API"
 author: "Cesaire Tobias"
 date: "May 08, 2025"
 format: 
@@ -19,7 +19,7 @@ format:
 
 The Second Certainty Tax Tool addresses one of life's two certainties—taxes—by providing individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress. Our application transforms this approach by implementing a proactive, year-round tax management system.
 
-The tool continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts quarterly payments, and provides optimization strategies—all in real-time. In today's complex financial landscape, where gig economy participation, investment income, and small business ownership have complicated personal taxation, our solution brings clarity and control to users' tax situations.
+The tool continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts provisional tax payments, and provides optimization strategies—all in real-time. In today's complex financial landscape, where gig economy participation, investment income, and small business ownership have complicated personal taxation, our solution brings clarity and control to users' tax positions.
 
 By empowering users with ongoing visibility into their tax position, the Second Certainty Tax Tool reduces financial anxiety, prevents costly surprises, and helps maximize legitimate tax advantages throughout the year.
 
@@ -27,66 +27,69 @@ By empowering users with ongoing visibility into their tax position, the Second 
 
 Our application leverages modern technology frameworks to deliver a secure, responsive, and user-friendly experience:
 
-- **Frontend**: React 18.2 (with React Router 6.10 for navigation, Axios 1.3.5 for HTTP requests, and Tailwind CSS 3.3.1 for styling)
-- **Backend**: FastAPI 0.110.1 (with Pydantic 2.6.0 for data validation, SQLAlchemy 2.0.40 for ORM, and Python-Jose 3.3.0 for JWT authentication)
-- **Database**: PostgreSQL 15 (selected for its robust handling of financial data, transactional integrity, and comprehensive indexing capabilities)
-- **Data Processing**: Pandas 2.0.0 and NumPy 1.24.2 (for efficient tax calculations and financial modeling)
-- **Visualization**: D3.js 7.8.4 and Recharts 2.5.0 (for interactive data visualization of tax liabilities and projections)
-- **Web Scraping**: BeautifulSoup4 4.12.3 and HTTPX 0.27.0 (for automating tax data collection from SARS)
-- **Authentication**: Password hashing with Passlib 1.7.4 and Bcrypt 4.1.2, JWT tokens with Python-Jose 3.3.0
-- **Database Migrations**: Alembic 1.13.1 (for managing database schema changes)
-- **Testing**: Pytest 7.4.4 with pytest-asyncio 0.23.5 and pytest-cov 4.1.0 (90% code coverage achieved)
-- **CI/CD**: GitHub Actions for continuous integration and AWS CodeDeploy for continuous deployment
+- **Framework**: FastAPI 0.110.1
+- **ORM**: SQLAlchemy 2.0.40
+- **Validation**: Pydantic 2.6.0
+- **Database**: PostgreSQL (or SQLite for development)
+- **Authentication**: JWT with password hashing using Passlib 1.7.4 and Bcrypt 4.1.2
+- **Data Processing**: HTTPX 0.27.0 for HTTP requests
+- **Web Scraping**: BeautifulSoup4 4.12.3 for SARS website data extraction
+- **Database Migrations**: Alembic 1.13.1
+- **Testing**: Pytest 7.4.4 with pytest-asyncio 0.23.5 and pytest-cov 4.1.0
+- **Server**: Uvicorn 0.29.0
 
-The architecture follows a microservices approach where the tax calculation engine, user data management, and document generation are separated for scalability and maintainability. We implemented secure API gateways with rate limiting to ensure system integrity against potential abuse.
+The architecture follows a layered approach where the tax calculation engine, user data management, and API endpoints are separated for maintainability and clearer responsibility separation.
 
 ## Recent Infrastructure Improvements
 
 We have recently enhanced the project's infrastructure to ensure maximum stability and maintainability:
 
-- **Comprehensive Test Suite**: Implemented extensive unit and integration tests for all core components, focusing on the tax calculation engine, data scraper functionality, and API endpoints
+- **Comprehensive Logging System**: Implemented structured logging with rotation and separate files for different severity levels
 - **Database Migration Framework**: Set up Alembic for systematic database schema management and version control
 - **Environment Configuration**: Enhanced the configuration system with a well-documented environment variable setup
-- **Dependency Management**: Updated the requirements.txt file to explicitly specify versions for all dependencies to prevent compatibility issues
-- **Source Control Optimization**: Improved .gitignore to exclude development artifacts and ensure clean repository management
+- **Admin Functionality**: Added administration capabilities for tax data management
+- **Enhanced Tax Data Scraping**: Developed a robust multi-strategy scraper for SARS tax data with fallback mechanisms
 
 # Application Features
 
-The Second Certainty Tax Tool offers comprehensive functionality to address all aspects of proactive tax management:
+The Second Certainty Tax API offers comprehensive functionality to address all aspects of proactive tax management:
 
-- **Intelligent User Onboarding**: Guided setup process that collects relevant financial information and tax situation details, requiring minimal tax expertise from users
-- **Income Stream Tracking**: Integration with multiple income sources including traditional employment, freelance work, rental income, dividends, and capital gains
-- **Real-time Tax Liability Dashboard**: Dynamic visualization of current tax position, projected year-end liability, and comparison with previous years
-- **Deduction Discovery Engine**: AI-powered analysis that identifies potential tax deductions based on spending patterns and user-specific situations
-- **Quarterly Payment Management**: Automated calculation of estimated quarterly tax payments with reminder systems and payment tracking
-- **Document Management System**: Secure storage for tax-relevant documentation, receipts, and financial statements with OCR capabilities
-- **Tax Calendar**: Personalized calendar with important tax dates, filing deadlines, and custom reminders
-- **Tax Scenario Modeling**: What-if analysis tool for exploring potential financial decisions and their tax implications
-- **Multi-year Tax Strategy Planning**: Long-term tax optimization recommendations based on user's financial goals and life events
-- **Secure Data Export**: One-click generation of organized financial records for tax preparation or professional review
-- **Tax Professional Collaboration Portal**: Secure channel for sharing relevant information with accountants or tax advisors
-- **Automatic Tax Rate Updates**: SARS website scraping to ensure tax calculations use the most current rates and thresholds
+- **User Authentication**: Secure JWT-based authentication system with password hashing
+- **Profile Management**: Create and manage user tax profiles with relevant personal information
+- **Income Tracking**: Record multiple income sources (salary, freelance, investments, etc.)
+- **Expense Management**: Track tax-deductible expenses across different categories
+- **Real-time Tax Liability Calculation**: Determine current tax position at any time
+- **Tax Data Management**: Up-to-date tax brackets, rebates, thresholds, and medical credits
+- **SARS Integration**: Automatic scraping of latest tax rates from SARS website
+- **Provisional Tax Calculation**: Calculate and track provisional tax payments for registered provisional taxpayers
+- **Data Validation**: Comprehensive input validation and error handling
+- **Role-Based Access Control**: Admin functions for system maintenance and data updates
 
 # Technical Architecture
 
 Our application follows a layered architecture that ensures separation of concerns and maintainability:
 
 ## API Layer
+
 The API layer is implemented using FastAPI and provides the interface for client applications. It includes:
 
-- **Authentication Routes**: User registration, login, and token management
-- **Tax Calculation Routes**: Endpoints for calculating tax liabilities and provisional tax
+- **Authentication Routes** (`/api/auth/*`): User registration, login, and token management
+- **Tax Calculation Routes** (`/api/tax/*`): Endpoints for calculating tax liabilities and provisional tax
 - **Data Management Routes**: Endpoints for managing income sources and expenses
 - **Tax Data Routes**: Endpoints for retrieving tax brackets, rebates, and thresholds
+- **Admin Routes** (`/api/admin/*`): Endpoints for administrative functions
 
 ## Business Logic Layer
+
 The core business logic includes:
 
 - **Tax Calculator**: The computation engine that applies South African tax rules
-- **Data Scraper**: Automated collection of tax data from the SARS website
+- **Data Scraper**: Sophisticated multi-strategy system for collecting tax data from the SARS website
 - **Authentication System**: JWT-based authentication with secure password hashing
+- **Tax Models**: Comprehensive data models representing the tax system
 
 ## Data Layer
+
 The database architecture uses SQLAlchemy ORM to interact with a PostgreSQL database:
 
 - **User Profiles**: Personal and authentication information
@@ -96,172 +99,119 @@ The database architecture uses SQLAlchemy ORM to interact with a PostgreSQL data
 - **Tax Calculations**: History of tax calculations for audit and reference
 
 ## Testing Infrastructure
+
 The testing infrastructure ensures reliability and correctness:
 
-- **Unit Tests**: Tests for individual components (90+ tests)
+- **Unit Tests**: Tests for individual components (tax calculator, data scraper, utils)
 - **Integration Tests**: End-to-end tests for complete workflows
-- **Mock Services**: Simulated external services for consistent testing
-- **Continuous Integration**: Automated test execution on every commit
+- **Mocked Services**: Simulated external services for consistent testing
+- **Test Coverage**: Comprehensive code coverage reporting
 
 # Deployment
 
-The Second Certainty Tax Tool is deployed and accessible at: [https://secondcertaintytax.financial-tools.com](https://secondcertaintytax.financial-tools.com)
+The Second Certainty Tax API can be deployed using multiple approaches:
 
-Our deployment strategy utilizes AWS infrastructure to ensure security, reliability, and scalability:
+- **Docker**: Using the provided Dockerfile and docker-compose.yml
+- **Traditional Deployment**: Direct installation on a server
+- **Development Mode**: Local installation for development and testing
 
-- Frontend assets are served through Amazon CloudFront CDN for optimal global performance
-- Backend services are containerized using Docker and orchestrated with Amazon ECS
-- Database operations run on Amazon RDS PostgreSQL instances with automated backups and point-in-time recovery
-- We maintain separate development, staging, and production environments with comprehensive CI/CD pipelines
+Our deployment process includes:
 
-The deployment process presented several challenges, particularly around securing sensitive financial data. We implemented end-to-end encryption, rigorous access controls, and comprehensive audit logging to address these concerns. Additionally, we established a blue-green deployment approach to ensure zero-downtime updates when implementing new features or security patches.
+1. Database setup and migration
+2. Environment configuration
+3. Initial data seeding
+4. API server startup with appropriate settings
 
-Performance optimization was another significant challenge, as tax calculations involving multiple income sources and deductions can be computationally intensive. We addressed this through strategic caching, database query optimization, and background processing of non-time-sensitive calculations.
+For production deployment, we recommend:
+
+- Setting a secure `SECRET_KEY` in the .env file
+- Configuring a production-ready PostgreSQL database
+- Setting up TLS/SSL for HTTPS
+- Enabling rate limiting
+- Setting up monitoring and logging
 
 # Development Workflow
 
 We follow a structured development workflow that ensures code quality and reliable releases:
 
 ## Version Control
-- **Git Workflow**: Trunk-based development with feature branches and pull requests
-- **Commit Guidelines**: Semantic commit messages following the Conventional Commits specification
-- **Code Reviews**: Required peer review for all changes before merging
+
+- **Git Workflow**: Feature branches with pull requests to main
+- **Commit Guidelines**: Clear, descriptive commit messages
+- **Code Reviews**: Required for all changes before merging
 
 ## Testing Approach
-- **Test-Driven Development**: Critical components are developed using TDD methodology
-- **Automated Tests**: Every feature is accompanied by appropriate tests
-- **Coverage Requirements**: Minimum 85% code coverage maintained across the codebase
+
+- **Test Strategy**: Combination of unit, integration, and functional tests
+- **Coverage Requirements**: Maintain high code coverage across the codebase
+- **Automated Testing**: Tests run on every pull request
 
 ## Continuous Integration/Continuous Deployment
-- **Build Pipeline**: Automated builds triggered on every push to the repository
-- **Testing Stage**: Automated test execution across multiple Python versions
-- **Deployment Stage**: Automated deployment to appropriate environment based on branch
+
+- **Build Pipeline**: Automated builds triggered on every push
+- **Testing Stage**: Automated test execution
+- **Deployment Stage**: Automated deployment to development environment
 
 ## Documentation Practices
+
 - **Code Documentation**: Comprehensive docstrings for all functions and classes
-- **API Documentation**: Auto-generated OpenAPI specification with detailed endpoint descriptions
-- **Change Documentation**: Detailed changelogs maintained for all releases
+- **API Documentation**: Auto-generated OpenAPI specification with Swagger UI
+- **User Guide**: Step-by-step documentation for end users
 
-# Code Repository
+# Implementation Details
 
-Our application's source code is maintained in a GitHub repository with comprehensive documentation and structured contribution guidelines:
+## Tax Calculation Engine
 
-[https://github.com/ces0491/second-certainty](https://github.com/ces0491/second-certainty)
+The tax calculation engine is the core of the application, implementing South African tax rules. It:
 
-The repository includes detailed setup instructions for local development environments, API documentation, and test suites. We follow a trunk-based development workflow with feature branches and pull request reviews to maintain code quality.
+1. Determines applicable tax brackets based on income
+2. Applies appropriate tax rates and base amounts
+3. Calculates applicable rebates based on age
+4. Accounts for medical tax credits
+5. Calculates effective tax rate and monthly equivalents
+6. Determines provisional tax payments for applicable taxpayers
 
-## Project Structure
-```
-second-certainty/
-│
-├── app/
-│   ├── api/        # API routes and dependencies
-│   ├── core/       # Core business logic
-│   ├── db/         # Database models and migrations
-│   ├── models/     # SQLAlchemy models
-│   ├── schemas/    # Pydantic schemas
-│   └── utils/      # Utility functions
-│
-├── docs/           # Documentation
-├── scripts/        # Utility scripts
-├── tests/          # Comprehensive test suite
-├── .env.example    # Environment variable template
-├── alembic.ini     # Database migration configuration
-├── requirements.txt # Project dependencies
-└── README.md       # Project documentation
-```
+## SARS Data Integration
 
-## Getting Started
+Our SARS data integration component uses a multi-layered approach to ensure reliable tax data:
 
-To set up the development environment:
+1. **Primary Source**: Scrapes the current SARS website for tax rates
+2. **Secondary Source**: Searches archived tax information when current data isn't available
+3. **Historical Reference**: Uses previous years' data when necessary
+4. **Manual Fallback**: Includes hardcoded tax data as a last resort
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ces0491/second-certainty.git
-   cd second-certainty
-   ```
+This ensures that even if the SARS website structure changes, our system can adapt and continue providing accurate tax information.
 
-2. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+## Data Models
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+The system uses a comprehensive set of data models:
 
-4. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
+- **User Profile**: Personal information and authentication details
+- **Income Sources**: Salary, freelance, investment income
+- **Expenses**: Categorized tax-deductible expenses
+- **Tax Brackets**: Progressive tax rates by income level
+- **Tax Rebates**: Primary, secondary, and tertiary rebates
+- **Tax Thresholds**: Age-based thresholds for tax-free income
+- **Medical Credits**: Medical scheme fee tax credits
 
-5. Run database migrations:
-   ```bash
-   alembic upgrade head
-   ```
+## Future Roadmap
 
-6. Seed initial data:
-   ```bash
-   python scripts/seed_data.py
-   ```
+Based on our development plan, we will be implementing the following features:
 
-7. Start the development server:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-
-# Future Roadmap
-
-Based on user feedback and market analysis, we've identified the following enhancements for future releases:
-
-## Short-term (Next 3 Months)
 - Integration with banking APIs for automatic income and expense tracking
-- Enhanced mobile responsiveness for on-the-go tax management
-- Additional visualization options for tax data and projections
-
-## Medium-term (3-9 Months)
-- Support for business entities (PTY, CC) with specific tax rules
-- Integration with popular accounting software (Xero, QuickBooks)
-- Multi-year tax planning tools with scenario modeling
-
-## Long-term (9+ Months)
-- Machine learning models for personalized tax optimization recommendations
-- International tax handling for users with cross-border income
-- Tax professional marketplace for connecting users with tax experts
-
-# Screenshots
-
-## Dashboard Overview
-![Dashboard Overview](placeholder-dashboard.png)
-
-The dashboard provides users with an at-a-glance view of their current tax position, including year-to-date income, estimated tax liability, and progress toward quarterly payment goals. The visualization on the right shows the breakdown of income sources affecting tax calculations.
-
-## Deduction Discovery
-![Deduction Discovery](placeholder-deductions.png)
-
-The deduction discovery interface analyzes user spending and life situations to identify potential tax deductions. Each suggestion includes an explanation of the relevant tax code and estimated impact on overall tax liability.
-
-## Tax Scenario Modeling
-![Tax Scenario Modeling](placeholder-modeling.png)
-
-The scenario modeling tool allows users to explore the tax implications of potential financial decisions. In this example, the user is comparing the tax effects of different retirement contribution strategies across a three-year period.
-
-## Document Management
-![Document Management](placeholder-documents.png)
-
-The document management system provides secure storage for receipts, financial statements, and other tax-relevant documentation. The OCR functionality automatically extracts and categorizes key information from uploaded documents.
+- Tax optimization recommendations
+- Multi-year tax planning tools
+- Mobile app integration
+- Data visualization for tax trends
+- Support for business entities (PTY, CC)
+- Integration with popular accounting software
 
 # Conclusion
 
-The Second Certainty Tax Tool represents a significant advancement in personal tax management for South African taxpayers. By transforming tax management from a reactive, year-end scramble into a proactive, year-round process, we empower users to make informed financial decisions with full awareness of their tax implications.
+The Second Certainty Tax API represents a significant advancement in personal tax management for South African taxpayers. By transforming tax management from a reactive, year-end process into a proactive, year-round approach, we empower users to make informed financial decisions with full awareness of their tax implications.
 
-Our comprehensive approach to tax management—combining real-time calculations, intuitive visualizations, and actionable recommendations—addresses a critical gap in the financial tools landscape. The integration of up-to-date tax data through automated SARS website scraping ensures that users always have access to the most current tax information.
-
-With a solid technical foundation, robust security measures, and a user-centric design, the Second Certainty Tax Tool is positioned to become an essential component of personal financial management for South Africans across the income spectrum.
+Our comprehensive approach to tax management—combining real-time calculations, data integration, and actionable insights—addresses a critical gap in the financial tools landscape. The robust technical architecture ensures scalability, maintainability, and security for users' sensitive financial information.
 
 ---
 
-*Note: This document was prepared on May 08, 2025, and reflects the current state of the Second Certainty Tax Tool. Features and technical specifications may evolve as we continue to enhance the platform based on user feedback and regulatory changes.*
+*Note: This document was prepared on May 08, 2025, and reflects the current state of the Second Certainty Tax API. Features and technical specifications may evolve as we continue to enhance the platform based on user feedback and regulatory changes.*
