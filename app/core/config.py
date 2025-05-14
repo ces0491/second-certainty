@@ -3,6 +3,8 @@ import os
 from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import time
+from sqlalchemy.exc import SQLAlchemyError
 
 class Settings(BaseSettings):
 
@@ -35,8 +37,22 @@ engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
-    """Get database session."""
+    """Get database session with retry logic."""
     db = SessionLocal()
+    retries = 3
+    while retries > 0:
+        try:
+            # Test connection
+            db.execute("SELECT 1")
+            break
+        except SQLAlchemyError as e:
+            retries -= 1
+            if retries == 0:
+                logger.error(f"Failed to connect to database after 3 attempts: {e}")
+                raise
+            logger.warning(f"Database connection failed. Retrying... ({retries} attempts left)")
+            time.sleep(1)
+    
     try:
         yield db
     finally:
