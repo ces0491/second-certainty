@@ -58,9 +58,9 @@ venv.bak/
 # Documentation / LaTeX
 docs/_build/
 docs/api/
-write-up.aux
-write-up.log
-write-up.toc
+*.aux
+*.log
+*.toc
 *.bak
 *.dvi
 *.pdf

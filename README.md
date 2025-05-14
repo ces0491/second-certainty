@@ -1,6 +1,16 @@
-# Second Certainty Tax API
+# Second Certainty - Tax Management System
 
-A comprehensive South African tax liability management API that helps users track, calculate, and optimize their tax obligations throughout the fiscal year.
+A comprehensive South African tax liability management system that helps users track, calculate, and optimize their tax obligations throughout the fiscal year.
+
+![Second Certainty Logo](https://placeholder-for-logo.com/logo.png)
+
+## Live Demo
+
+- **Frontend Application**: [https://second-certainty.onrender.com](https://second-certainty.onrender.com)
+- **Backend API**: [https://second-certainty-api.onrender.com](https://second-certainty-api.onrender.com)
+- **API Documentation**: [https://second-certainty-api.onrender.com/api/docs](https://second-certainty-api.onrender.com/api/docs)
+
+> **Note**: The application is deployed on Render's free tier, which may result in slow initial load times after periods of inactivity.
 
 ## Overview
 
@@ -19,9 +29,21 @@ Our application transforms this approach by implementing a proactive, year-round
 - **SARS Integration**: Automatic scraping of latest tax rates from SARS website
 - **Provisional Tax**: Calculate and track provisional tax payments
 - **Data Validation**: Comprehensive input validation and error handling
+- **Visualizations**: Charts and graphs for income, expenses, and tax projections
+
+## Documentation
+
+For more detailed information, please refer to the following documentation:
+
+- [Installation Guide](./INSTALLATION.md): Setup instructions for local development
+- [Deployment Guide](./DEPLOYMENT.md): Instructions for deploying to production
+- [API Documentation](./API.md): Details on available endpoints and usage
+- [Frontend Documentation](./FRONTEND.md): Overview of frontend architecture and components
+- [Contributing Guidelines](./CONTRIBUTING.md): How to contribute to the project
 
 ## Technology Stack
 
+### Backend
 - **Framework**: FastAPI 0.110.1
 - **ORM**: SQLAlchemy 2.0.40
 - **Validation**: Pydantic 2.6.0
@@ -32,278 +54,63 @@ Our application transforms this approach by implementing a proactive, year-round
 - **HTTP Client**: HTTPX 0.27.0
 - **Server**: Uvicorn 0.29.0
 
-## Project Structure
+### Frontend
+- **Framework**: React 18.2
+- **Routing**: React Router 6.22.1
+- **HTTP Client**: Axios 1.6.7
+- **State Management**: React Context API
+- **Styling**: Tailwind CSS 3.4.1
+- **Data Visualization**: Recharts 2.12.0
+- **Build Tools**: Create React App
 
-```
-second-certainty/
-│
-├── app/
-│   ├── api/
-│   │   ├── routes/
-│   │   │   ├── __init__.py
-│   │   │   ├── auth.py             # Authentication endpoints
-│   │   │   └── tax_calculator.py   # Tax calculation endpoints
-│   │   ├── __init__.py
-│   │   └── dependencies.py
-│   │
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── auth.py                 # Authentication logic
-│   │   ├── config.py               # Configuration settings
-│   │   ├── data_scraper.py         # SARS website scraper
-│   │   ├── exceptions.py           # Custom exceptions
-│   │   └── tax_calculator.py       # Tax calculation engine
-│   │
-│   ├── db/
-│   │   ├── __init__.py
-│   │   ├── base.py
-│   │   ├── session.py
-│   │   └── migrations/             # Alembic migrations
-│   │
-│   ├── models/
-│   │   ├── __init__.py
-│   │   └── tax_models.py           # SQLAlchemy models
-│   │
-│   ├── schemas/
-│   │   ├── __init__.py
-│   │   └── tax_schemas.py          # Pydantic schemas
-│   │
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   └── tax_utils.py            # Utility functions
-│   │
-│   ├── __init__.py
-│   └── main.py                     # Application entry point
-│
-├── docs/                           # Documentation
-│
-├── scripts/
-│   ├── seed_data.py                # Database seeding
-│   └── update_tax_tables.py        # Manual tax data update
-│
-├── tests/
-│   ├── test_api/
-│   ├── test_core/
-│   ├── test_utils/
-│   ├── __init__.py
-│   └── conftest.py
-│
-├── .env.example                    # Environment variables template
-├── Dockerfile                      # Docker configuration
-├── docker-compose.yml              # Docker Compose configuration
-├── requirements.txt                # Python dependencies
-├── setup.py                        # Package setup
-└── README.md                       # Project documentation
-```
+## Quick Start
 
-## Installation
-
-### Prerequisites
-
-- Python 3.10+
-- PostgreSQL (optional, SQLite can be used for development)
-- Git
-
-### Local Development Setup
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ces0491/second-certainty.git
-   cd second-certainty
-   ```
-
-2. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Create a .env file from the example:
-   ```bash
-   cp .env.example .env
-   ```
-   Edit the .env file with your configuration.
-
-5. Initialize the database:
-   ```bash
-   python scripts/seed_data.py
-   ```
-
-6. Start the development server:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-
-### Docker Setup
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ces0491/second-certainty.git
-   cd second-certainty
-   ```
-
-2. Create a .env file from the example:
-   ```bash
-   cp .env.example .env
-   ```
-   Edit the .env file with your configuration.
-
-3. Build and start the containers:
-   ```bash
-   docker-compose up -d
-   ```
-
-The API will be available at http://localhost:8000.
-
-## API Endpoints
-
-### Authentication
-
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/token` - Get JWT access token
-- `GET /api/auth/me` - Get current user info
-
-### Tax Calculation
-
-- `GET /api/tax/tax-brackets/` - Get tax brackets for a specific tax year
-- `GET /api/tax/deductible-expenses/` - Get all deductible expense types
-- `POST /api/tax/users/{user_id}/income/` - Add income source for a user
-- `GET /api/tax/users/{user_id}/income/` - Get all income sources for a user
-- `DELETE /api/tax/users/{user_id}/income/{income_id}` - Delete an income source
-- `POST /api/tax/users/{user_id}/expenses/` - Add expense for a user
-- `GET /api/tax/users/{user_id}/expenses/` - Get all expenses for a user
-- `DELETE /api/tax/users/{user_id}/expenses/{expense_id}` - Delete an expense
-- `GET /api/tax/users/{user_id}/tax-calculation/` - Calculate tax liability
-- `GET /api/tax/users/{user_id}/provisional-tax/` - Calculate provisional tax
-- `POST /api/tax/update-tax-data/` - Update tax data from SARS website
-
-## Documentation
-
-API documentation is available at:
-- Swagger UI: http://localhost:8000/api/docs
-- ReDoc: http://localhost:8000/api/redoc
-
-## Testing
-
-Run the tests with pytest:
+### Backend
 
 ```bash
-pytest
+# Clone the repository
+git clone https://github.com/ces0491/second-certainty.git
+cd second-certainty
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Create environment file
+cp .env.example .env
+# Edit .env with your configuration
+
+# Initialize database
+python init_db.py
+python scripts/seed_data.py
+
+# Start development server
+uvicorn app.main:app --reload
 ```
 
-For test coverage:
+### Frontend
 
 ```bash
-pytest --cov=app tests/
+# Navigate to frontend directory
+cd path/to/frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start
 ```
 
-## Development
-
-### Adding New Routes
-
-1. Create a new file in `app/api/routes/`
-2. Define endpoints using FastAPI router
-3. Include the router in `app/main.py`
-
-### Database Migrations
-
-We use Alembic for database migrations:
-
-```bash
-# Create a new migration
-alembic revision --autogenerate -m "description"
-
-# Apply migrations
-alembic upgrade head
-```
-
-## Deployment
-
-### Production Configuration
-
-For production deployment:
-
-1. Set a secure `SECRET_KEY` in the .env file
-2. Configure a production-ready database
-3. Set up TLS/SSL for HTTPS
-4. Enable rate limiting
-5. Set up monitoring and logging
-
-### Deployment Options
-
-- **Docker**: Use the provided Dockerfile and docker-compose.yml
-- **Kubernetes**: Deploy using Kubernetes manifests (not included)
-- **AWS**: Deploy on AWS ECS or EKS
-- **Heroku**: Deploy directly from GitHub
-
-## Logging
-
-Second Certainty uses a comprehensive logging system that captures application events at different severity levels:
-
-- **General Logs**: `logs/second_certainty.log` - Contains all application logs
-- **Error Logs**: `logs/second_certainty_error.log` - Contains only error-level logs
-
-Log files are automatically rotated when they reach 10 MB, and the system keeps the 5 most recent log files.
-
-### Log Levels
-
-The application uses the following log levels:
-
-- `DEBUG`: Detailed information, typically useful for debugging
-- `INFO`: Confirmation that things are working as expected
-- `WARNING`: Indication that something unexpected happened or may happen in the future
-- `ERROR`: An error occurred that should be investigated
-- `CRITICAL`: A critical error that requires immediate attention
-
-### Controlling Log Level
-
-You can control the logging level through the `DEBUG` environment variable:
-- When `DEBUG=True`, the application logs at the `DEBUG` level
-- When `DEBUG=False`, the application logs at the `INFO` level
-
-### Log Format
-
-Each log entry includes:
-- Timestamp
-- Module name
-- Log level
-- Line number
-- Message
-
-Example: 2025-05-08 14:30:22 - second_certainty.tax_calculator - INFO - tax_calculator.py:157 - Calculating tax liability for user 1
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -am 'Add new feature'`
-4. Push to the branch: `git push origin feature/my-feature`
-5. Submit a pull request
+See the [Installation Guide](./INSTALLATION.md) for more detailed instructions.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## Acknowledgements
 
 - South African Revenue Service (SARS) for providing tax information
 - The FastAPI team for the API framework
-
----
-
-## Roadmap
-
-Future improvements planned for the Second Certainty Tax API:
-
-- Integration with banking APIs for automatic income and expense tracking
-- Tax optimization recommendations
-- Multi-year tax planning tools
-- Mobile app integration
-- Data visualization for tax trends
-- Support for business entities (PTY, CC)
-- Integration with popular accounting software
