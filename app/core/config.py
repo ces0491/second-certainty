@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     API_PREFIX: str = "/api"
     
+    DEBUG: bool = False
+
     # Database settings - use environment variable with fallback
     DATABASE_URL: str
     
