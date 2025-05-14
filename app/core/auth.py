@@ -1,4 +1,4 @@
-# app/core/auth.py (new file)
+# app/core/auth.py - ensure proper exports
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -14,7 +14,7 @@ from app.core.config import get_db
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")  # Fix the tokenUrl
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)

@@ -20,7 +20,7 @@ class UserResponse(UserBase):
     is_admin: Optional[bool] = False
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Income schemas
 class IncomeBase(BaseModel):
@@ -39,7 +39,7 @@ class IncomeResponse(IncomeBase):
     created_at: date
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Expense schemas
 class ExpenseBase(BaseModel):
@@ -57,7 +57,7 @@ class ExpenseResponse(ExpenseBase):
     created_at: date
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Tax calculation schemas
 class TaxBracketResponse(BaseModel):
@@ -91,4 +91,4 @@ class DeductibleExpenseTypeResponse(BaseModel):
     max_percentage: Optional[float] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
