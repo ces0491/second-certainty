@@ -238,6 +238,84 @@ async def update_tax_data(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to update tax data: {str(e)}")
 
+# app/api/routes/tax_calculator.py - Add this new endpoint
+
+@router.post("/users/{user_id}/custom-tax-calculation/", response_model=TaxCalculationResponse)
+def calculate_custom_tax(
+    user_id: int, 
+    calculation_data: dict,
+    tax_year: Optional[str] = None, 
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
+    """
+    Calculate tax liability based on custom parameters.
+    Allows for "what-if" tax scenarios without modifying the user's actual data.
+    """
+    # Security: Ensure users can only calculate their own tax
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to calculate tax for this user"
+        )
+    
+    # Use provided tax year or default
+    if not tax_year:
+        tax_year = get_tax_year()
+    
+    # Extract data from the request
+    income = calculation_data.get('income', 0)
+    age = calculation_data.get('age', 0)
+    expense_data = calculation_data.get('expenses', {})
+    
+    # Calculate total expenses
+    total_expenses = sum(expense_data.values())
+    
+    # Get the calculator
+    calculator = TaxCalculator(db)
+    
+    try:
+        # Get the user for some base information
+        user = db.query(UserProfile).filter(UserProfile.id == user_id).first()
+        if not user:
+            raise ValueError(f"User with ID {user_id} not found")
+        
+        # Calculate taxable income
+        taxable_income = max(0, income - total_expenses)
+        
+        # Calculate tax before rebates
+        tax_before_rebates = calculator.calculate_income_tax(taxable_income, tax_year)
+        
+        # Calculate rebates based on age
+        rebates = calculator.calculate_rebate(age, tax_year)
+        
+        # Calculate medical credits (simplified - could be customized further)
+        medical_credits = calculator.calculate_medical_credit(1, 0, tax_year)
+        
+        # Calculate final tax
+        final_tax = max(0, tax_before_rebates - rebates - medical_credits)
+        
+        # Calculate effective tax rate
+        effective_tax_rate = final_tax / taxable_income if taxable_income > 0 else 0
+        
+        # Calculate monthly tax rate
+        monthly_tax_rate = final_tax / (12 * income) if income > 0 else 0
+        
+        # Create response
+        return {
+            "gross_income": income,
+            "taxable_income": taxable_income,
+            "tax_before_rebates": tax_before_rebates,
+            "rebates": rebates,
+            "medical_credits": medical_credits,
+            "final_tax": final_tax,
+            "effective_tax_rate": effective_tax_rate,
+            "monthly_tax_rate": monthly_tax_rate
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 @router.delete("/users/{user_id}/income/{income_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_income(
     user_id: int,
