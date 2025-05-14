@@ -17,9 +17,9 @@ format:
 
 # Project Description
 
-The Second Certainty Tax Tool addresses one of life's two certainties—taxes—by providing individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress. Our application transforms this approach by implementing a proactive, year-round tax management system.
+The Second Certainty Tax Tool addresses one of life's two certainties—taxes—by providing individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress.
 
-The tool continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts provisional tax payments, and provides optimization strategies—all in real-time. In today's complex financial landscape, where gig economy participation, investment income, and small business ownership have complicated personal taxation, our solution brings clarity and control to users' tax positions.
+Our application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts provisional tax payments, and provides optimization strategies—all in real-time.
 
 By empowering users with ongoing visibility into their tax position, the Second Certainty Tax Tool reduces financial anxiety, prevents costly surprises, and helps maximize legitimate tax advantages throughout the year.
 
@@ -31,11 +31,10 @@ Our application leverages modern technology frameworks to deliver a secure, resp
 - **ORM**: SQLAlchemy 2.0.40
 - **Validation**: Pydantic 2.6.0
 - **Database**: PostgreSQL (or SQLite for development)
-- **Authentication**: JWT with password hashing using Passlib 1.7.4 and Bcrypt 4.1.2
-- **Data Processing**: HTTPX 0.27.0 for HTTP requests
-- **Web Scraping**: BeautifulSoup4 4.12.3 for SARS website data extraction
-- **Database Migrations**: Alembic 1.13.1
-- **Testing**: Pytest 7.4.4 with pytest-asyncio 0.23.5 and pytest-cov 4.1.0
+- **Authentication**: JWT with password hashing
+- **Testing**: Pytest 7.4.4
+- **Documentation**: OpenAPI (Swagger UI)
+- **HTTP Client**: HTTPX 0.27.0
 - **Server**: Uvicorn 0.29.0
 
 The architecture follows a layered approach where the tax calculation engine, user data management, and API endpoints are separated for maintainability and clearer responsibility separation.
@@ -109,11 +108,15 @@ The testing infrastructure ensures reliability and correctness:
 
 # Deployment
 
-The Second Certainty Tax API can be deployed using multiple approaches:
+The Second Certainty Tax API is currently deployed on Render's free tier:
 
-- **Docker**: Using the provided Dockerfile and docker-compose.yml
-- **Traditional Deployment**: Direct installation on a server
-- **Development Mode**: Local installation for development and testing
+- **Frontend**: [https://second-certainty.onrender.com](https://second-certainty.onrender.com)
+- **Backend API**: [https://second-certainty-api.onrender.com](https://second-certainty-api.onrender.com)
+
+Other recommended deployment options include:
+- Heroku
+- AWS (EC2 or ECS/EKS)
+- Digital Ocean
 
 Our deployment process includes:
 
@@ -123,7 +126,6 @@ Our deployment process includes:
 4. API server startup with appropriate settings
 
 For production deployment, we recommend:
-
 - Setting a secure `SECRET_KEY` in the .env file
 - Configuring a production-ready PostgreSQL database
 - Setting up TLS/SSL for HTTPS
@@ -158,45 +160,9 @@ We follow a structured development workflow that ensures code quality and reliab
 - **API Documentation**: Auto-generated OpenAPI specification with Swagger UI
 - **User Guide**: Step-by-step documentation for end users
 
-# Implementation Details
+# Future Roadmap
 
-## Tax Calculation Engine
-
-The tax calculation engine is the core of the application, implementing South African tax rules. It:
-
-1. Determines applicable tax brackets based on income
-2. Applies appropriate tax rates and base amounts
-3. Calculates applicable rebates based on age
-4. Accounts for medical tax credits
-5. Calculates effective tax rate and monthly equivalents
-6. Determines provisional tax payments for applicable taxpayers
-
-## SARS Data Integration
-
-Our SARS data integration component uses a multi-layered approach to ensure reliable tax data:
-
-1. **Primary Source**: Scrapes the current SARS website for tax rates
-2. **Secondary Source**: Searches archived tax information when current data isn't available
-3. **Historical Reference**: Uses previous years' data when necessary
-4. **Manual Fallback**: Includes hardcoded tax data as a last resort
-
-This ensures that even if the SARS website structure changes, our system can adapt and continue providing accurate tax information.
-
-## Data Models
-
-The system uses a comprehensive set of data models:
-
-- **User Profile**: Personal information and authentication details
-- **Income Sources**: Salary, freelance, investment income
-- **Expenses**: Categorized tax-deductible expenses
-- **Tax Brackets**: Progressive tax rates by income level
-- **Tax Rebates**: Primary, secondary, and tertiary rebates
-- **Tax Thresholds**: Age-based thresholds for tax-free income
-- **Medical Credits**: Medical scheme fee tax credits
-
-## Future Roadmap
-
-Based on our development plan, we will be implementing the following features:
+Based on user feedback and market analysis, we've identified the following enhancements for future releases:
 
 - Integration with banking APIs for automatic income and expense tracking
 - Tax optimization recommendations

@@ -3,6 +3,11 @@ import asyncio
 import sys
 import os
 from sqlalchemy.orm import Session
+import logging
+from app.models.tax_models import (
+    TaxBracket, TaxRebate, TaxThreshold, MedicalTaxCredit, 
+    DeductibleExpenseType, Base
+)
 
 # Add parent directory to path so we can import app modules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -170,6 +175,127 @@ async def seed_tax_data(db: Session):
         # Fall back to manual seeding if scraping fails
         result = await seed_tax_data_manually(db, tax_year)
         return result
+
+async def initialize_database(db: Session, current_tax_year: str = None):
+    """
+    Initialize the database with required seed data.
+    Can be used during startup or manually via script.
+    
+    Args:
+        db: Database session
+        current_tax_year: The current tax year (optional, defaults to calculated value)
+    """
+    try:
+        logger = logging.getLogger("initialize_database")
+        
+        # If tax year not specified, calculate it
+        if not current_tax_year:
+            current_tax_year = get_tax_year()
+            
+        logger.info(f"Initializing database for tax year {current_tax_year}")
+        
+        # Seed deductible expense types
+        await seed_deductible_expense_types(db)
+        
+        # Initialize tax data
+        try:
+            # First try to get current tax year data
+            scraper = SARSDataScraper()
+            await scraper.update_tax_data(db, current_tax_year)
+            logger.info(f"Successfully initialized tax data for {current_tax_year}")
+        except Exception as e:
+            logger.warning(f"Could not retrieve current tax year data: {e}")
+            logger.info("Falling back to previous tax year data...")
+            
+            # If current year fails, try previous tax year
+            previous_year_start = int(current_tax_year.split('-')[0]) - 1
+            previous_year_end = int(current_tax_year.split('-')[1]) - 1
+            previous_tax_year = f"{previous_year_start}-{previous_year_end}"
+            
+            # Check if we already have data for the previous year
+            existing = db.query(TaxBracket).filter(TaxBracket.tax_year == previous_tax_year).first()
+            
+            if existing:
+                logger.info(f"Using existing {previous_tax_year} tax data")
+                # Copy previous year data to current year
+                await copy_tax_year_data(db, previous_tax_year, current_tax_year)
+            else:
+                # Try to scrape previous year data
+                try:
+                    await scraper.update_tax_data(db, previous_tax_year)
+                    await copy_tax_year_data(db, previous_tax_year, current_tax_year)
+                except Exception as e2:
+                    logger.error(f"Could not retrieve previous tax year data: {e2}")
+                    logger.info("Falling back to manual tax data entry...")
+                    # Use the manual seed function
+                    await seed_tax_data_manually(db, current_tax_year)
+        
+        logger.info("Database initialization completed successfully")
+        
+    except Exception as e:
+        logger.error(f"Error initializing database: {e}", exc_info=True)
+        raise
+
+async def copy_tax_year_data(db: Session, source_year: str, target_year: str):
+    """Copy tax data from one year to another when SARS hasn't updated yet."""
+    logger = logging.getLogger("copy_tax_year_data")
+    logger.info(f"Copying tax data from {source_year} to {target_year}...")
+    
+    # Get source year tax brackets
+    brackets = db.query(TaxBracket).filter(TaxBracket.tax_year == source_year).all()
+    rebate = db.query(TaxRebate).filter(TaxRebate.tax_year == source_year).first()
+    threshold = db.query(TaxThreshold).filter(TaxThreshold.tax_year == source_year).first()
+    medical = db.query(MedicalTaxCredit).filter(MedicalTaxCredit.tax_year == source_year).first()
+    
+    # Clear any existing data for target year
+    db.query(TaxBracket).filter(TaxBracket.tax_year == target_year).delete()
+    db.query(TaxRebate).filter(TaxRebate.tax_year == target_year).delete()
+    db.query(TaxThreshold).filter(TaxThreshold.tax_year == target_year).delete()
+    db.query(MedicalTaxCredit).filter(MedicalTaxCredit.tax_year == target_year).delete()
+    
+    # Copy brackets with new tax year
+    for bracket in brackets:
+        new_bracket = TaxBracket(
+            lower_limit=bracket.lower_limit,
+            upper_limit=bracket.upper_limit,
+            rate=bracket.rate,
+            base_amount=bracket.base_amount,
+            tax_year=target_year
+        )
+        db.add(new_bracket)
+    
+    # Copy rebate
+    if rebate:
+        new_rebate = TaxRebate(
+            primary=rebate.primary,
+            secondary=rebate.secondary,
+            tertiary=rebate.tertiary,
+            tax_year=target_year
+        )
+        db.add(new_rebate)
+    
+    # Copy threshold
+    if threshold:
+        new_threshold = TaxThreshold(
+            below_65=threshold.below_65,
+            age_65_to_74=threshold.age_65_to_74,
+            age_75_plus=threshold.age_75_plus,
+            tax_year=target_year
+        )
+        db.add(new_threshold)
+    
+    # Copy medical credits
+    if medical:
+        new_medical = MedicalTaxCredit(
+            main_member=medical.main_member,
+            additional_member=medical.additional_member,
+            tax_year=target_year
+        )
+        db.add(new_medical)
+    
+    # Commit all changes
+    db.commit()
+    logger.info(f"Successfully copied tax data from {source_year} to {target_year}")
 
 async def main():
     db = next(get_db())

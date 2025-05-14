@@ -1,4 +1,4 @@
-# app/core/data_scraper.py (updated with logging)
+# app/core/data_scraper.py
 from sqlalchemy.orm import Session
 from typing import Dict, Any, Optional
 
@@ -10,14 +10,13 @@ logger = get_logger("data_scraper")
 
 class SARSDataScraper:
     """
-    Enhanced scraper for South African Revenue Service tax tables and rates.
-    This is a compatibility wrapper around the new modular scraping components.
+    Facade for South African Revenue Service tax data scraping.
+    Delegates to specialized components for the actual implementation.
     """
     
     def __init__(self):
         """Initialize the scraper."""
         logger.debug("SARSDataScraper initialized")
-        pass
     
     async def update_tax_data(self, db: Session, tax_year: Optional[str] = None, force: bool = False) -> Dict[str, Any]:
         """
