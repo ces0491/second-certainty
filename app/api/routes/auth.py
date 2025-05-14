@@ -5,11 +5,12 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from pydantic import BaseModel, EmailStr
 
 from app.core.auth import authenticate_user, create_access_token, get_password_hash
 from app.core.config import settings, get_db
 from app.models.tax_models import UserProfile
-from pydantic import BaseModel, EmailStr
+from app.schemas.tax_schemas import UserResponse
 
 router = APIRouter()
 
@@ -24,6 +25,11 @@ class UserCreate(BaseModel):
     surname: str
     date_of_birth: str
     is_provisional_taxpayer: Optional[bool] = False
+
+@router.get("/me", response_model=UserResponse)
+async def get_current_user_profile(current_user: UserProfile = Depends(get_current_user)):
+    """Get the current user's profile."""
+    return current_user
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(

@@ -17,6 +17,7 @@ class UserCreate(UserBase):
 class UserResponse(UserBase):
     id: int
     created_at: date
+    is_admin: Optional[bool] = False
 
     class Config:
         orm_mode = True
