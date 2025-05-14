@@ -1,10 +1,13 @@
 # app/core/config.py
 import os
+import time  # Make sure to import time for sleep
 from pydantic_settings import BaseSettings
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text  # Add text import
 from sqlalchemy.orm import sessionmaker
-import time
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError  # Add this import for error handling
+
+# Import the logger from logging utils
+from app.utils.logging_utils import get_logger
 
 class Settings(BaseSettings):
 
@@ -42,8 +45,8 @@ def get_db():
     retries = 3
     while retries > 0:
         try:
-            # Test connection
-            db.execute("SELECT 1")
+            # Properly use the text() function for raw SQL
+            db.execute(text("SELECT 1"))
             break
         except SQLAlchemyError as e:
             retries -= 1
