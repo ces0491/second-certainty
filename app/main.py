@@ -74,7 +74,7 @@ Base.metadata.create_all(bind=engine)
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://second-certainty-frontend.onrender.com"],  # production frontend domain
+    allow_origins=["https://second-certainty.onrender.com"],  # production frontend domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
