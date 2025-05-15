@@ -1,4 +1,4 @@
-# app/main.py (fixed version)
+# app/main.py
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -12,7 +12,7 @@ from datetime import datetime
 from app.core.config import settings, get_db, engine
 from app.models.tax_models import Base
 from app.api.routes import tax_calculator, admin
-from app.api.routes import auth  # Make sure auth router is imported
+from app.api.routes import auth
 from app.core.data_scraper import SARSDataScraper
 from app.models.tax_models import TaxBracket, TaxRebate, TaxThreshold, MedicalTaxCredit
 from app.utils.tax_utils import get_tax_year
@@ -24,7 +24,7 @@ logger = setup_logging(
     log_level=logging.DEBUG if settings.DEBUG else logging.INFO
 )
 
-# Define lifespan context manager first
+# Define lifespan context manager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -57,7 +57,7 @@ async def lifespan(app: FastAPI):
     # SHUTDOWN
     logger.info("Application shutting down")
 
-# Create the app with the lifespan parameter (ONLY ONCE)
+# Create the app with the lifespan parameter
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
