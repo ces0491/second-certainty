@@ -3,9 +3,9 @@ import os
 import time  # Make sure to import time for sleep
 import logging
 from pydantic_settings import BaseSettings
-from sqlalchemy import create_engine, text  # Add text import
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import SQLAlchemyError  # Add this import for error handling
+from sqlalchemy.exc import SQLAlchemyError
 from app.utils.logging_utils import setup_logging, get_logger
 
 class Settings(BaseSettings):

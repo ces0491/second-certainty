@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 import logging
 import os
 from pathlib import Path
@@ -125,7 +126,7 @@ async def health_check(db: Session = Depends(get_db)):
         db_error = None
         try:
             # Simple query to check database connection
-            db.execute("SELECT 1").fetchone()
+            db.execute(text("SELECT 1")).fetchone()
         except Exception as e:
             db_status = "unhealthy"
             db_error = str(e)
