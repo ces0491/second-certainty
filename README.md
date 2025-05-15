@@ -2,13 +2,14 @@
 
 A comprehensive South African tax liability management system that helps users track, calculate, and optimize their tax obligations throughout the fiscal year.
 
-![Second Certainty Logo](docs/images/sc_logo.png)
+![](docs/images/sc_logo.png)
 
 ## Live Demo
 
 - **Frontend Application**: [https://second-certainty.onrender.com](https://second-certainty.onrender.com)
 - **Backend API**: [https://second-certainty-api.onrender.com](https://second-certainty-api.onrender.com)
 - **API Documentation**: [https://second-certainty-api.onrender.com/api/docs](https://second-certainty-api.onrender.com/api/docs)
+- **Frontend Documentation**: [https://github.com/ces0491/second-certainty-frontend#second-certainty---frontend](https://github.com/ces0491/second-certainty-frontend#second-certainty---frontend)
 
 > **Note**: The application is deployed on Render's free tier, which may result in slow initial load times after periods of inactivity.
 
@@ -35,11 +36,9 @@ Our application transforms this approach by implementing a proactive, year-round
 
 For more detailed information, please refer to the following documentation:
 
-- [Installation Guide](./INSTALLATION.md): Setup instructions for local development
-- [Deployment Guide](./DEPLOYMENT.md): Instructions for deploying to production
-- [API Documentation](./API.md): Details on available endpoints and usage
-- [Frontend Documentation](./FRONTEND.md): Overview of frontend architecture and components
-- [Contributing Guidelines](./CONTRIBUTING.md): How to contribute to the project
+- [Installation Guide](./docs/INSTALLATION.md): Setup instructions for local development
+- [Deployment Guide](./docs/DEPLOYMENT.md): Instructions for deploying to production
+- [API Documentation](./docs/API.md): Details on available endpoints and usage
 
 ## Technology Stack
 
@@ -104,7 +103,7 @@ npm install
 npm start
 ```
 
-See the [Installation Guide](./INSTALLATION.md) for more detailed instructions.
+See the [Installation Guide](./docs/INSTALLATION.md) for more detailed instructions.
 
 ## License
 

@@ -11,8 +11,8 @@ This document provides detailed information about the Second Certainty Tax API e
 
 For interactive API documentation:
 
-- **Swagger UI**: `{base_url}/docs`
-- **ReDoc**: `{base_url}/redoc`
+- **Swagger UI**: `https://second-certainty-api.onrender.com/api/docs/docs`
+- **ReDoc**: `https://second-certainty-api.onrender.com/api/docs/redoc`
 
 ## Authentication
 

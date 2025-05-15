@@ -234,4 +234,4 @@ After installation:
 3. Add income sources and expenses
 4. Explore the tax calculation features
 
-For more information on using the application, refer to the [User Guide](./docs/user-guide.qmd).
+For more information on using the application, refer to the [README](/README.md).
