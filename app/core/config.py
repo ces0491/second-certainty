@@ -1,13 +1,12 @@
 # app/core/config.py
 import os
 import time  # Make sure to import time for sleep
+import logging
 from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine, text  # Add text import
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError  # Add this import for error handling
-
-# Import the logger from logging utils
-from app.utils.logging_utils import get_logger
+from app.utils.logging_utils import setup_logging, get_logger
 
 class Settings(BaseSettings):
 
@@ -34,6 +33,12 @@ class Settings(BaseSettings):
         # Allow case-insensitive environment variables
         case_sensitive = False
 settings = Settings()
+
+# Set up application logging
+logger = setup_logging(
+    app_name="second_certainty",
+    log_level=logging.DEBUG if settings.DEBUG else logging.INFO
+)
 
 # Database setup
 engine = create_engine(settings.DATABASE_URL)
