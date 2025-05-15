@@ -9,7 +9,7 @@ Usage:
     python fetch_tax_data.py [--year YYYY-YYYY] [--force] [--manual]
 
 Options:
-    --year YYYY-YYYY    Specify tax year in format "2024-2025" (default: current tax year)
+    --year YYYY-YYYY    Specify tax year in format "2025-2026" (default: current tax year)
     --force             Override existing data for the specified tax year
     --manual            Skip web scraping and use manual data entry
 """

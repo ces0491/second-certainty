@@ -2,7 +2,7 @@
 
 A comprehensive South African tax liability management system that helps users track, calculate, and optimize their tax obligations throughout the fiscal year.
 
-![Second Certainty Logo](https://placeholder-for-logo.com/logo.png)
+![Second Certainty Logo](docs/images/sc_logo.png)
 
 ## Live Demo
 

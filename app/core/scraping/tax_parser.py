@@ -23,8 +23,19 @@ class TaxDataParser:
         soup = BeautifulSoup(html_content, 'html.parser')
         year_end = tax_year.split('-')[1]
         
-        # Look for headings containing the tax year
-        year_headings = soup.find_all(['h1', 'h2', 'h3', 'h4'], string=re.compile(f"{year_end}"))
+        year_patterns = [
+            f"{year_end} tax year",      # "2023 tax year"
+            f"{year_end}",               # "2022-2023"
+            f"tax year {year_end}"       # "tax year 2023"
+        ]
+    
+        for pattern in year_patterns:
+            # Search for headings with this pattern
+            year_headings = soup.find_all(['h1', 'h2', 'h3', 'h4'], 
+                                      string=re.compile(pattern, re.IGNORECASE))
+        
+            if year_headings:
+                logger.info(f"Found heading for year {year_end}: {year_headings[0].text}")
         
         for heading in year_headings:
             logger.info(f"Found heading for year {year_end}: {heading.text}")
