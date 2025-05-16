@@ -12,6 +12,13 @@ from app.models.tax_models import UserProfile
 from app.core.config import settings
 from app.core.config import get_db
 
+import bcrypt
+if not hasattr(bcrypt, '__about__'):
+    # Add a patched version attribute for passlib compatibility
+    bcrypt.__about__ = type('obj', (object,), {
+        '__version__': getattr(bcrypt, 'VERSION', '3.2.0')
+    })
+    
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")  # Fix the tokenUrl
@@ -47,13 +54,18 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        # Add debug logging here
+        print(f"Decoding token with secret: {settings.SECRET_KEY[:3]}...")
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-    except JWTError:
+    except JWTError as e:
+        print(f"JWT Error: {str(e)}")
         raise credentials_exception
+    
     user = db.query(UserProfile).filter(UserProfile.email == email).first()
     if user is None:
+        print(f"User not found for email: {email}")
         raise credentials_exception
     return user
