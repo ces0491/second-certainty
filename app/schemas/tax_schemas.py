@@ -92,3 +92,20 @@ class DeductibleExpenseTypeResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ExpenseTypeResponse(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+class ExpenseResponse(ExpenseBase):
+    id: int
+    user_id: int
+    created_at: date
+    expense_type: Optional[ExpenseTypeResponse] = None
+    
+    class Config:
+        from_attributes = True

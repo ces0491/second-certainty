@@ -1,0 +1,138 @@
+---
+title: "Second Certainty: Tax Management System"
+author: "Cesaire Tobias"
+date: "August 18, 2025"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    code-fold: true
+---
+
+![*logo generated using OpenAI's DALL·E model via ChatGPT (May 2025)](docs/images/sc_logo.png)
+
+# Project Description
+
+Second Certainty addresses one of life's two certainties—taxes—by providing South African individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. 
+
+Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress. This application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts quarterly payments, and provides optimization strategies—all in real-time.
+
+The system combines up-to-date South African tax regulations with personal financial data to deliver accurate tax calculations, visualizations, and strategic recommendations, helping users optimize their tax position throughout the year rather than scrambling at tax season.
+
+# Technical Requirements
+
+## Backend
+- **Framework**: FastAPI 0.110.1 - chosen for its high performance, automatic documentation generation, and modern Python type annotations
+- **ORM**: SQLAlchemy 2.0.40 - provides flexible database operations and ORM capabilities
+- **Validation**: Pydantic 2.6.0 - ensures robust data validation with minimal code
+- **Database**: PostgreSQL (production), SQLite (development) - PostgreSQL chosen for scalability and reliability
+- **Authentication**: JWT with password hashing - industry-standard approach for secure authentication
+- **Testing**: Pytest 7.4.4 - comprehensive testing framework for Python
+- **Documentation**: OpenAPI (Swagger UI) - automatic API documentation generation
+- **HTTP Client**: HTTPX 0.27.0 - modern async HTTP client for API integrations
+- **Server**: Uvicorn 0.29.0 - high-performance ASGI server
+
+## Frontend
+- **Framework**: React 18.2 - chosen for its component-based architecture and efficient rendering
+- **Routing**: React Router 6.22.1 - provides declarative routing for React applications
+- **HTTP Client**: Axios 1.6.7 - feature-rich HTTP client for API communication
+- **State Management**: React Context API - built-in state management solution that avoids dependencies
+- **Styling**: Tailwind CSS 3.4.1 - utility-first CSS framework for rapid UI development
+- **Data Visualization**: Recharts 2.12.0 - responsive charting library for React
+- **Build Tools**: Create React App - simplified configuration and build process
+
+# Application Features
+
+## User Management
+- Secure JWT-based authentication system with password hashing
+- User registration and login functionality
+- Profile management for personal tax information
+
+## Financial Data Management
+- Income tracking from multiple sources (salary, freelance, investments, etc.)
+- Expense management with categorization for tax-deductible items
+- Document upload and storage for receipts and financial records
+
+## Tax Calculations
+- Real-time tax liability calculation based on current financial data
+- Up-to-date tax brackets, rebates, and thresholds for South Africa
+- Automated SARS integration that retrieves the latest tax rates
+- Provisional tax payment calculation and tracking
+
+## Analytics and Reporting
+- Interactive dashboards with key tax metrics
+- Visualizations for income, expenses, and tax projections
+- Downloadable tax reports for personal records
+- Year-on-year comparison of tax position
+
+## Data Security
+- Comprehensive input validation and error handling
+- Secure data storage with encryption
+- Compliance with South African data protection regulations
+
+# Deployment
+
+The Second Certainty application is deployed on Render's free tier, which may result in slow initial load times after periods of inactivity.
+When logging in, please note that you may need to retry after `No response from server`  message - this is also a function of deployment on Render's free tier which is not sufficiently performant for this application.
+
+- **Frontend Application**: [https://second-certainty.onrender.com](https://second-certainty.onrender.com)
+- **Backend API**: [https://second-certainty-api.onrender.com](https://second-certainty-api.onrender.com)
+
+- **API Documentation**: [https://second-certainty-api.onrender.com/api/docs](https://second-certainty-api.onrender.com/api/docs)
+- **Frontend Documentation**: [https://github.com/ces0491/second-certainty-frontend#second-certainty---frontend](https://github.com/ces0491/
+
+For more detailed information on deployment, please refer to the following documentation:
+
+- [Installation Guide](./docs/INSTALLATION.md): Setup instructions for local development
+- [Deployment Guide](./docs/DEPLOYMENT.md): Instructions for deploying to production
+
+# Code Repository
+
+The project is maintained in separate repositories for the backend and frontend components:
+
+- **Backend Repository**: [https://github.com/ces0491/second-certainty](https://github.com/ces0491/second-certainty)
+- **Frontend Repository**: [https://github.com/ces0491/second-certainty-frontend](https://github.com/ces0491/second-certainty-frontend)
+
+The repositories include detailed documentation on installation, deployment, and API usage, making it accessible for developers who want to explore or contribute to the project.
+
+# Screenshots
+
+## Dashboard
+![Dashboard](docs/images/Dashboard.png)
+*The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations.*
+
+## Income Tracking
+![Income Tracking](income_tracking.png)
+*Interface for managing multiple income sources with categorization and tax implications.*
+
+## Expense Management
+![Expense Management](expense_management.png)
+*Expense tracking interface with tax deduction categorization and documentation upload.*
+
+## Tax Calculator
+![Tax Calculator](docs/images/Calculator.png)
+*Interactive tax calculator showing real-time liability based on current financial data.*
+
+## Provisional Tax Planner
+![Provisional Tax Planner](docs/images/Provisional.png)
+*Tool for calculating and tracking provisional tax payments throughout the fiscal year.*
+
+## Profile Management
+![Profile Management](docs/images/Profile.png)
+*User profile interface for managing personal tax information and preferences.*
+
+# Future Enhancements
+
+- Mobile application for on-the-go tax management
+- Integration with banking APIs for automated transaction import
+- Advanced tax optimization recommendations using machine learning
+- Multi-user accounts for tax practitioners and accountants
+- Direct SARS e-filing integration for tax submissions
+
+# Acknowledgments
+
+- South African Revenue Service (SARS) for providing tax information
+- The FastAPI and React communities for their excellent documentation and support
+- Render for reliable cloud hosting infrastructure

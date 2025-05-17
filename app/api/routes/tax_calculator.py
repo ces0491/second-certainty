@@ -131,7 +131,9 @@ def get_user_expenses(
     if not tax_year:
         tax_year = get_tax_year()
     
-    expenses = db.query(UserExpense).filter(
+    expenses = db.query(UserExpense).options(
+    joinedload(UserExpense.expense_type)
+    ).filter(
         UserExpense.user_id == user_id,
         UserExpense.tax_year == tax_year
     ).all()

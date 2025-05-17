@@ -2,7 +2,7 @@
 
 A comprehensive South African tax liability management system that helps users track, calculate, and optimize their tax obligations throughout the fiscal year.
 
-![](docs/images/sc_logo.png)
+![*logo generated using OpenAI's DALL·E model via ChatGPT (May 2025)](docs/images/sc_logo.png)
 
 ## Live Demo
 
