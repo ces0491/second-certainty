@@ -9,7 +9,7 @@
 <meta name="author" content="Cesaire Tobias">
 <meta name="dcterms.date" content="2025-08-18">
 
-<title>Second Certainty: South African Tax Liability Management System</title>
+<title>Second Certainty: Tax Management System</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -73,7 +73,6 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#profile-management" id="toc-profile-management" class="nav-link" data-scroll-target="#profile-management"><span class="header-section-number">6.6</span> Profile Management</a></li>
   </ul></li>
   <li><a href="#future-enhancements" id="toc-future-enhancements" class="nav-link" data-scroll-target="#future-enhancements"><span class="header-section-number">7</span> Future Enhancements</a></li>
-  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments"><span class="header-section-number">8</span> Acknowledgments</a></li>
   </ul>
 </nav>
 </div>
@@ -81,7 +80,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Second Certainty: South African Tax Liability Management System</h1>
+<h1 class="title">Second Certainty: Tax Management System</h1>
 </div>
 
 
@@ -108,6 +107,12 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./images/sc_logo.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">*logo generated using OpenAI’s DALL·E model via ChatGPT (May 2025)</figcaption>
+</figure>
+</div>
 <section id="project-description" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Project Description</h1>
 <p>Second Certainty addresses one of life’s two certainties—taxes—by providing South African individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year.</p>
@@ -190,7 +195,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="deployment" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Deployment</h1>
-<p>The Second Certainty application is deployed on Render’s free tier, which may result in slow initial load times after periods of inactivity.</p>
+<p>The Second Certainty application is deployed on Render’s free tier, which may result in slow initial load times after periods of inactivity. When logging in, please note that you may need to retry after <code>No response from server</code> message - this is also a function of deployment on Render’s free tier which is not sufficiently performant for this application.</p>
 <ul>
 <li><p><strong>Frontend Application</strong>: <a href="https://second-certainty.onrender.com">https://second-certainty.onrender.com</a></p></li>
 <li><p><strong>Backend API</strong>: <a href="https://second-certainty-api.onrender.com">https://second-certainty-api.onrender.com</a></p></li>
@@ -216,27 +221,27 @@ ul.task-list li input[type="checkbox"] {
 <h1 data-number="6"><span class="header-section-number">6</span> Screenshots</h1>
 <section id="dashboard" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="dashboard"><span class="header-section-number">6.1</span> Dashboard</h2>
-<p><img src="dashboard.png" class="img-fluid" alt="Dashboard"> <em>The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations.</em></p>
+<p><img src="./images/Dashboard.png" class="img-fluid" alt="Dashboard"> <em>The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations.</em></p>
 </section>
 <section id="income-tracking" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="income-tracking"><span class="header-section-number">6.2</span> Income Tracking</h2>
-<p><img src="income_tracking.png" class="img-fluid" alt="Income Tracking"> <em>Interface for managing multiple income sources with categorization and tax implications.</em></p>
+<p><img src="./images/Income.png" class="img-fluid" alt="Income Tracking"> <em>Interface for managing multiple income sources with categorization and tax implications.</em></p>
 </section>
 <section id="expense-management" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="expense-management"><span class="header-section-number">6.3</span> Expense Management</h2>
-<p><img src="expense_management.png" class="img-fluid" alt="Expense Management"> <em>Expense tracking interface with tax deduction categorization and documentation upload.</em></p>
+<p><img src="./images/Expenses.png" class="img-fluid" alt="Expense Management"> <em>Expense tracking interface with tax deduction categorization and documentation upload.</em></p>
 </section>
 <section id="tax-calculator" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="tax-calculator"><span class="header-section-number">6.4</span> Tax Calculator</h2>
-<p><img src="tax_calculator.png" class="img-fluid" alt="Tax Calculator"> <em>Interactive tax calculator showing real-time liability based on current financial data.</em></p>
+<p><img src="./images/Calculator.png" class="img-fluid" alt="Tax Calculator"> <em>Interactive tax calculator showing real-time liability based on current financial data.</em></p>
 </section>
 <section id="provisional-tax-planner" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="provisional-tax-planner"><span class="header-section-number">6.5</span> Provisional Tax Planner</h2>
-<p><img src="provisional_tax.png" class="img-fluid" alt="Provisional Tax Planner"> <em>Tool for calculating and tracking provisional tax payments throughout the fiscal year.</em></p>
+<p><img src="./images/Provisional.png" class="img-fluid" alt="Provisional Tax Planner"> <em>Tool for calculating and tracking provisional tax payments throughout the fiscal year.</em></p>
 </section>
 <section id="profile-management" class="level2" data-number="6.6">
 <h2 data-number="6.6" class="anchored" data-anchor-id="profile-management"><span class="header-section-number">6.6</span> Profile Management</h2>
-<p><img src="profile.png" class="img-fluid" alt="Profile Management"> <em>User profile interface for managing personal tax information and preferences.</em></p>
+<p><img src="./images/Profile.png" class="img-fluid" alt="Profile Management"> <em>User profile interface for managing personal tax information and preferences.</em></p>
 </section>
 </section>
 <section id="future-enhancements" class="level1" data-number="7">
@@ -247,14 +252,6 @@ ul.task-list li input[type="checkbox"] {
 <li>Advanced tax optimization recommendations using machine learning</li>
 <li>Multi-user accounts for tax practitioners and accountants</li>
 <li>Direct SARS e-filing integration for tax submissions</li>
-</ul>
-</section>
-<section id="acknowledgments" class="level1" data-number="8">
-<h1 data-number="8"><span class="header-section-number">8</span> Acknowledgments</h1>
-<ul>
-<li>South African Revenue Service (SARS) for providing tax information</li>
-<li>The FastAPI and React communities for their excellent documentation and support</li>
-<li>Render for reliable cloud hosting infrastructure</li>
 </ul>
 </section>
 

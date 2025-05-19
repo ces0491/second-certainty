@@ -202,7 +202,7 @@ ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8000</code></pre>
 <li>Terminal 1 (Backend):</li>
 </ol>
 <div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /path/to/second-certainty</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> venv/bin/activate</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> venv/bin/activate <span class="co"># On Windows: venv\Scripts\activate</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uvicorn</span> app.main:app <span class="at">--reload</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="2" type="1">
 <li>Terminal 2 (Frontend):</li>
@@ -265,7 +265,7 @@ ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8000</code></pre>
 <li>Add income sources and expenses</li>
 <li>Explore the tax calculation features</li>
 </ol>
-<p>For more information on using the application, refer to the <a href="./docs/user-guide.qmd">User Guide</a>.</p>
+<p>For more information on using the application, refer to the <a href="/README.md">README</a>.</p>
 </section>
 </section>
 

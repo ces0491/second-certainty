@@ -11,7 +11,7 @@ format:
     code-fold: true
 ---
 
-![*logo generated using OpenAI's DALL·E model via ChatGPT (May 2025)](docs/images/sc_logo.png)
+![*logo generated using OpenAI's DALL·E model via ChatGPT (May 2025)](./images/sc_logo.png)
 
 # Project Description
 
@@ -100,27 +100,27 @@ The repositories include detailed documentation on installation, deployment, and
 # Screenshots
 
 ## Dashboard
-![Dashboard](docs/images/Dashboard.png)
+![Dashboard](./images/Dashboard.png)
 *The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations.*
 
 ## Income Tracking
-![Income Tracking](income_tracking.png)
+![Income Tracking](./images/Income.png)
 *Interface for managing multiple income sources with categorization and tax implications.*
 
 ## Expense Management
-![Expense Management](expense_management.png)
+![Expense Management](./images/Expenses.png)
 *Expense tracking interface with tax deduction categorization and documentation upload.*
 
 ## Tax Calculator
-![Tax Calculator](docs/images/Calculator.png)
+![Tax Calculator](./images/Calculator.png)
 *Interactive tax calculator showing real-time liability based on current financial data.*
 
 ## Provisional Tax Planner
-![Provisional Tax Planner](docs/images/Provisional.png)
+![Provisional Tax Planner](./images/Provisional.png)
 *Tool for calculating and tracking provisional tax payments throughout the fiscal year.*
 
 ## Profile Management
-![Profile Management](docs/images/Profile.png)
+![Profile Management](./images/Profile.png)
 *User profile interface for managing personal tax information and preferences.*
 
 # Future Enhancements
@@ -130,9 +130,3 @@ The repositories include detailed documentation on installation, deployment, and
 - Advanced tax optimization recommendations using machine learning
 - Multi-user accounts for tax practitioners and accountants
 - Direct SARS e-filing integration for tax submissions
-
-# Acknowledgments
-
-- South African Revenue Service (SARS) for providing tax information
-- The FastAPI and React communities for their excellent documentation and support
-- Render for reliable cloud hosting infrastructure
