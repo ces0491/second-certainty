@@ -1,6 +1,6 @@
 # app/api/routes/tax_calculator.py
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import (Session, joinedload)
 from typing import List, Optional
 
 from app.core.config import get_db
