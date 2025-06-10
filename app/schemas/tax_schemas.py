@@ -4,7 +4,34 @@ from typing import Optional, List
 from datetime import date
 from decimal import Decimal
 
-# User schemas
+# Add the missing DeductibleExpenseType schema
+class DeductibleExpenseTypeResponse(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    max_deduction: Optional[float] = None
+    max_percentage: Optional[float] = None
+    is_active: bool = True
+
+    class Config:
+        from_attributes = True
+
+# Updated ExpenseResponse with proper nested schema
+class ExpenseResponse(BaseModel):
+    id: int
+    user_id: int
+    expense_type_id: int
+    description: Optional[str] = None
+    amount: float
+    tax_year: Optional[str] = None
+    created_at: date
+    # Use the proper nested schema instead of dict
+    expense_type: Optional[DeductibleExpenseTypeResponse] = None
+
+    class Config:
+        from_attributes = True
+
+# Keep your other schemas unchanged...
 class UserBase(BaseModel):
     email: EmailStr
     name: str
@@ -84,15 +111,6 @@ class ExpenseUpdate(BaseModel):
     amount: Optional[float] = None
     tax_year: Optional[str] = None
 
-class ExpenseResponse(ExpenseBase):
-    id: int
-    user_id: int
-    created_at: date
-    expense_type: Optional[dict] = None
-
-    class Config:
-        from_attributes = True
-
 # Tax bracket schemas
 class TaxBracketBase(BaseModel):
     lower_limit: int
@@ -128,20 +146,6 @@ class ProvisionalTaxBase(BaseModel):
     final_payment: float
 
 class ProvisionalTaxResponse(ProvisionalTaxBase):
-    class Config:
-        from_attributes = True
-
-# Deductible expense type schemas
-class DeductibleExpenseTypeBase(BaseModel):
-    name: str
-    description: Optional[str] = None
-    max_deduction: Optional[float] = None
-    max_percentage: Optional[float] = None
-    is_active: bool = True
-
-class DeductibleExpenseTypeResponse(DeductibleExpenseTypeBase):
-    id: int
-
     class Config:
         from_attributes = True
 
