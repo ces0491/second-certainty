@@ -75,10 +75,16 @@ Base.metadata.create_all(bind=engine)
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://second-certainty.onrender.com"],  # production frontend domain
+    allow_origins=[
+        "https://second-certainty.onrender.com",  # production frontend
+        "http://localhost:3000",                   # development frontend
+        "http://127.0.0.1:3000",                  # alternative localhost
+        "https://localhost:3000",                  # HTTPS localhost
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Include the auth router (critical for authentication)
