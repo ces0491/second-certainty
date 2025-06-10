@@ -44,19 +44,21 @@ class UserResponse(UserBase):
 
 # Income schemas
 class IncomeBase(BaseModel):
-    description: str
-    amount: Decimal
-    date_received: date
-    income_type: str
+    source_type: str
+    description: Optional[str] = None
+    annual_amount: float
+    is_paye: bool = True
+    tax_year: Optional[str] = None
 
 class IncomeCreate(IncomeBase):
     pass
 
 class IncomeUpdate(BaseModel):
+    source_type: Optional[str] = None
     description: Optional[str] = None
-    amount: Optional[Decimal] = None
-    date_received: Optional[date] = None
-    income_type: Optional[str] = None
+    annual_amount: Optional[float] = None
+    is_paye: Optional[bool] = None
+    tax_year: Optional[str] = None
 
 class IncomeResponse(IncomeBase):
     id: int
@@ -68,29 +70,82 @@ class IncomeResponse(IncomeBase):
 
 # Expense schemas
 class ExpenseBase(BaseModel):
-    description: str
-    amount: Decimal
-    date_incurred: date
-    expense_type: str
+    expense_type_id: int
+    description: Optional[str] = None
+    amount: float
+    tax_year: Optional[str] = None
 
 class ExpenseCreate(ExpenseBase):
     pass
 
 class ExpenseUpdate(BaseModel):
+    expense_type_id: Optional[int] = None
     description: Optional[str] = None
-    amount: Optional[Decimal] = None
-    date_incurred: Optional[date] = None
-    expense_type: Optional[str] = None
+    amount: Optional[float] = None
+    tax_year: Optional[str] = None
 
 class ExpenseResponse(ExpenseBase):
     id: int
     user_id: int
     created_at: date
+    expense_type: Optional[dict] = None
 
     class Config:
         from_attributes = True
 
+# Tax bracket schemas
+class TaxBracketBase(BaseModel):
+    lower_limit: int
+    upper_limit: Optional[int] = None
+    rate: float
+    base_amount: int
+    tax_year: str
+
+class TaxBracketResponse(TaxBracketBase):
+    class Config:
+        from_attributes = True
+
 # Tax calculation schemas
+class TaxCalculationBase(BaseModel):
+    gross_income: float
+    taxable_income: float
+    tax_before_rebates: float
+    rebates: float
+    medical_credits: float
+    final_tax: float
+    effective_tax_rate: float
+    monthly_tax_rate: float
+
+class TaxCalculationResponse(TaxCalculationBase):
+    class Config:
+        from_attributes = True
+
+# Provisional tax schemas
+class ProvisionalTaxBase(BaseModel):
+    annual_tax: float
+    first_payment: float
+    second_payment: float
+    final_payment: float
+
+class ProvisionalTaxResponse(ProvisionalTaxBase):
+    class Config:
+        from_attributes = True
+
+# Deductible expense type schemas
+class DeductibleExpenseTypeBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+    max_deduction: Optional[float] = None
+    max_percentage: Optional[float] = None
+    is_active: bool = True
+
+class DeductibleExpenseTypeResponse(DeductibleExpenseTypeBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+# Legacy schemas for backward compatibility
 class TaxCalculationRequest(BaseModel):
     total_income: Decimal
     total_expenses: Decimal
@@ -102,39 +157,16 @@ class TaxBracket(BaseModel):
     rate: Decimal
     threshold: Decimal
 
-class TaxCalculationResponse(BaseModel):
-    taxable_income: Decimal
-    total_tax: Decimal
-    tax_brackets: List[TaxBracket]
-    effective_rate: Decimal
-    marginal_rate: Decimal
-    provisional_payments: Optional[Decimal] = None
-
-    class Config:
-        from_attributes = True
-
-# Provisional tax schemas
-class ProvisionalTaxBase(BaseModel):
+# Provisional tax legacy schemas
+class ProvisionalTaxCreate(BaseModel):
     period: str
     estimated_income: Decimal
     estimated_expenses: Decimal
     payment_amount: Decimal
     due_date: date
 
-class ProvisionalTaxCreate(ProvisionalTaxBase):
-    pass
-
 class ProvisionalTaxUpdate(BaseModel):
     estimated_income: Optional[Decimal] = None
     estimated_expenses: Optional[Decimal] = None
     payment_amount: Optional[Decimal] = None
     due_date: Optional[date] = None
-
-class ProvisionalTaxResponse(ProvisionalTaxBase):
-    id: int
-    user_id: int
-    payment_status: str
-    created_at: date
-
-    class Config:
-        from_attributes = True

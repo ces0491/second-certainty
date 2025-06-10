@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 
 from fastapi import APIRouter, Depends, HTTPException, status, Response
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr, validator
 
@@ -12,7 +12,7 @@ from app.core.config import settings, get_db
 from app.models.tax_models import UserProfile
 from app.schemas.tax_schemas import UserResponse
 
-# Create router instance - this must be defined before any routes
+# Create router instance
 router = APIRouter()
 
 # Define models for the auth endpoints
@@ -45,11 +45,7 @@ class LoginResponse(BaseModel):
 # Endpoints
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_profile(current_user: UserProfile = Depends(get_current_user)):
-    """
-    Get the current user's profile based on JWT token.
-    
-    This endpoint requires authentication via Bearer token.
-    """
+    """Get the current user's profile based on JWT token."""
     return current_user
 
 @router.post("/token", response_model=Token)
@@ -57,11 +53,7 @@ async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    """
-    Authenticate user and generate JWT token.
-    
-    Returns access token for use in Authentication header.
-    """
+    """Authenticate user and generate JWT token."""
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -79,11 +71,7 @@ async def login_for_access_token(
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_user(user: UserCreate, db: Session = Depends(get_db)):
-    """
-    Register a new user account.
-    
-    Returns success message if registration is successful.
-    """
+    """Register a new user account."""
     # Check if user already exists
     db_user = db.query(UserProfile).filter(UserProfile.email == user.email).first()
     if db_user:
@@ -126,10 +114,5 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/logout")
 async def logout(response: Response):
-    """
-    Endpoint for client-side logout.
-    
-    This is primarily for documentation purposes as JWT tokens
-    cannot be invalidated - the client should remove the token.
-    """
+    """Endpoint for client-side logout."""
     return {"message": "Successfully logged out"}

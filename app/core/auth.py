@@ -1,5 +1,4 @@
 # app/core/auth.py
-# app/core/auth.py
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -71,9 +70,5 @@ def get_current_user(
     user = db.query(UserProfile).filter(UserProfile.email == email).first()
     if user is None:
         raise credentials_exception
-    
-    # Update last login
-    user.last_login = datetime.utcnow()
-    db.commit()
     
     return user
