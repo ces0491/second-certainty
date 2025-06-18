@@ -1,6 +1,6 @@
 # app/schemas/tax_schemas.py
 from pydantic import BaseModel, EmailStr, validator
-from typing import Optional, List
+from typing import Optional
 from datetime import date
 from decimal import Decimal
 
@@ -145,7 +145,16 @@ class ProvisionalTaxBase(BaseModel):
     second_payment: float
     final_payment: float
 
-class ProvisionalTaxResponse(ProvisionalTaxBase):
+class PaymentInfo(BaseModel):
+    amount: float
+    due_date: str
+class ProvisionalTaxResponse(BaseModel):
+    total_tax: float
+    taxable_income: float
+    effective_tax_rate: float
+    first_payment: PaymentInfo
+    second_payment: PaymentInfo
+
     class Config:
         from_attributes = True
 

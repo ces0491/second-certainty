@@ -67,7 +67,6 @@ The system combines up-to-date South African tax regulations with personal finan
 ## Tax Calculations
 - **South African Tax Compliance**: Current tax brackets, rebates, and thresholds for all age groups
 - **Provisional Tax Management**: Automated calculation and tracking of provisional tax payments for eligible taxpayers
-- **Custom Tax Scenarios**: "What-if" tax calculations for financial planning
 - **Age-based Calculations**: Automatic rebate and threshold adjustments based on user age
 
 ## Data Integration and Management
@@ -77,10 +76,9 @@ The system combines up-to-date South African tax regulations with personal finan
 - **Comprehensive Logging**: Structured logging with file rotation and error tracking
 
 ## Security and Performance
-- **Input Validation**: Comprehensive data validation using Pydantic schemas
-- **Rate Limiting**: Configurable API rate limiting to prevent abuse
+- **Input Validation**: Data validation using Pydantic schemas
 - **CORS Management**: Secure cross-origin resource sharing configuration
-- **Error Handling**: Standardized error responses and comprehensive exception management
+- **Error Handling**: Error responses and exception management
 
 # Deployment
 
@@ -169,6 +167,7 @@ The repositories include comprehensive documentation covering:
 - **Rate Limiting**: Actually implement rate limiting
 - **Password Updates**: Updating profile data is not fully supported yet
 - **Improve Standardization**: For logging, error handling, user input sanitization
+- **Enhanced Visualizations**: Use more sophisticated charting libraries like Highchart for better visualizations
 - **Improve Token Validation**
 - **Complete Docstrings**
 - **Write More Tests**
