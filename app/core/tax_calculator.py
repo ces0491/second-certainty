@@ -1,4 +1,4 @@
-# app/core/tax_calculator.py (updated with logging)
+# app/core/tax_calculator.py
 from sqlalchemy.orm import Session
 from typing import Dict, List, Optional, Tuple, Any
 import math
@@ -290,37 +290,70 @@ class TaxCalculator:
     ) -> Dict[str, Any]:
         """
         Calculate provisional tax payments for provisional taxpayers.
-        
+    
         Returns a dictionary with:
-        - annual_tax: Total annual tax liability
-        - first_payment: First provisional payment (due August)
-        - second_payment: Second provisional payment (due February)
-        - final_payment: Final payment (due with tax return)
+        - total_tax: Total annual tax liability
+        - taxable_income: Taxable income for the year
+        - effective_tax_rate: Effective tax rate
+        - first_payment: Dict with amount and due_date for first payment
+        - second_payment: Dict with amount and due_date for second payment
         """
         if tax_year is None:
             tax_year = get_tax_year()
-        
+    
+        logger.debug(f"Calculating provisional tax for user {user_id}, tax year {tax_year}")
+    
         # Get user profile
         user = self.db.query(UserProfile).filter(UserProfile.id == user_id).first()
         if not user:
             raise ValueError(f"User with ID {user_id} not found")
-        
+    
         # Check if user is a provisional taxpayer
         if not user.is_provisional_taxpayer:
+            logger.warning(f"User {user_id} is not a provisional taxpayer")
             raise ValueError(f"User with ID {user_id} is not a provisional taxpayer")
-        
+    
         # Calculate total tax liability
         tax_liability = self.calculate_tax_liability(user_id, tax_year)
         annual_tax = tax_liability["final_tax"]
-        
-        # Calculate provisional payments
-        first_payment = annual_tax * 0.5
-        second_payment = annual_tax * 0.5
-        final_payment = 0  # Assuming accurate estimates; otherwise, this would be the difference
-        
-        return {
-            "annual_tax": annual_tax,
-            "first_payment": first_payment,
-            "second_payment": second_payment,
-            "final_payment": final_payment
+        taxable_income = tax_liability["taxable_income"]
+        effective_tax_rate = tax_liability["effective_tax_rate"]
+    
+        logger.debug(f"Tax calculation for user {user_id}: annual_tax={annual_tax}, taxable_income={taxable_income}")
+    
+        # Calculate provisional payments (50% each)
+        first_payment_amount = annual_tax * 0.5
+        second_payment_amount = annual_tax * 0.5
+    
+        # Calculate due dates based on tax year
+        # Tax year format: "2025-2026" 
+        year_parts = tax_year.split('-')
+        start_year = int(year_parts[0])
+        end_year = int(year_parts[1])
+    
+        # First payment due: 31 August of the start year
+        first_due_date = f"{start_year}-08-31"
+    
+        # Second payment due: 28/29 February of the end year
+        # Check for leap year
+        if end_year % 4 == 0 and (end_year % 100 != 0 or end_year % 400 == 0):
+            second_due_date = f"{end_year}-02-29"
+        else:
+            second_due_date = f"{end_year}-02-28"
+    
+        result = {
+            "total_tax": annual_tax,
+            "taxable_income": taxable_income,
+            "effective_tax_rate": effective_tax_rate,
+            "first_payment": {
+                "amount": first_payment_amount,
+                "due_date": first_due_date
+            },
+            "second_payment": {
+                "amount": second_payment_amount,
+                "due_date": second_due_date
+            }
         }
+    
+        logger.debug(f"Provisional tax result: {result}")
+        return result
