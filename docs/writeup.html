@@ -52,14 +52,15 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#backend" id="toc-backend" class="nav-link" data-scroll-target="#backend"><span class="header-section-number">2.1</span> Backend</a></li>
   <li><a href="#frontend" id="toc-frontend" class="nav-link" data-scroll-target="#frontend"><span class="header-section-number">2.2</span> Frontend</a></li>
+  <li><a href="#development-tools" id="toc-development-tools" class="nav-link" data-scroll-target="#development-tools"><span class="header-section-number">2.3</span> Development Tools</a></li>
   </ul></li>
   <li><a href="#application-features" id="toc-application-features" class="nav-link" data-scroll-target="#application-features"><span class="header-section-number">3</span> Application Features</a>
   <ul class="collapse">
-  <li><a href="#user-management" id="toc-user-management" class="nav-link" data-scroll-target="#user-management"><span class="header-section-number">3.1</span> User Management</a></li>
+  <li><a href="#core-user-management" id="toc-core-user-management" class="nav-link" data-scroll-target="#core-user-management"><span class="header-section-number">3.1</span> Core User Management</a></li>
   <li><a href="#financial-data-management" id="toc-financial-data-management" class="nav-link" data-scroll-target="#financial-data-management"><span class="header-section-number">3.2</span> Financial Data Management</a></li>
   <li><a href="#tax-calculations" id="toc-tax-calculations" class="nav-link" data-scroll-target="#tax-calculations"><span class="header-section-number">3.3</span> Tax Calculations</a></li>
-  <li><a href="#analytics-and-reporting" id="toc-analytics-and-reporting" class="nav-link" data-scroll-target="#analytics-and-reporting"><span class="header-section-number">3.4</span> Analytics and Reporting</a></li>
-  <li><a href="#data-security" id="toc-data-security" class="nav-link" data-scroll-target="#data-security"><span class="header-section-number">3.5</span> Data Security</a></li>
+  <li><a href="#data-integration-and-management" id="toc-data-integration-and-management" class="nav-link" data-scroll-target="#data-integration-and-management"><span class="header-section-number">3.4</span> Data Integration and Management</a></li>
+  <li><a href="#security-and-performance" id="toc-security-and-performance" class="nav-link" data-scroll-target="#security-and-performance"><span class="header-section-number">3.5</span> Security and Performance</a></li>
   </ul></li>
   <li><a href="#deployment" id="toc-deployment" class="nav-link" data-scroll-target="#deployment"><span class="header-section-number">4</span> Deployment</a></li>
   <li><a href="#code-repository" id="toc-code-repository" class="nav-link" data-scroll-target="#code-repository"><span class="header-section-number">5</span> Code Repository</a></li>
@@ -72,7 +73,13 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#provisional-tax-planner" id="toc-provisional-tax-planner" class="nav-link" data-scroll-target="#provisional-tax-planner"><span class="header-section-number">6.5</span> Provisional Tax Planner</a></li>
   <li><a href="#profile-management" id="toc-profile-management" class="nav-link" data-scroll-target="#profile-management"><span class="header-section-number">6.6</span> Profile Management</a></li>
   </ul></li>
-  <li><a href="#future-enhancements" id="toc-future-enhancements" class="nav-link" data-scroll-target="#future-enhancements"><span class="header-section-number">7</span> Future Enhancements</a></li>
+  <li><a href="#technical-architecture" id="toc-technical-architecture" class="nav-link" data-scroll-target="#technical-architecture"><span class="header-section-number">7</span> Technical Architecture</a>
+  <ul class="collapse">
+  <li><a href="#backend-architecture" id="toc-backend-architecture" class="nav-link" data-scroll-target="#backend-architecture"><span class="header-section-number">7.1</span> Backend Architecture</a></li>
+  <li><a href="#frontend-architecture" id="toc-frontend-architecture" class="nav-link" data-scroll-target="#frontend-architecture"><span class="header-section-number">7.2</span> Frontend Architecture</a></li>
+  <li><a href="#security-implementation" id="toc-security-implementation" class="nav-link" data-scroll-target="#security-implementation"><span class="header-section-number">7.3</span> Security Implementation</a></li>
+  </ul></li>
+  <li><a href="#future-enhancements" id="toc-future-enhancements" class="nav-link" data-scroll-target="#future-enhancements"><span class="header-section-number">8</span> Future Enhancements</a></li>
   </ul>
 </nav>
 </div>
@@ -116,7 +123,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="project-description" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Project Description</h1>
 <p>Second Certainty addresses one of life’s two certainties—taxes—by providing South African individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year.</p>
-<p>Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress. This application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts quarterly payments, and provides optimization strategies—all in real-time.</p>
+<p>Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress. This application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts provisional payments, and provides optimization strategies—all in real-time.</p>
 <p>The system combines up-to-date South African tax regulations with personal financial data to deliver accurate tax calculations, visualizations, and strategic recommendations, helping users optimize their tax position throughout the year rather than scrambling at tax season.</p>
 </section>
 <section id="technical-requirements" class="level1" data-number="2">
@@ -126,12 +133,14 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><strong>Framework</strong>: FastAPI 0.110.1 - chosen for its high performance, automatic documentation generation, and modern Python type annotations</li>
 <li><strong>ORM</strong>: SQLAlchemy 2.0.40 - provides flexible database operations and ORM capabilities</li>
-<li><strong>Validation</strong>: Pydantic 2.6.0 - ensures robust data validation with minimal code</li>
+<li><strong>Validation</strong>: Pydantic 2.6.0 with pydantic-settings 2.2.1 - ensures robust data validation with minimal code</li>
 <li><strong>Database</strong>: PostgreSQL (production), SQLite (development) - PostgreSQL chosen for scalability and reliability</li>
-<li><strong>Authentication</strong>: JWT with password hashing - industry-standard approach for secure authentication</li>
-<li><strong>Testing</strong>: Pytest 7.4.4 - comprehensive testing framework for Python</li>
+<li><strong>Authentication</strong>: JWT with HTTPBearer security and bcrypt password hashing - modern secure authentication approach</li>
+<li><strong>Testing</strong>: Pytest 7.4.4 with pytest-asyncio 0.23.5 - comprehensive testing framework for Python including async support</li>
 <li><strong>Documentation</strong>: OpenAPI (Swagger UI) - automatic API documentation generation</li>
-<li><strong>HTTP Client</strong>: HTTPX 0.27.0 - modern async HTTP client for API integrations</li>
+<li><strong>HTTP Client</strong>: HTTPX 0.27.0 - modern async HTTP client for SARS website integration</li>
+<li><strong>Web Scraping</strong>: BeautifulSoup4 4.12.3 with lxml 5.1.0 - for parsing SARS tax data</li>
+<li><strong>Database Migrations</strong>: Alembic 1.13.1 - robust database schema management</li>
 <li><strong>Server</strong>: Uvicorn 0.29.0 - high-performance ASGI server</li>
 </ul>
 </section>
@@ -141,117 +150,172 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>Framework</strong>: React 18.2 - chosen for its component-based architecture and efficient rendering</li>
 <li><strong>Routing</strong>: React Router 6.22.1 - provides declarative routing for React applications</li>
 <li><strong>HTTP Client</strong>: Axios 1.6.7 - feature-rich HTTP client for API communication</li>
-<li><strong>State Management</strong>: React Context API - built-in state management solution that avoids dependencies</li>
+<li><strong>State Management</strong>: React Context API - built-in state management solution that avoids external dependencies</li>
 <li><strong>Styling</strong>: Tailwind CSS 3.4.1 - utility-first CSS framework for rapid UI development</li>
 <li><strong>Data Visualization</strong>: Recharts 2.12.0 - responsive charting library for React</li>
 <li><strong>Build Tools</strong>: Create React App - simplified configuration and build process</li>
 </ul>
 </section>
+<section id="development-tools" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="development-tools"><span class="header-section-number">2.3</span> Development Tools</h2>
+<ul>
+<li><strong>Code Formatting</strong>: Black 24.2.0, isort 5.13.2 - automated code formatting and import sorting</li>
+<li><strong>Linting</strong>: Flake8 7.0.0 - code quality and style checking</li>
+<li><strong>Environment Management</strong>: python-dotenv 1.0.1 - secure environment variable management</li>
+</ul>
+</section>
 </section>
 <section id="application-features" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Application Features</h1>
-<section id="user-management" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="user-management"><span class="header-section-number">3.1</span> User Management</h2>
+<section id="core-user-management" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="core-user-management"><span class="header-section-number">3.1</span> Core User Management</h2>
 <ul>
-<li>Secure JWT-based authentication system with password hashing</li>
-<li>User registration and login functionality</li>
-<li>Profile management for personal tax information</li>
+<li><strong>Secure Authentication</strong>: JWT-based authentication system with HTTPBearer tokens and bcrypt password hashing</li>
+<li><strong>User Registration and Login</strong>: Comprehensive user account management with profile customization</li>
+<li><strong>Provisional Taxpayer Support</strong>: Special handling for users subject to provisional tax requirements</li>
+<li><strong>Admin Features</strong>: Administrative capabilities for system management and tax data updates</li>
 </ul>
 </section>
 <section id="financial-data-management" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="financial-data-management"><span class="header-section-number">3.2</span> Financial Data Management</h2>
 <ul>
-<li>Income tracking from multiple sources (salary, freelance, investments, etc.)</li>
-<li>Expense management with categorization for tax-deductible items</li>
-<li>Document upload and storage for receipts and financial records</li>
+<li><strong>Multi-Source Income Tracking</strong>: Support for salary, freelance, investment, rental, and other income types</li>
+<li><strong>Comprehensive Expense Management</strong>: Categorized tax-deductible expenses with predefined types and validation</li>
+<li><strong>Real-time Calculations</strong>: Immediate tax liability updates as financial data changes</li>
+<li><strong>Historical Data</strong>: Multi-year tax data management with automatic tax year detection</li>
 </ul>
 </section>
 <section id="tax-calculations" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="tax-calculations"><span class="header-section-number">3.3</span> Tax Calculations</h2>
 <ul>
-<li>Real-time tax liability calculation based on current financial data</li>
-<li>Up-to-date tax brackets, rebates, and thresholds for South Africa</li>
-<li>Automated SARS integration that retrieves the latest tax rates</li>
-<li>Provisional tax payment calculation and tracking</li>
+<li><strong>South African Tax Compliance</strong>: Current tax brackets, rebates, and thresholds for all age groups</li>
+<li><strong>Provisional Tax Management</strong>: Automated calculation and tracking of provisional tax payments for eligible taxpayers</li>
+<li><strong>Custom Tax Scenarios</strong>: “What-if” tax calculations for financial planning</li>
+<li><strong>Age-based Calculations</strong>: Automatic rebate and threshold adjustments based on user age</li>
 </ul>
 </section>
-<section id="analytics-and-reporting" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="analytics-and-reporting"><span class="header-section-number">3.4</span> Analytics and Reporting</h2>
+<section id="data-integration-and-management" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="data-integration-and-management"><span class="header-section-number">3.4</span> Data Integration and Management</h2>
 <ul>
-<li>Interactive dashboards with key tax metrics</li>
-<li>Visualizations for income, expenses, and tax projections</li>
-<li>Downloadable tax reports for personal records</li>
-<li>Year-on-year comparison of tax position</li>
+<li><strong>SARS Website Integration</strong>: Automated scraping of latest tax rates with multiple fallback strategies</li>
+<li><strong>Robust Data Pipeline</strong>: Multi-tiered approach for tax data retrieval including manual fallbacks</li>
+<li><strong>Database Migration System</strong>: Alembic-powered schema management for seamless updates</li>
+<li><strong>Comprehensive Logging</strong>: Structured logging with file rotation and error tracking</li>
 </ul>
 </section>
-<section id="data-security" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="data-security"><span class="header-section-number">3.5</span> Data Security</h2>
+<section id="security-and-performance" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="security-and-performance"><span class="header-section-number">3.5</span> Security and Performance</h2>
 <ul>
-<li>Comprehensive input validation and error handling</li>
-<li>Secure data storage with encryption</li>
-<li>Compliance with South African data protection regulations</li>
+<li><strong>Input Validation</strong>: Comprehensive data validation using Pydantic schemas</li>
+<li><strong>Rate Limiting</strong>: Configurable API rate limiting to prevent abuse</li>
+<li><strong>CORS Management</strong>: Secure cross-origin resource sharing configuration</li>
+<li><strong>Error Handling</strong>: Standardized error responses and comprehensive exception management</li>
 </ul>
 </section>
 </section>
 <section id="deployment" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Deployment</h1>
-<p>The Second Certainty application is deployed on Render’s free tier, which may result in slow initial load times after periods of inactivity. When logging in, please note that you may need to retry after <code>No response from server</code> message - this is also a function of deployment on Render’s free tier which is not sufficiently performant for this application.</p>
-<ul>
-<li><p><strong>Frontend Application</strong>: <a href="https://second-certainty.onrender.com">https://second-certainty.onrender.com</a></p></li>
-<li><p><strong>Backend API</strong>: <a href="https://second-certainty-api.onrender.com">https://second-certainty-api.onrender.com</a></p></li>
-<li><p><strong>API Documentation</strong>: <a href="https://second-certainty-api.onrender.com/api/docs">https://second-certainty-api.onrender.com/api/docs</a></p></li>
-<li><p><strong>Frontend Documentation</strong>: [https://github.com/ces0491/second-certainty-frontend#second-certainty—frontend](https://github.com/ces0491/</p></li>
-</ul>
+<p>The Second Certainty application is deployed on Render’s free tier, which may result in slow initial load times after periods of inactivity. When logging in, please note that you may need to retry after <code>No response from server</code> message - this is a function of deployment on Render’s free tier which experiences “cold starts” after 15 minutes of inactivity.</p>
+<p><strong>Live Application URLs:</strong> - <strong>Frontend Application</strong>: <a href="https://second-certainty.onrender.com">https://second-certainty.onrender.com</a> - <strong>Backend API</strong>: <a href="https://second-certainty-api.onrender.com">https://second-certainty-api.onrender.com</a> - <strong>API Documentation</strong>: <a href="https://second-certainty-api.onrender.com/api/docs">https://second-certainty-api.onrender.com/api/docs</a></p>
+<p><strong>Performance Considerations:</strong> - Initial load times may exceed 30 seconds due to service “spin-up” on free tier - Subsequent requests are fast once the service is active - Database queries are optimized for performance despite platform limitations</p>
 <p>For more detailed information on deployment, please refer to the following documentation:</p>
 <ul>
-<li><a href="./docs/INSTALLATION.md">Installation Guide</a>: Setup instructions for local development</li>
-<li><a href="./docs/DEPLOYMENT.md">Deployment Guide</a>: Instructions for deploying to production</li>
+<li><a href="./docs/INSTALLATION.md">Installation Guide</a>: Complete setup instructions for local development</li>
+<li><a href="./docs/DEPLOYMENT.md">Deployment Guide</a>: Comprehensive production deployment instructions</li>
+<li><a href="./docs/API.md">API Documentation</a>: Detailed API reference with examples</li>
 </ul>
 </section>
 <section id="code-repository" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Code Repository</h1>
-<p>The project is maintained in separate repositories for the backend and frontend components:</p>
+<p>The project is maintained in separate repositories for optimal development workflow:</p>
 <ul>
 <li><strong>Backend Repository</strong>: <a href="https://github.com/ces0491/second-certainty">https://github.com/ces0491/second-certainty</a></li>
 <li><strong>Frontend Repository</strong>: <a href="https://github.com/ces0491/second-certainty-frontend">https://github.com/ces0491/second-certainty-frontend</a></li>
 </ul>
-<p>The repositories include detailed documentation on installation, deployment, and API usage, making it accessible for developers who want to explore or contribute to the project.</p>
+<p>The repositories include comprehensive documentation covering: - <strong>Installation and Setup</strong>: Step-by-step local development environment setup - <strong>API Documentation</strong>: Complete endpoint reference with request/response examples<br>
+- <strong>Database Schema</strong>: Detailed model relationships and migration procedures - <strong>Testing Framework</strong>: Unit, integration, and API testing suites - <strong>Deployment Procedures</strong>: Production deployment with security best practices</p>
 </section>
 <section id="screenshots" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Screenshots</h1>
 <section id="dashboard" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="dashboard"><span class="header-section-number">6.1</span> Dashboard</h2>
-<p><img src="./images/Dashboard.png" class="img-fluid" alt="Dashboard"> <em>The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations.</em></p>
+<p><img src="./images/Dashboard.png" class="img-fluid" alt="Dashboard"> <em>The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations with real-time updates.</em></p>
 </section>
 <section id="income-tracking" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="income-tracking"><span class="header-section-number">6.2</span> Income Tracking</h2>
-<p><img src="./images/Income.png" class="img-fluid" alt="Income Tracking"> <em>Interface for managing multiple income sources with categorization and tax implications.</em></p>
+<p><img src="./images/Income.png" class="img-fluid" alt="Income Tracking"> <em>Comprehensive interface for managing multiple income sources with PAYE categorization and annual amount tracking.</em></p>
 </section>
 <section id="expense-management" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="expense-management"><span class="header-section-number">6.3</span> Expense Management</h2>
-<p><img src="./images/Expenses.png" class="img-fluid" alt="Expense Management"> <em>Expense tracking interface with tax deduction categorization and documentation upload.</em></p>
+<p><img src="./images/Expenses.png" class="img-fluid" alt="Expense Management"> <em>Expense tracking interface with predefined tax-deductible categories, amount validation, and documentation support.</em></p>
 </section>
 <section id="tax-calculator" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="tax-calculator"><span class="header-section-number">6.4</span> Tax Calculator</h2>
-<p><img src="./images/Calculator.png" class="img-fluid" alt="Tax Calculator"> <em>Interactive tax calculator showing real-time liability based on current financial data.</em></p>
+<p><img src="./images/Calculator.png" class="img-fluid" alt="Tax Calculator"> <em>Interactive tax calculator showing real-time liability calculations based on current financial data with age-based rebate adjustments.</em></p>
 </section>
 <section id="provisional-tax-planner" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="provisional-tax-planner"><span class="header-section-number">6.5</span> Provisional Tax Planner</h2>
-<p><img src="./images/Provisional.png" class="img-fluid" alt="Provisional Tax Planner"> <em>Tool for calculating and tracking provisional tax payments throughout the fiscal year.</em></p>
+<p><img src="./images/Provisional.png" class="img-fluid" alt="Provisional Tax Planner"> <em>Specialized tool for calculating and tracking provisional tax payments throughout the fiscal year with due date management.</em></p>
 </section>
 <section id="profile-management" class="level2" data-number="6.6">
 <h2 data-number="6.6" class="anchored" data-anchor-id="profile-management"><span class="header-section-number">6.6</span> Profile Management</h2>
-<p><img src="./images/Profile.png" class="img-fluid" alt="Profile Management"> <em>User profile interface for managing personal tax information and preferences.</em></p>
+<p><img src="./images/Profile.png" class="img-fluid" alt="Profile Management"> <em>User profile interface for managing personal tax information, provisional taxpayer status, and account preferences.</em></p>
 </section>
 </section>
-<section id="future-enhancements" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Future Enhancements</h1>
+<section id="technical-architecture" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Technical Architecture</h1>
+<section id="backend-architecture" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="backend-architecture"><span class="header-section-number">7.1</span> Backend Architecture</h2>
 <ul>
-<li>Mobile application for on-the-go tax management</li>
-<li>Integration with banking APIs for automated transaction import</li>
-<li>Advanced tax optimization recommendations using machine learning</li>
-<li>Multi-user accounts for tax practitioners and accountants</li>
-<li>Direct SARS e-filing integration for tax submissions</li>
+<li><strong>RESTful API Design</strong>: Clean, consistent endpoint structure following REST principles</li>
+<li><strong>Modular Code Organization</strong>: Separation of concerns with dedicated modules for authentication, tax calculations, and data management</li>
+<li><strong>Async Processing</strong>: Non-blocking operations for web scraping and external API calls</li>
+<li><strong>Database Abstraction</strong>: SQLAlchemy ORM with migration support for schema evolution</li>
+<li><strong>Error Handling</strong>: Comprehensive exception management with structured error responses</li>
+</ul>
+</section>
+<section id="frontend-architecture" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="frontend-architecture"><span class="header-section-number">7.2</span> Frontend Architecture</h2>
+<ul>
+<li><strong>Component-Based Design</strong>: Reusable React components with clear separation of concerns</li>
+<li><strong>State Management</strong>: Context API for global state with local component state for UI interactions</li>
+<li><strong>Responsive Design</strong>: Mobile-first Tailwind CSS implementation for all screen sizes</li>
+<li><strong>Data Visualization</strong>: Interactive charts and graphs using Recharts library</li>
+<li><strong>API Integration</strong>: Centralized Axios configuration with error handling and retry logic</li>
+</ul>
+</section>
+<section id="security-implementation" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="security-implementation"><span class="header-section-number">7.3</span> Security Implementation</h2>
+<ul>
+<li><strong>Authentication Flow</strong>: JWT tokens with HTTPBearer security and automatic token refresh</li>
+<li><strong>Password Security</strong>: Bcrypt hashing with salt for secure password storage</li>
+<li><strong>Input Sanitization</strong>: Comprehensive validation at both API and database levels</li>
+<li><strong>CORS Configuration</strong>: Secure cross-origin resource sharing with whitelisted domains</li>
+<li><strong>Rate Limiting</strong>: API endpoint protection against abuse and DDoS attacks</li>
+</ul>
+</section>
+</section>
+<section id="future-enhancements" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Future Enhancements</h1>
+<ul>
+<li><p><strong>Rate Limiting</strong>: Actually implement rate limiting</p></li>
+<li><p><strong>Password Updates</strong>: Updating profile data is not fully supported yet</p></li>
+<li><p><strong>Improve Standardization</strong>: For logging, error handling, user input sanitization</p></li>
+<li><p><strong>Improve Token Validation</strong></p></li>
+<li><p><strong>Complete Docstrings</strong></p></li>
+<li><p><strong>Write More Tests</strong></p></li>
+<li><p><strong>Mobile Application</strong>: React Native app for iOS and Android with offline capability</p></li>
+<li><p><strong>Advanced Reporting</strong>: PDF generation for tax reports and provisional tax statements</p></li>
+<li><p><strong>Email Notifications</strong>: Automated reminders for provisional tax due dates and tax season</p></li>
+<li><p><strong>Enhanced Security</strong>: Two-factor authentication and advanced session management</p></li>
+<li><p><strong>Banking Integration</strong>: Direct API connections with South African banks for automatic transaction import</p></li>
+<li><p><strong>Advanced Analytics</strong>: Machine learning-powered tax optimization recommendations</p></li>
+<li><p><strong>Multi-User Support</strong>: Family and business account management with role-based permissions</p></li>
+<li><p><strong>Tax Practitioner Features</strong>: Professional tools for accountants and tax consultants</p></li>
+<li><p><strong>SARS e-Filing Integration</strong>: Direct submission of tax returns through official SARS channels</p></li>
+<li><p><strong>AI-Powered Insights</strong>: Intelligent tax planning recommendations based on financial patterns</p></li>
+<li><p><strong>Expanded Tax Types</strong>: Support for additional tax types including CGT, estate duty, and VAT</p></li>
+<li><p><strong>Enterprise Features</strong>: Multi-company management for large organizations and tax practitioners</p></li>
 </ul>
 </section>
 

@@ -11,17 +11,17 @@ This document provides detailed information about the Second Certainty Tax API e
 
 For interactive API documentation:
 
-- **Swagger UI**: `https://second-certainty-api.onrender.com/api/docs/docs`
-- **ReDoc**: `https://second-certainty-api.onrender.com/api/docs/redoc`
+- **Swagger UI**: `https://second-certainty-api.onrender.com/api/docs`
+- **ReDoc**: `https://second-certainty-api.onrender.com/api/redoc`
 
 ## Authentication
 
-The API uses JWT (JSON Web Token) for authentication.
+The API uses JWT (JSON Web Token) for authentication with HTTPBearer security scheme.
 
 ### Register a User
 
-```
-POST /auth/register
+```http
+POST /api/auth/register
 ```
 
 **Request Body:**
@@ -41,19 +41,50 @@ POST /auth/register
 
 ```json
 {
-  "message": "User created successfully"
+  "message": "User created successfully",
+  "user_id": 1
 }
 ```
 
-### Get Access Token
+### Login (JSON)
 
-```
-POST /auth/token
+```http
+POST /api/auth/login
 ```
 
 **Request Body:**
 
-Form data with:
+```json
+{
+  "email": "user@example.com",
+  "password": "secure_password"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "token_type": "bearer",
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "name": "John",
+    "surname": "Doe",
+    "is_provisional_taxpayer": false,
+    "is_admin": false
+  }
+}
+```
+
+### Login (OAuth2 Compatible)
+
+```http
+POST /api/auth/token
+```
+
+**Request Body (Form Data):**
 - `username`: User's email
 - `password`: User's password
 
@@ -66,23 +97,87 @@ Form data with:
 }
 ```
 
-### Authentication Header
+### Get Current User
 
-For all protected endpoints, include the token in the Authorization header:
+```http
+GET /api/auth/me
+```
 
+**Headers:**
 ```
 Authorization: Bearer {access_token}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "id": 1,
+  "email": "user@example.com",
+  "name": "John",
+  "surname": "Doe",
+  "date_of_birth": "1980-01-01",
+  "is_provisional_taxpayer": false,
+  "is_admin": false,
+  "created_at": "2025-01-01"
+}
+```
+
+### Update Profile
+
+```http
+PUT /api/auth/profile
+```
+
+**Request Body (all fields optional):**
+
+```json
+{
+  "name": "John",
+  "surname": "Smith",
+  "date_of_birth": "1980-01-01",
+  "is_provisional_taxpayer": true
+}
+```
+
+### Change Password
+
+```http
+PUT /api/auth/change-password
+```
+
+**Request Body:**
+
+```json
+{
+  "current_password": "old_password",
+  "new_password": "new_secure_password"
+}
+```
+
+### Logout
+
+```http
+POST /api/auth/logout
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "message": "Successfully logged out"
+}
 ```
 
 ## Tax Calculation Endpoints
 
 ### Get Tax Brackets
 
-```
-GET /tax/tax-brackets/
+```http
+GET /api/tax/tax-brackets/
 ```
 
-Query Parameters:
+**Query Parameters:**
 - `tax_year` (optional): Tax year in format "YYYY-YYYY" (default: current tax year)
 
 **Response (200 OK):**
@@ -102,15 +197,14 @@ Query Parameters:
     "rate": 0.26,
     "base_amount": 42678,
     "tax_year": "2024-2025"
-  },
-  ...
+  }
 ]
 ```
 
 ### Get Deductible Expense Types
 
-```
-GET /tax/deductible-expenses/
+```http
+GET /api/tax/deductible-expenses/
 ```
 
 **Response (200 OK):**
@@ -122,16 +216,16 @@ GET /tax/deductible-expenses/
     "name": "Retirement Annuity Contributions",
     "description": "Contributions to retirement annuities",
     "max_deduction": 350000,
-    "max_percentage": 27.5
-  },
-  ...
+    "max_percentage": 27.5,
+    "is_active": true
+  }
 ]
 ```
 
 ### Add Income Source
 
-```
-POST /tax/users/{user_id}/income/
+```http
+POST /api/tax/users/{user_id}/income/
 ```
 
 **Request Body:**
@@ -157,17 +251,18 @@ POST /tax/users/{user_id}/income/
   "annual_amount": 600000,
   "is_paye": true,
   "tax_year": "2024-2025",
-  "created_at": "2025-05-14"
+  "created_at": "2025-05-14",
+  "updated_at": "2025-05-14"
 }
 ```
 
 ### Get Income Sources
 
-```
-GET /tax/users/{user_id}/income/
+```http
+GET /api/tax/users/{user_id}/income/
 ```
 
-Query Parameters:
+**Query Parameters:**
 - `tax_year` (optional): Tax year in format "YYYY-YYYY"
 
 **Response (200 OK):**
@@ -182,24 +277,24 @@ Query Parameters:
     "annual_amount": 600000,
     "is_paye": true,
     "tax_year": "2024-2025",
-    "created_at": "2025-05-14"
-  },
-  ...
+    "created_at": "2025-05-14",
+    "updated_at": "2025-05-14"
+  }
 ]
 ```
 
 ### Delete Income Source
 
-```
-DELETE /tax/users/{user_id}/income/{income_id}
+```http
+DELETE /api/tax/users/{user_id}/income/{income_id}
 ```
 
 **Response (204 No Content)**
 
 ### Add Expense
 
-```
-POST /tax/users/{user_id}/expenses/
+```http
+POST /api/tax/users/{user_id}/expenses/
 ```
 
 **Request Body:**
@@ -207,7 +302,7 @@ POST /tax/users/{user_id}/expenses/
 ```json
 {
   "expense_type_id": 1,
-  "description": "Monthly contribution",
+  "description": "Monthly RA contribution",
   "amount": 24000,
   "tax_year": "2024-2025"
 }
@@ -220,20 +315,28 @@ POST /tax/users/{user_id}/expenses/
   "id": 1,
   "user_id": 1,
   "expense_type_id": 1,
-  "description": "Monthly contribution",
+  "description": "Monthly RA contribution",
   "amount": 24000,
   "tax_year": "2024-2025",
-  "created_at": "2025-05-14"
+  "created_at": "2025-05-14",
+  "expense_type": {
+    "id": 1,
+    "name": "Retirement Annuity Contributions",
+    "description": "Contributions to retirement annuities",
+    "max_deduction": 350000,
+    "max_percentage": 27.5,
+    "is_active": true
+  }
 }
 ```
 
 ### Get Expenses
 
-```
-GET /tax/users/{user_id}/expenses/
+```http
+GET /api/tax/users/{user_id}/expenses/
 ```
 
-Query Parameters:
+**Query Parameters:**
 - `tax_year` (optional): Tax year in format "YYYY-YYYY"
 
 **Response (200 OK):**
@@ -249,32 +352,32 @@ Query Parameters:
       "name": "Retirement Annuity Contributions",
       "description": "Contributions to retirement annuities",
       "max_deduction": 350000,
-      "max_percentage": 27.5
+      "max_percentage": 27.5,
+      "is_active": true
     },
-    "description": "Monthly contribution",
+    "description": "Monthly RA contribution",
     "amount": 24000,
     "tax_year": "2024-2025",
     "created_at": "2025-05-14"
-  },
-  ...
+  }
 ]
 ```
 
 ### Delete Expense
 
-```
-DELETE /tax/users/{user_id}/expenses/{expense_id}
+```http
+DELETE /api/tax/users/{user_id}/expenses/{expense_id}
 ```
 
 **Response (204 No Content)**
 
 ### Calculate Tax Liability
 
-```
-GET /tax/users/{user_id}/tax-calculation/
+```http
+GET /api/tax/users/{user_id}/tax-calculation/
 ```
 
-Query Parameters:
+**Query Parameters:**
 - `tax_year` (optional): Tax year in format "YYYY-YYYY"
 
 **Response (200 OK):**
@@ -285,50 +388,73 @@ Query Parameters:
   "taxable_income": 576000,
   "tax_before_rebates": 176030,
   "rebates": 17235,
-  "medical_credits": 4164,
+  "medical_credits": 347,
   "final_tax": 154631,
   "effective_tax_rate": 0.2686,
-  "monthly_tax_rate": 0.0243
+  "monthly_tax_rate": 0.0215
 }
 ```
 
-### Calculate Provisional Tax
+### Calculate Custom Tax Scenario
 
-```
-GET /tax/users/{user_id}/provisional-tax/
+```http
+POST /api/tax/users/{user_id}/custom-tax-calculation/
 ```
 
-Query Parameters:
+**Request Body:**
+
+```json
+{
+  "income": 600000,
+  "age": 35,
+  "expenses": {
+    "retirement_annuity": 24000,
+    "medical_expenses": 5000
+  }
+}
+```
+
+**Query Parameters:**
 - `tax_year` (optional): Tax year in format "YYYY-YYYY"
 
 **Response (200 OK):**
 
 ```json
 {
-  "annual_tax": 154631,
-  "first_payment": 77315.5,
-  "second_payment": 77315.5,
-  "final_payment": 0
+  "gross_income": 600000,
+  "taxable_income": 571000,
+  "tax_before_rebates": 174930,
+  "rebates": 17235,
+  "medical_credits": 347,
+  "final_tax": 153561,
+  "effective_tax_rate": 0.2689,
+  "monthly_tax_rate": 0.0213
 }
 ```
 
-### Update Tax Data
+### Calculate Provisional Tax
 
+```http
+GET /api/tax/users/{user_id}/provisional-tax/
 ```
-POST /tax/update-tax-data/
-```
+
+**Query Parameters:**
+- `tax_year` (optional): Tax year in format "YYYY-YYYY"
 
 **Response (200 OK):**
 
 ```json
 {
-  "status": "success",
-  "data": {
-    "tax_year": "2024-2025",
-    "brackets": [...],
-    "rebates": {...},
-    "thresholds": {...},
-    "medical_credits": {...}
+  "total_tax": 154631,
+  "taxable_income": 576000,
+  "effective_tax_rate": 0.2686,
+  "first_payment": {
+    "amount": 77315.5,
+    "due_date": "2025-08-31"
+  },
+  "second_payment": {
+    "amount": 77315.5,
+    "due_date": "2026-02-28"
   }
 }
 ```
@@ -337,13 +463,18 @@ POST /tax/update-tax-data/
 
 ### Update Tax Data (Admin Only)
 
-```
-POST /admin/update-tax-data
+```http
+POST /api/admin/update-tax-data
 ```
 
-Query Parameters:
+**Query Parameters:**
 - `force` (optional): Override existing data (default: false)
 - `year` (optional): Tax year to update (default: current)
+
+**Headers:**
+```
+Authorization: Bearer {admin_access_token}
+```
 
 **Response (200 OK):**
 
@@ -355,6 +486,48 @@ Query Parameters:
 }
 ```
 
+## Health Check Endpoints
+
+### Root Endpoint
+
+```http
+GET /
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "app_name": "Second Certainty",
+  "version": "1.0.0",
+  "message": "Welcome to the Second Certainty Tax API"
+}
+```
+
+### Health Check
+
+```http
+GET /api/health
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-06-18T12:34:56.789Z",
+  "version": "1.0.0",
+  "database": {
+    "status": "healthy",
+    "error": null
+  },
+  "environment": {
+    "status": "healthy",
+    "missing": null
+  }
+}
+```
+
 ## Error Responses
 
 The API returns standard HTTP status codes:
@@ -363,211 +536,68 @@ The API returns standard HTTP status codes:
 - **401 Unauthorized**: Missing or invalid authentication token
 - **403 Forbidden**: Authenticated user doesn't have permission
 - **404 Not Found**: Resource not found
+- **422 Unprocessable Entity**: Validation errors
 - **500 Internal Server Error**: Server-side error
 
-Error response body:
+### Error Response Format
 
 ```json
 {
-  "detail": "Error message"
+  "detail": "Error message describing what went wrong"
 }
 ```
 
-## Data Models
-
-### User Profile
+### Validation Error Response
 
 ```json
 {
-  "id": 1,
-  "email": "user@example.com",
-  "name": "John",
-  "surname": "Doe",
-  "date_of_birth": "1980-01-01",
-  "is_provisional_taxpayer": false,
-  "is_admin": false,
-  "created_at": "2025-05-01",
-  "updated_at": "2025-05-01"
+  "detail": [
+    {
+      "loc": ["body", "email"],
+      "msg": "field required",
+      "type": "value_error.missing"
+    }
+  ]
 }
 ```
 
-### Income Source
+## Authentication
 
-```json
-{
-  "id": 1,
-  "user_id": 1,
-  "source_type": "Salary",
-  "description": "Main employment",
-  "annual_amount": 600000,
-  "is_paye": true,
-  "tax_year": "2024-2025",
-  "created_at": "2025-05-01",
-  "updated_at": "2025-05-01"
-}
+All protected endpoints require a valid JWT token in the Authorization header:
+
+```
+Authorization: Bearer {access_token}
 ```
 
-### Expense
-
-```json
-{
-  "id": 1,
-  "user_id": 1,
-  "expense_type_id": 1,
-  "expense_type": {
-    "id": 1,
-    "name": "Retirement Annuity Contributions",
-    "description": "Contributions to retirement annuities",
-    "max_deduction": 350000,
-    "max_percentage": 27.5
-  },
-  "description": "Monthly contribution",
-  "amount": 24000,
-  "tax_year": "2024-2025",
-  "created_at": "2025-05-01",
-  "updated_at": "2025-05-01"
-}
-```
-
-### Tax Bracket
-
-```json
-{
-  "lower_limit": 1,
-  "upper_limit": 237100,
-  "rate": 0.18,
-  "base_amount": 0,
-  "tax_year": "2024-2025"
-}
-```
-
-### Tax Rebate
-
-```json
-{
-  "primary": 17235,
-  "secondary": 9444,
-  "tertiary": 3145,
-  "tax_year": "2024-2025"
-}
-```
-
-### Tax Threshold
-
-```json
-{
-  "below_65": 95750,
-  "age_65_to_74": 148217,
-  "age_75_plus": 165689,
-  "tax_year": "2024-2025"
-}
-```
-
-### Medical Tax Credit
-
-```json
-{
-  "main_member": 347,
-  "additional_member": 347,
-  "tax_year": "2024-2025"
-}
-```
+Tokens expire after 7 days (10080 minutes) by default.
 
 ## Rate Limiting
 
-The API implements basic rate limiting to prevent abuse:
+The API implements rate limiting:
 
-- 100 requests per minute per IP address
-- 1000 requests per hour per IP address
+- 100 requests per minute for general endpoints
+- 5 requests per minute for authentication endpoints
 
 Exceeding these limits will result in a 429 Too Many Requests response.
 
-## Pagination
+## Tax Year Format
 
-List endpoints support pagination via query parameters:
+Tax years are represented in the format "YYYY-YYYY" (e.g., "2024-2025").
+The South African tax year runs from March 1 to February 28/29 of the following year.
 
-- `skip`: Number of items to skip
-- `limit`: Maximum number of items to return
+## User Authorization
 
-Example:
-
-```
-GET /tax/users/{user_id}/income/?skip=0&limit=10
-```
-
-## API Versioning
-
-The current API version is v1, which is implied in the base URL. Future versions will be explicitly versioned:
-
-```
-/api/v2/...
-```
+Users can only access their own data. Attempting to access another user's data will result in a 403 Forbidden response, unless the user has admin privileges.
 
 ## CORS Support
 
-The API supports Cross-Origin Resource Sharing (CORS) for the following origins:
+The API supports Cross-Origin Resource Sharing (CORS) for:
 
 - Development: `http://localhost:3000`
 - Production: `https://second-certainty.onrender.com`
 
-## Client Implementation Examples
+## OpenAPI Schema
 
-### JavaScript (Axios)
-
-```javascript
-// Get access token
-const getToken = async () => {
-  const response = await axios.post('https://second-certainty-api.onrender.com/api/auth/token', 
-    new URLSearchParams({
-      'username': 'user@example.com',
-      'password': 'secure_password'
-    }),
-    {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    }
-  );
-  return response.data.access_token;
-};
-
-// Get tax calculation
-const getTaxCalculation = async (userId, token) => {
-  const response = await axios.get(
-    `https://second-certainty-api.onrender.com/api/tax/users/${userId}/tax-calculation/`,
-    {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }
-  );
-  return response.data;
-};
-```
-
-### Python (Requests)
-
-```python
-import requests
-
-# Get access token
-def get_token():
-    response = requests.post(
-        'https://second-certainty-api.onrender.com/api/auth/token',
-        data={
-            'username': 'user@example.com',
-            'password': 'secure_password'
-        }
-    )
-    return response.json()['access_token']
-
-# Get tax calculation
-def get_tax_calculation(user_id, token):
-    response = requests.get(
-        f'https://second-certainty-api.onrender.com/api/tax/users/{user_id}/tax-calculation/',
-        headers={
-            'Authorization': f'Bearer {token}'
-        }
-    )
-    return response.json()
-```
+The complete OpenAPI schema is available at:
+- Development: `http://localhost:8000/api/openapi.json`
+- Production: `https://second-certainty-api.onrender.com/api/openapi.json`

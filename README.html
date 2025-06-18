@@ -94,40 +94,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Frontend Application</strong>: <a href="https://second-certainty.onrender.com">https://second-certainty.onrender.com</a></li>
 <li><strong>Backend API</strong>: <a href="https://second-certainty-api.onrender.com">https://second-certainty-api.onrender.com</a></li>
 <li><strong>API Documentation</strong>: <a href="https://second-certainty-api.onrender.com/api/docs">https://second-certainty-api.onrender.com/api/docs</a></li>
-<li><strong>Frontend Documentation</strong>: <a href="https://github.com/ces0491/second-certainty-frontend#second-certainty---frontend">https://github.com/ces0491/second-certainty-frontend#second-certainty—frontend</a></li>
+<li><strong>Frontend Repository</strong>: <a href="https://github.com/ces0491/second-certainty-frontend">https://github.com/ces0491/second-certainty-frontend</a></li>
 </ul>
 <blockquote class="blockquote">
-<p><strong>Note</strong>: The application is deployed on Render’s free tier, which may result in slow initial load times after periods of inactivity.</p>
+<p><strong>Note</strong>: The application is deployed on Render’s free tier, which may result in slow initial load times after periods of inactivity. When logging in, please note that you may need to retry after <code>No response from server</code> message - this is a function of deployment on Render’s free tier.</p>
 </blockquote>
 </section>
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
 <p>The Second Certainty Tax Tool addresses one of life’s two certainties—taxes—by providing individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress.</p>
-<p>Our application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts quarterly payments, and provides optimization strategies—all in real-time.</p>
+<p>Our application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts provisional payments, and provides optimization strategies—all in real-time.</p>
 </section>
 <section id="features" class="level2">
 <h2 class="anchored" data-anchor-id="features">Features</h2>
+<section id="core-functionality" class="level3">
+<h3 class="anchored" data-anchor-id="core-functionality">Core Functionality</h3>
 <ul>
-<li><strong>User Authentication</strong>: Secure JWT-based authentication system</li>
-<li><strong>Profile Management</strong>: Create and manage user tax profiles</li>
+<li><strong>User Authentication</strong>: Secure JWT-based authentication system with HTTPBearer tokens</li>
+<li><strong>Profile Management</strong>: Create and manage user tax profiles with provisional taxpayer status</li>
 <li><strong>Income Tracking</strong>: Log multiple income sources (salary, freelance, investments, etc.)</li>
-<li><strong>Expense Management</strong>: Record and categorize tax-deductible expenses</li>
-<li><strong>Real-time Tax Liability</strong>: Calculate current tax position at any time</li>
-<li><strong>Tax Data</strong>: Up-to-date tax brackets, rebates, thresholds</li>
-<li><strong>SARS Integration</strong>: Automatic scraping of latest tax rates from SARS website</li>
-<li><strong>Provisional Tax</strong>: Calculate and track provisional tax payments</li>
-<li><strong>Data Validation</strong>: Comprehensive input validation and error handling</li>
-<li><strong>Visualizations</strong>: Charts and graphs for income, expenses, and tax projections</li>
+<li><strong>Expense Management</strong>: Record and categorize tax-deductible expenses with predefined types</li>
+<li><strong>Real-time Tax Calculation</strong>: Calculate current tax position at any time</li>
+<li><strong>Provisional Tax</strong>: Calculate and track provisional tax payments for eligible taxpayers</li>
 </ul>
 </section>
-<section id="documentation" class="level2">
-<h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
-<p>For more detailed information, please refer to the following documentation:</p>
+<section id="tax-data-management" class="level3">
+<h3 class="anchored" data-anchor-id="tax-data-management">Tax Data Management</h3>
 <ul>
-<li><a href="./docs/INSTALLATION.md">Installation Guide</a>: Setup instructions for local development</li>
-<li><a href="./docs/DEPLOYMENT.md">Deployment Guide</a>: Instructions for deploying to production</li>
-<li><a href="./docs/API.md">API Documentation</a>: Details on available endpoints and usage</li>
+<li><strong>Up-to-date Tax Information</strong>: Current tax brackets, rebates, thresholds for South Africa</li>
+<li><strong>SARS Integration</strong>: Automatic scraping of latest tax rates from SARS website with multiple fallback strategies</li>
+<li><strong>Historical Data</strong>: Support for multiple tax years with automatic tax year detection</li>
+<li><strong>Manual Data Entry</strong>: Fallback to manual tax data when scraping fails</li>
 </ul>
+</section>
+<section id="advanced-features" class="level3">
+<h3 class="anchored" data-anchor-id="advanced-features">Advanced Features</h3>
+<ul>
+<li><strong>Data Validation</strong>: Comprehensive input validation and error handling</li>
+<li><strong>Database Migrations</strong>: Alembic-powered database schema management</li>
+<li><strong>Background Tasks</strong>: Asynchronous tax data updates</li>
+<li><strong>Admin Features</strong>: Administrative endpoints for tax data management</li>
+<li><strong>Comprehensive Logging</strong>: Structured logging with file rotation</li>
+</ul>
+</section>
 </section>
 <section id="technology-stack" class="level2">
 <h2 class="anchored" data-anchor-id="technology-stack">Technology Stack</h2>
@@ -136,13 +145,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><strong>Framework</strong>: FastAPI 0.110.1</li>
 <li><strong>ORM</strong>: SQLAlchemy 2.0.40</li>
-<li><strong>Validation</strong>: Pydantic 2.6.0</li>
-<li><strong>Database</strong>: PostgreSQL (or SQLite for development)</li>
-<li><strong>Authentication</strong>: JWT with password hashing</li>
-<li><strong>Testing</strong>: Pytest 7.4.4</li>
+<li><strong>Validation</strong>: Pydantic 2.6.0 with pydantic-settings 2.2.1</li>
+<li><strong>Database</strong>: PostgreSQL (production), SQLite (development)</li>
+<li><strong>Authentication</strong>: JWT with python-jose[cryptography] 3.3.0 and passlib[bcrypt] 1.7.4</li>
+<li><strong>Testing</strong>: Pytest 7.4.4 with pytest-asyncio 0.23.5</li>
 <li><strong>Documentation</strong>: OpenAPI (Swagger UI)</li>
-<li><strong>HTTP Client</strong>: HTTPX 0.27.0</li>
+<li><strong>HTTP Client</strong>: HTTPX 0.27.0 for async web scraping</li>
 <li><strong>Server</strong>: Uvicorn 0.29.0</li>
+<li><strong>Web Scraping</strong>: BeautifulSoup4 4.12.3 with lxml 5.1.0</li>
+<li><strong>Database Migrations</strong>: Alembic 1.13.1</li>
 </ul>
 </section>
 <section id="frontend" class="level3">
@@ -157,11 +168,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Build Tools</strong>: Create React App</li>
 </ul>
 </section>
+<section id="development-tools" class="level3">
+<h3 class="anchored" data-anchor-id="development-tools">Development Tools</h3>
+<ul>
+<li><strong>Code Formatting</strong>: Black 24.2.0, isort 5.13.2</li>
+<li><strong>Linting</strong>: Flake8 7.0.0</li>
+<li><strong>Environment</strong>: python-dotenv 1.0.1</li>
+</ul>
+</section>
 </section>
 <section id="quick-start" class="level2">
 <h2 class="anchored" data-anchor-id="quick-start">Quick Start</h2>
-<section id="backend-1" class="level3">
-<h3 class="anchored" data-anchor-id="backend-1">Backend</h3>
+<section id="backend-setup" class="level3">
+<h3 class="anchored" data-anchor-id="backend-setup">Backend Setup</h3>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clone the repository</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/ces0491/second-certainty.git</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> second-certainty</span>
@@ -174,39 +193,213 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create environment file</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> .env.example .env</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Edit .env with your configuration</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> env.example .env</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Edit .env with your configuration (see Environment Variables section)</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize database</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> init_db.py</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/seed_data.py</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Start development server</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ex">uvicorn</span> app.main:app <span class="at">--reload</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Seed initial data</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/seed_data.py</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Start development server</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ex">uvicorn</span> app.main:app <span class="at">--reload</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="frontend-1" class="level3">
-<h3 class="anchored" data-anchor-id="frontend-1">Frontend</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Navigate to frontend directory</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> path/to/frontend</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Start development server</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> start</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>See the <a href="./docs/INSTALLATION.md">Installation Guide</a> for more detailed instructions.</p>
+<section id="frontend-setup" class="level3">
+<h3 class="anchored" data-anchor-id="frontend-setup">Frontend Setup</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clone frontend repository</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/ces0491/second-certainty-frontend.git</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> second-certainty-frontend</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create environment file</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"REACT_APP_API_BASE_URL=http://localhost:8000/api"</span> <span class="op">&gt;</span> .env.local</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Start development server</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> start</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
+</section>
+<section id="environment-variables" class="level2">
+<h2 class="anchored" data-anchor-id="environment-variables">Environment Variables</h2>
+<p>Create a <code>.env</code> file in the root directory with the following variables:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Database Configuration</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="va">DATABASE_URL</span><span class="op">=</span>sqlite:///./second_certainty.db  <span class="co"># For development</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># DATABASE_URL=postgresql://username:password@localhost:5432/second_certainty  # For production</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Security Configuration</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="va">SECRET_KEY</span><span class="op">=</span>your-super-secret-key-change-this-in-production</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="va">ACCESS_TOKEN_EXPIRE_MINUTES</span><span class="op">=</span>10080  <span class="co"># 1 week</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Application Configuration</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="va">APP_NAME</span><span class="op">=</span><span class="st">"Second Certainty"</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="va">APP_VERSION</span><span class="op">=</span><span class="st">"1.0.0"</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="va">API_PREFIX</span><span class="op">=</span><span class="st">"/api"</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="va">DEBUG</span><span class="op">=</span>True</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="va">ENVIRONMENT</span><span class="op">=</span>development</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># SARS Configuration</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="va">SARS_WEBSITE_URL</span><span class="op">=</span>https://www.sars.gov.za</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># CORS Configuration</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="va">CORS_ORIGINS</span><span class="op">=</span>http://localhost:3000</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Logging Configuration</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="va">LOG_LEVEL</span><span class="op">=</span>INFO</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="va">LOG_FILE</span><span class="op">=</span>logs/app.log</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co"># File Upload Configuration</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="va">MAX_FILE_SIZE</span><span class="op">=</span>10485760  <span class="co"># 10MB</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="va">UPLOAD_DIR</span><span class="op">=</span>uploads</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="va">ALLOWED_FILE_TYPES</span><span class="op">=</span>.pdf,.jpg,.jpeg,.png</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Rate Limiting</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="va">ENABLE_RATE_LIMITING</span><span class="op">=</span>True</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="va">DEFAULT_RATE_LIMIT</span><span class="op">=</span>100</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="va">AUTH_RATE_LIMIT</span><span class="op">=</span>5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="api-endpoints" class="level2">
+<h2 class="anchored" data-anchor-id="api-endpoints">API Endpoints</h2>
+<section id="authentication" class="level3">
+<h3 class="anchored" data-anchor-id="authentication">Authentication</h3>
+<ul>
+<li><code>POST /api/auth/register</code> - Register new user</li>
+<li><code>POST /api/auth/login</code> - Login with email/password (JSON)</li>
+<li><code>POST /api/auth/token</code> - OAuth2 compatible login</li>
+<li><code>GET /api/auth/me</code> - Get current user profile</li>
+<li><code>PUT /api/auth/profile</code> - Update user profile</li>
+<li><code>PUT /api/auth/change-password</code> - Change password</li>
+<li><code>POST /api/auth/logout</code> - Logout endpoint</li>
+</ul>
+</section>
+<section id="tax-management" class="level3">
+<h3 class="anchored" data-anchor-id="tax-management">Tax Management</h3>
+<ul>
+<li><code>GET /api/tax/tax-brackets/</code> - Get tax brackets for tax year</li>
+<li><code>GET /api/tax/deductible-expenses/</code> - Get deductible expense types</li>
+<li><code>POST /api/tax/users/{user_id}/income/</code> - Add income source</li>
+<li><code>GET /api/tax/users/{user_id}/income/</code> - Get user income sources</li>
+<li><code>DELETE /api/tax/users/{user_id}/income/{income_id}</code> - Delete income source</li>
+<li><code>POST /api/tax/users/{user_id}/expenses/</code> - Add expense</li>
+<li><code>GET /api/tax/users/{user_id}/expenses/</code> - Get user expenses</li>
+<li><code>DELETE /api/tax/users/{user_id}/expenses/{expense_id}</code> - Delete expense</li>
+<li><code>GET /api/tax/users/{user_id}/tax-calculation/</code> - Calculate tax liability</li>
+<li><code>GET /api/tax/users/{user_id}/provisional-tax/</code> - Calculate provisional tax</li>
+<li><code>POST /api/tax/users/{user_id}/custom-tax-calculation/</code> - Custom tax scenarios</li>
+</ul>
+</section>
+<section id="administrative" class="level3">
+<h3 class="anchored" data-anchor-id="administrative">Administrative</h3>
+<ul>
+<li><code>POST /api/admin/update-tax-data</code> - Update tax data from SARS (Admin only)</li>
+</ul>
+</section>
+<section id="health-status" class="level3">
+<h3 class="anchored" data-anchor-id="health-status">Health &amp; Status</h3>
+<ul>
+<li><code>GET /</code> - Root endpoint with app information</li>
+<li><code>GET /api/health</code> - Health check with database status</li>
+</ul>
+</section>
+</section>
+<section id="database-models" class="level2">
+<h2 class="anchored" data-anchor-id="database-models">Database Models</h2>
+<section id="core-models" class="level3">
+<h3 class="anchored" data-anchor-id="core-models">Core Models</h3>
+<ul>
+<li><strong>UserProfile</strong>: User accounts with authentication and tax preferences</li>
+<li><strong>IncomeSource</strong>: Multiple income streams per user</li>
+<li><strong>UserExpense</strong>: Tax-deductible expenses with categorization</li>
+<li><strong>DeductibleExpenseType</strong>: Predefined expense categories with limits</li>
+</ul>
+</section>
+<section id="tax-data-models" class="level3">
+<h3 class="anchored" data-anchor-id="tax-data-models">Tax Data Models</h3>
+<ul>
+<li><strong>TaxBracket</strong>: Progressive tax brackets by year</li>
+<li><strong>TaxRebate</strong>: Age-based tax rebates (primary, secondary, tertiary)</li>
+<li><strong>TaxThreshold</strong>: Tax-free thresholds by age group</li>
+<li><strong>MedicalTaxCredit</strong>: Medical scheme fee tax credits</li>
+<li><strong>TaxCalculation</strong>: Stored tax calculation results</li>
+</ul>
+</section>
+</section>
+<section id="database-management" class="level2">
+<h2 class="anchored" data-anchor-id="database-management">Database Management</h2>
+<section id="migrations" class="level3">
+<h3 class="anchored" data-anchor-id="migrations">Migrations</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create new migration</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">alembic</span> revision <span class="at">--autogenerate</span> <span class="at">-m</span> <span class="st">"description"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply migrations</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">alembic</span> upgrade head</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check migration status</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ex">alembic</span> current</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ex">alembic</span> history</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="administrative-tools" class="level3">
+<h3 class="anchored" data-anchor-id="administrative-tools">Administrative Tools</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create admin user</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> create_admin.py admin@example.com password123 Admin User</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List all users</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> list_users.py</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Debug user profile</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> debug_user_profile.py <span class="op">&lt;</span>user_id<span class="op">&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Update tax data manually</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> fetch_tax_data.py <span class="at">--year</span> 2024-2025 <span class="at">--force</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="testing" class="level2">
+<h2 class="anchored" data-anchor-id="testing">Testing</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run all tests</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pytest</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run with coverage</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pytest</span> <span class="at">--cov</span><span class="op">=</span>app tests/</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run specific test file</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ex">pytest</span> tests/test_api/test_tax_calculator.py</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Run tests with verbose output</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ex">pytest</span> <span class="at">-v</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="deployment" class="level2">
+<h2 class="anchored" data-anchor-id="deployment">Deployment</h2>
+<p>The application is configured for deployment on Render.com with the following structure:</p>
+<ul>
+<li><strong>Backend</strong>: Web service with PostgreSQL database</li>
+<li><strong>Frontend</strong>: Static site deployment</li>
+<li><strong>Environment</strong>: Production configuration with appropriate CORS settings</li>
+</ul>
+<p>See <a href="./docs/DEPLOYMENT.md">DEPLOYMENT.md</a> for detailed deployment instructions.</p>
+</section>
+<section id="documentation" class="level2">
+<h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
+<p>For more detailed information, refer to:</p>
+<ul>
+<li><a href="./docs/INSTALLATION.md">Installation Guide</a>: Complete setup instructions</li>
+<li><a href="./docs/DEPLOYMENT.md">Deployment Guide</a>: Production deployment</li>
+<li><a href="./docs/API.md">API Documentation</a>: Detailed API reference</li>
+</ul>
+</section>
+<section id="contributing" class="level2">
+<h2 class="anchored" data-anchor-id="contributing">Contributing</h2>
+<ol type="1">
+<li>Fork the repository</li>
+<li>Create a feature branch (<code>git checkout -b feature/amazing-feature</code>)</li>
+<li>Commit your changes (<code>git commit -m 'Add amazing feature'</code>)</li>
+<li>Push to the branch (<code>git push origin feature/amazing-feature</code>)</li>
+<li>Open a Pull Request</li>
+</ol>
 </section>
 <section id="license" class="level2">
 <h2 class="anchored" data-anchor-id="license">License</h2>
 <p>This project is licensed under the MIT License - see the <a href="./LICENSE">LICENSE</a> file for details.</p>
-</section>
-<section id="acknowledgements" class="level2">
-<h2 class="anchored" data-anchor-id="acknowledgements">Acknowledgements</h2>
-<ul>
-<li>South African Revenue Service (SARS) for providing tax information</li>
-<li>The FastAPI team for the API framework</li>
-</ul>
 </section>
 </section>
 
