@@ -1,13 +1,16 @@
 # app/core/scraping/web_client.py
 import logging
-from typing import Any, Dict, Optional
+from typing import Optional
 import httpx
 logger = logging.getLogger(__name__)
+
+
 class SARSWebClient:
     """Client for fetching content from the SARS website."""
     SARS_BASE_URL = "https://www.sars.gov.za"
     TAX_RATES_URL = f"{SARS_BASE_URL}/tax-rates/income-tax/rates-of-tax-for-individuals/"
     ARCHIVE_URL = f"{SARS_BASE_URL}/tax-rates/archive-tax-rates/"
+
     def __init__(self, timeout: float = 30.0, max_retries: int = 3):
         """
         Initialize the SARS web client.
@@ -17,6 +20,7 @@ class SARSWebClient:
         """
         self.timeout = timeout
         self.max_retries = max_retries
+
     async def fetch_page(self, url: str) -> Optional[str]:
         """
         Fetch HTML content from a URL with retries and error handling.
@@ -47,12 +51,15 @@ class SARSWebClient:
             except Exception as e:
                 logger.error(f"Unexpected error fetching {url}: {e}")
                 return None
+
     async def fetch_current_tax_page(self) -> Optional[str]:
         """Fetch the current tax rates page."""
         return await self.fetch_page(self.TAX_RATES_URL)
+
     async def fetch_archive_page(self) -> Optional[str]:
         """Fetch the archive tax rates page."""
         return await self.fetch_page(self.ARCHIVE_URL)
+
     async def fetch_specific_archive_page(self, archive_url: str) -> Optional[str]:
         """
         Fetch a specific archive page.

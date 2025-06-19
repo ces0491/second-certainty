@@ -1,11 +1,14 @@
 # app/core/scraping/tax_repository.py
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 from sqlalchemy.orm import Session
 from app.models.tax_models import MedicalTaxCredit, TaxBracket, TaxRebate, TaxThreshold
 logger = logging.getLogger(__name__)
+
+
 class TaxDataRepository:
     """Repository for tax data database operations."""
+
     def __init__(self, db: Session):
         """
         Initialize the repository with a database session.
@@ -13,6 +16,7 @@ class TaxDataRepository:
             db: SQLAlchemy database session
         """
         self.db = db
+
     def check_tax_data_exists(self, tax_year: str) -> bool:
         """
         Check if tax data exists for a specific tax year.
@@ -23,6 +27,7 @@ class TaxDataRepository:
         """
         existing = self.db.query(TaxBracket).filter(TaxBracket.tax_year == tax_year).first()
         return existing is not None
+
     def clear_tax_data(self, tax_year: str) -> None:
         """
         Clear all tax data for a specific tax year.
@@ -34,6 +39,7 @@ class TaxDataRepository:
         self.db.query(TaxRebate).filter(TaxRebate.tax_year == tax_year).delete()
         self.db.query(TaxThreshold).filter(TaxThreshold.tax_year == tax_year).delete()
         self.db.query(MedicalTaxCredit).filter(MedicalTaxCredit.tax_year == tax_year).delete()
+
     def save_tax_data(self, data: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
         """
         Save tax data to the database.
@@ -63,6 +69,7 @@ class TaxDataRepository:
             error_message = f"Error saving tax data to database: {e}"
             logger.error(error_message)
             return False, error_message
+
     def get_previous_tax_year_data(self, previous_tax_year: str, target_tax_year: str) -> Optional[Dict[str, Any]]:
         """
         Get tax data from a previous tax year and update for a new tax year.

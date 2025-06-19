@@ -1,5 +1,5 @@
 # app/core/tax_calculator.py
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from sqlalchemy.orm import Session
 from app.models.tax_models import (
     IncomeSource,
@@ -15,6 +15,8 @@ from app.utils.logging_utils import get_logger
 from app.utils.tax_utils import calculate_age, get_tax_year
 # Get module logger
 logger = get_logger("tax_calculator")
+
+
 class TaxCalculator:
     """
     Handles all South African personal income tax calculations.
@@ -22,6 +24,7 @@ class TaxCalculator:
     def __init__(self, db: Session):
         self.db = db
         logger.debug("TaxCalculator initialized")
+
     def get_tax_brackets(self, tax_year: str) -> List[Dict[str, Any]]:
         """Get tax brackets for the specified tax year."""
         logger.debug(f"Getting tax brackets for {tax_year}")
@@ -39,6 +42,7 @@ class TaxCalculator:
         ]
         logger.debug(f"Found {len(result)} tax brackets for {tax_year}")
         return result
+
     def get_tax_rebates(self, tax_year: str) -> Dict[str, float]:
         """Get tax rebates for the specified tax year."""
         logger.debug(f"Getting tax rebates for {tax_year}")
@@ -47,6 +51,7 @@ class TaxCalculator:
             logger.warning(f"No tax rebates found for {tax_year}")
             return {"primary": 0, "secondary": 0, "tertiary": 0}
         return {"primary": rebate.primary, "secondary": rebate.secondary, "tertiary": rebate.tertiary}
+
     def get_tax_thresholds(self, tax_year: str) -> Dict[str, int]:
         """Get tax thresholds for the specified tax year."""
         logger.debug(f"Getting tax thresholds for {tax_year}")
@@ -59,6 +64,7 @@ class TaxCalculator:
             "age_65_to_74": threshold.age_65_to_74,
             "age_75_plus": threshold.age_75_plus,
         }
+
     def get_medical_tax_credits(self, tax_year: str) -> Dict[str, float]:
         """Get medical tax credits for the specified tax year."""
         logger.debug(f"Getting medical tax credits for {tax_year}")
@@ -67,6 +73,7 @@ class TaxCalculator:
             logger.warning(f"No medical tax credits found for {tax_year}")
             return {"main_member": 0, "additional_member": 0}
         return {"main_member": credit.main_member, "additional_member": credit.additional_member}
+
     def calculate_income_tax(self, taxable_income: float, tax_year: str) -> float:
         """
         Calculate income tax based on taxable income and tax brackets.
@@ -97,6 +104,7 @@ class TaxCalculator:
         tax = base_amount + (rate * (taxable_income - lower_limit))
         logger.debug(f"Calculated tax: R{tax:.2f}")
         return tax
+
     def calculate_rebate(self, age: int, tax_year: str) -> float:
         """Calculate total rebates based on age."""
         rebates = self.get_tax_rebates(tax_year)
@@ -106,11 +114,13 @@ class TaxCalculator:
         if age >= 75:
             total_rebate += rebates["tertiary"]
         return total_rebate
+
     def calculate_medical_credit(self, main_members: int, additional_members: int, tax_year: str) -> float:
         """Calculate medical scheme fee tax credits."""
         credits = self.get_medical_tax_credits(tax_year)
         total_credit = (credits["main_member"] * main_members) + (credits["additional_member"] * additional_members)
         return total_credit
+
     def calculate_tax_threshold(self, age: int, tax_year: str) -> int:
         """Get the tax threshold based on age."""
         thresholds = self.get_tax_thresholds(tax_year)
@@ -120,6 +130,7 @@ class TaxCalculator:
             return thresholds["age_65_to_74"]
         else:
             return thresholds["below_65"]
+
     def calculate_deductible_expenses(self, user_id: int, tax_year: str) -> float:
         """Calculate total deductible expenses for a user."""
         expenses = (
@@ -131,6 +142,7 @@ class TaxCalculator:
             # and their respective limits or rules
             total_deductible += expense.amount
         return total_deductible
+
     def calculate_tax_liability(self, user_id: int, tax_year: Optional[str] = None) -> Dict[str, Any]:
         """
         Calculate complete tax liability for a user.
@@ -215,6 +227,7 @@ class TaxCalculator:
             "effective_tax_rate": effective_tax_rate,
             "monthly_tax_rate": monthly_tax_rate,
         }
+
     def calculate_provisional_tax(self, user_id: int, tax_year: Optional[str] = None) -> Dict[str, Any]:
         """
         Calculate provisional tax payments for provisional taxpayers.

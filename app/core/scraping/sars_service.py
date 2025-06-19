@@ -1,6 +1,6 @@
 # app/core/scraping/sars_service.py
 import logging
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 from sqlalchemy.orm import Session
 from app.core.scraping.tax_parser import TaxDataParser
 from app.core.scraping.tax_provider import TaxDataProvider
@@ -8,11 +8,16 @@ from app.core.scraping.tax_repository import TaxDataRepository
 from app.core.scraping.web_client import SARSWebClient
 from app.utils.tax_utils import get_tax_year
 logger = logging.getLogger(__name__)
+
+
 class SARSTaxException(Exception):
     """Exception raised for errors in SARS tax data scraping."""
     pass
+
+
 class SARSDataService:
     """Service for coordinating SARS tax data scraping and storage."""
+
     def __init__(self, db: Session):
         """
         Initialize the SARS data service.
@@ -26,6 +31,7 @@ class SARSDataService:
         self.tax_provider = TaxDataProvider()
         self.success_count = 0
         self.error_count = 0
+
     async def update_tax_data(self, tax_year: Optional[str] = None, force: bool = False) -> Dict[str, Any]:
         """
         Update tax data for a specific tax year.
@@ -60,6 +66,7 @@ class SARSDataService:
         if not success:
             raise SARSTaxException(f"Failed to save tax data: {error}")
         return data
+
     async def try_current_page(self, tax_year: str) -> Optional[Dict[str, Any]]:
         """
         Try to get tax data from the current tax rates page.
@@ -100,6 +107,7 @@ class SARSDataService:
             self.error_count += 1
             logger.error(f"Error extracting tax data from current page: {e}")
             return None
+
     async def try_archive_page(self, tax_year: str) -> Optional[Dict[str, Any]]:
         """
         Try to get tax data from the archive page.
@@ -144,6 +152,7 @@ class SARSDataService:
             self.error_count += 1
             logger.error(f"Error extracting tax data from archive: {e}")
             return None
+
     async def try_previous_year_data(self, tax_year: str) -> Optional[Dict[str, Any]]:
         """
         Try to use data from the previous tax year.

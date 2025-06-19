@@ -34,14 +34,14 @@ def setup_logging(app_name="second_certainty", log_level=logging.INFO):
 
     # Create file handler for general logs
     general_log_file = log_dir / f"{app_name}.log"
-    file_handler = RotatingFileHandler(general_log_file, maxBytes=10 * 1024 * 1024, backupCount=5)  #10 MB
+    file_handler = RotatingFileHandler(general_log_file, maxBytes=10 * 1024 * 1024, backupCount=5)  # 10 MB
     file_handler.setFormatter(formatter)
     file_handler.setLevel(log_level)
     logger.addHandler(file_handler)
 
     # Create file handler for errors only
     error_log_file = log_dir / f"{app_name}_error.log"
-    error_file_handler = RotatingFileHandler(error_log_file, maxBytes=10 * 1024 * 1024, backupCount=5)  #10 MB
+    error_file_handler = RotatingFileHandler(error_log_file, maxBytes=10 * 1024 * 1024, backupCount=5)  # 10 MB
     error_file_handler.setFormatter(formatter)
     error_file_handler.setLevel(logging.ERROR)
     logger.addHandler(error_file_handler)

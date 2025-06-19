@@ -12,14 +12,8 @@ from sqlalchemy.orm import Session
 
 from app.api.routes import admin, auth, tax_calculator
 from app.core.config import engine, get_db, settings
-from app.models.tax_models import (
-    Base,
-    MedicalTaxCredit,
-    TaxBracket,
-    TaxRebate,
-    TaxThreshold,
-)
-from app.utils.logging_utils import get_logger, setup_logging
+from app.models.tax_models import Base
+from app.utils.logging_utils import setup_logging
 
 # Set up application logging
 logger = setup_logging(app_name="second_certainty", log_level=logging.DEBUG if settings.DEBUG else logging.INFO)
@@ -54,7 +48,7 @@ async def lifespan(app: FastAPI):
 
     logger.info("Application startup complete")
 
-    yield  #This is where the application runs
+    yield  # This is where the application runs
 
     # SHUTDOWN
     logger.info("Application shutting down")
@@ -78,10 +72,10 @@ Base.metadata.create_all(bind=engine)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://second-certainty.onrender.com",  #production frontend
-        "http://localhost:3000",  #development frontend
-        "http://127.0.0.1:3000",  #alternative localhost
-        "https://localhost:3000",  #HTTPS localhost
+        "https://second-certainty.onrender.com",  # production frontend
+        "http://localhost:3000",  # development frontend
+        "http://127.0.0.1:3000",  # alternative localhost
+        "https://localhost:3000",  # HTTPS localhost
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],

@@ -26,9 +26,9 @@ class TaxDataParser:
         year_end = tax_year.split("-")[1]
 
         year_patterns = [
-            f"{year_end} tax year",  #"2023 tax year"
-            f"{year_end}",  #"2022-2023"
-            f"tax year {year_end}",  #"tax year 2023"
+            f"{year_end} tax year",  # "2023 tax year"
+            f"{year_end}",  # "2022-2023"
+            f"tax year {year_end}",  # "tax year 2023"
         ]
 
         for pattern in year_patterns:
@@ -85,7 +85,7 @@ class TaxDataParser:
                 logger.info(f"Found tax brackets table: Table {i+1}")
 
                 # Extract rows from the table
-                rows = table.find_all("tr")[1:]  #Skip header row
+                rows = table.find_all("tr")[1:]  # Skip header row
 
                 for row in rows:
                     cells = row.find_all("td")

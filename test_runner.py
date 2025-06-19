@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Test runner script for Second Certainty Tax Tool.
 Run this after applying the fixes to verify everything works correctly.

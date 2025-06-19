@@ -9,6 +9,33 @@ from app.core.auth import create_access_token
 from app.core.config import get_db
 from app.main import app
 from app.models.tax_models import Base
+import pytest
+from decimal import Decimal
+
+@pytest.fixture
+def mock_tax_brackets():
+    """Fixture providing test tax brackets for 2025-2026"""
+    return [
+        {"min_income": 0, "max_income": 237100, "rate": 0.18, "base_tax": 0},
+        {"min_income": 237101, "max_income": 370500, "rate": 0.26, "base_tax": 42678},
+        {"min_income": 370501, "max_income": 512800, "rate": 0.31, "base_tax": 77362},
+        {"min_income": 512801, "max_income": 673000, "rate": 0.36, "base_tax": 121475},
+        {"min_income": 673001, "max_income": 857900, "rate": 0.39, "base_tax": 179147},
+        {"min_income": 857901, "max_income": 1817000, "rate": 0.41, "base_tax": 251258},
+        {"min_income": 1817001, "max_income": float('inf'), "rate": 0.45, "base_tax": 644489}
+    ]
+
+@pytest.fixture
+def sample_user_data():
+    """Fixture for test user data"""
+    return {
+        "email": "test@example.com",
+        "password": "testpassword123",
+        "name": "Test",
+        "surname": "User",
+        "id_number": "9001010001080",
+        "date_of_birth": "1990-01-01"
+    }
 
 #Create an in-memory SQLite database for testing
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"

@@ -10,12 +10,19 @@ def get_tax_year() -> str:
 
     Returns a string in the format "2024-2025"
     """
-    today = datetime.now()
-    # If we're in January or February, we're in the tax year that started in the previous calendar year
-    if today.month < 3:
-        return f"{current_year-1}-{current_year}"
+    now = datetime.now()
+    current_year = now.year
+
+    # South African tax year starts on March 1
+    # If current date is before March 1, we're still in the previous tax year
+    if now.month < 3:
+        tax_year_start = current_year - 1
+        tax_year_end = current_year
     else:
-        return f"{current_year}-{current_year+1}"
+        tax_year_start = current_year
+        tax_year_end = current_year + 1
+
+    return f"{tax_year_start}-{tax_year_end}"
 
 
 def calculate_age(birth_date: date) -> int:
@@ -138,4 +145,4 @@ def is_sa_citizen_from_id(id_number: str) -> bool:
         raise ValueError(error)
 
     citizenship_digit = int(id_number[10])
-    return citizenship_digit == 0  #0 = SA citizen, 1 = permanent resident
+    return citizenship_digit == 0  # 0 = SA citizen, 1 = permanent resident

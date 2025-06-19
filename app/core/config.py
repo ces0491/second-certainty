@@ -1,14 +1,16 @@
-# app/core/config.py - Fixed version
+# app/core/config.py
 import logging
 import os
 import time
-from typing import List, Optional
+from typing import Optional
 from pydantic import ConfigDict, field_validator
 from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
-from app.utils.logging_utils import get_logger, setup_logging
+from app.utils.logging_utils import setup_logging
+
+
 class Settings(BaseSettings):
     """Application settings with proper Pydantic v2 configuration."""
     # Core app settings
@@ -19,7 +21,7 @@ class Settings(BaseSettings):
     # Required settings
     DATABASE_URL: str
     SECRET_KEY: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  #1 week
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 1 week
     # SARS related settings
     SARS_WEBSITE_URL: str = "https://www.sars.gov.za"
     # Optional database settings
@@ -39,7 +41,7 @@ class Settings(BaseSettings):
     DEFAULT_RATE_LIMIT: Optional[int] = 100
     AUTH_RATE_LIMIT: Optional[int] = 5
     # File upload settings - Fixed to handle string values with comments
-    MAX_FILE_SIZE: Optional[int] = 10485760  #10MB
+    MAX_FILE_SIZE: Optional[int] = 10485760  # 10MB
     UPLOAD_DIR: Optional[str] = "uploads"
     ALLOWED_FILE_TYPES: Optional[str] = ".pdf,.jpg,.jpeg,.png"
     # Logging settings
@@ -50,6 +52,7 @@ class Settings(BaseSettings):
     # Scraping settings
     SCRAPING_TIMEOUT: Optional[int] = 30
     SCRAPING_RETRIES: Optional[int] = 3
+
     # Validator to clean up integer fields that might have comments
     @field_validator(
         "MAX_FILE_SIZE",
@@ -85,14 +88,17 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
-        extra="allow",  #Allow extra fields from environment
+        extra="allow",  # Allow extra fields from environment
     )
+
+
 # Initialize settings with error handling
 try:
     settings = Settings()
 except Exception as e:
     print(f"Error loading settings: {e}")
     print("Creating minimal settings for debugging...")
+
     # Create minimal settings for debugging
     class MinimalSettings:
         APP_NAME = "Second Certainty"
@@ -108,6 +114,8 @@ except Exception as e:
         LOG_LEVEL = "INFO"
         ENVIRONMENT = "development"
     settings = MinimalSettings()
+
+
 # Set up application logging
 logger = setup_logging(
     app_name="second_certainty", log_level=logging.DEBUG if getattr(settings, "DEBUG", False) else logging.INFO
@@ -115,6 +123,8 @@ logger = setup_logging(
 # Database setup
 engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
 def get_db():
     """Get database session with retry logic."""
     db = SessionLocal()
