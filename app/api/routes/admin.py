@@ -4,7 +4,7 @@ import subprocess
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.core.auth import get_current_user
+from app.core.auth import get_current_admin_user
 from app.core.config import get_db
 from app.models.tax_models import UserProfile
 
@@ -36,7 +36,7 @@ async def update_tax_data(
     force: bool = False,
     year: str = None,
     db: Session = Depends(get_db),
-    current_user: UserProfile = Depends(get_current_user),
+    current_user: UserProfile = Depends(get_current_admin_user),
 ):
     """
     Admin endpoint to update tax data from SARS website.
