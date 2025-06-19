@@ -15,11 +15,11 @@ format:
 
 # Project Description
 
-Second Certainty addresses one of life's two certainties—taxes—by providing South African individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. 
+Second Certainty addresses one of life's two certainties, **taxes** by providing South African individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. 
 
-Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress. This application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts provisional payments, and provides optimization strategies—all in real-time.
+Traditional tax management often occurs reactively at the tax year-end, leading to unexpected liabilities, missed deductions, and stress. Second Certainty transforms this approach by implementing a proactive, year-round tax management system that calculates estimated tax liabilities based on current income and expense streams.
 
-The system combines up-to-date South African tax regulations with personal financial data to deliver accurate tax calculations, visualizations, and strategic recommendations, helping users optimize their tax position throughout the year rather than scrambling at tax season.
+The system combines up-to-date South African tax regulations with personal financial data to deliver accurate tax calculations, visualizations, and insights, helping users optimize their tax position throughout the year.
 
 # Technical Requirements
 
@@ -91,10 +91,10 @@ The Second Certainty application is deployed on Render's free tier, which may re
 
 **Performance Considerations:**
 - Initial load times may exceed 30 seconds due to service "spin-up" on free tier
-- Subsequent requests are fast once the service is active
+- Subsequent requests are responsive once the service is active
 - Database queries are optimized for performance despite platform limitations
 
-For more detailed information on deployment, please refer to the following documentation:
+For more detailed information, please refer to the following documentation:
 
 - [Installation Guide](./docs/INSTALLATION.md): Complete setup instructions for local development
 - [Deployment Guide](./docs/DEPLOYMENT.md): Comprehensive production deployment instructions
@@ -102,7 +102,7 @@ For more detailed information on deployment, please refer to the following docum
 
 # Code Repository
 
-The project is maintained in separate repositories for optimal development workflow:
+The project is maintained in two separate repositories:
 
 - **Backend Repository**: [https://github.com/ces0491/second-certainty](https://github.com/ces0491/second-certainty)
 - **Frontend Repository**: [https://github.com/ces0491/second-certainty-frontend](https://github.com/ces0491/second-certainty-frontend)
@@ -152,7 +152,7 @@ The repositories include comprehensive documentation covering:
 ## Frontend Architecture  
 - **Component-Based Design**: Reusable React components with clear separation of concerns
 - **State Management**: Context API for global state with local component state for UI interactions
-- **Responsive Design**: Mobile-first Tailwind CSS implementation for all screen sizes
+- **Responsive Design**: Tailwind CSS implementation for all screen sizes
 - **Data Visualization**: Interactive charts and graphs using Recharts library
 - **API Integration**: Centralized Axios configuration with error handling and retry logic
 
@@ -161,10 +161,9 @@ The repositories include comprehensive documentation covering:
 - **Password Security**: Bcrypt hashing with salt for secure password storage
 - **Input Sanitization**: Comprehensive validation at both API and database levels
 - **CORS Configuration**: Secure cross-origin resource sharing with whitelisted domains
-- **Rate Limiting**: API endpoint protection against abuse and DDoS attacks
 
 # Future Enhancements
-- **Rate Limiting**: Actually implement rate limiting
+- **Rate Limiting**: Actually implement rate limiting (hooks in place for future development)
 - **Password Updates**: Updating profile data is not fully supported yet
 - **Improve Standardization**: For logging, error handling, user input sanitization
 - **Enhanced Visualizations**: Use more sophisticated charting libraries like Highchart for better visualizations

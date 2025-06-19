@@ -1,13 +1,10 @@
 #tests/test_core/test_data_scraper
-from unittest.mock import AsyncMock, MagicMock, patch
-
-import httpx
 import pytest
-
+from unittest.mock import patch, MagicMock, AsyncMock
+import httpx
 from app.core.data_scraper import SARSDataScraper
-from app.core.scraping.tax_parser import TaxDataParser
 from app.core.scraping.web_client import SARSWebClient
-
+from app.core.scraping.tax_parser import TaxDataParser
 
 @pytest.fixture
 def mock_sars_html():
@@ -52,11 +49,10 @@ def mock_sars_html():
     </html>
     """
 
-
 @pytest.mark.asyncio
 async def test_web_client_fetch_page(mock_sars_html):
     """Test the SARSWebClient fetch_page method."""
-    with patch("httpx.AsyncClient") as mock_client_class:
+    with patch('httpx.AsyncClient') as mock_client_class:
         #Set up the mock client and response
         mock_client = MagicMock()
         mock_client_class.return_value.__aenter__.return_value = mock_client
@@ -71,7 +67,6 @@ async def test_web_client_fetch_page(mock_sars_html):
 
         assert html == mock_sars_html
         mock_client.get.assert_called_once_with("https://test-url.com")
-
 
 def test_tax_parser_extract_tax_brackets(mock_sars_html):
     """Test extracting tax brackets from HTML using TaxDataParser."""
@@ -89,7 +84,6 @@ def test_tax_parser_extract_tax_brackets(mock_sars_html):
         assert "tax_year" in bracket
         assert bracket["tax_year"] == tax_year
 
-
 def test_tax_parser_extract_tax_rebates(mock_sars_html):
     """Test extracting tax rebates from HTML using TaxDataParser."""
     parser = TaxDataParser()
@@ -101,7 +95,6 @@ def test_tax_parser_extract_tax_rebates(mock_sars_html):
     assert rebates["secondary"] == 9444
     assert rebates["tertiary"] == 3145
     assert rebates["tax_year"] == tax_year
-
 
 def test_tax_parser_extract_tax_thresholds(mock_sars_html):
     """Test extracting tax thresholds from HTML using TaxDataParser."""
@@ -115,7 +108,6 @@ def test_tax_parser_extract_tax_thresholds(mock_sars_html):
     assert thresholds["age_75_plus"] == 165689
     assert thresholds["tax_year"] == tax_year
 
-
 def test_tax_parser_extract_medical_tax_credits(mock_sars_html):
     """Test extracting medical tax credits from HTML using TaxDataParser."""
     parser = TaxDataParser()
@@ -127,7 +119,6 @@ def test_tax_parser_extract_medical_tax_credits(mock_sars_html):
     assert credits["additional_member"] == 347
     assert credits["tax_year"] == tax_year
 
-
 @pytest.mark.asyncio
 async def test_sars_data_scraper_update_tax_data():
     """Test the SARSDataScraper facade update_tax_data method."""
@@ -135,7 +126,7 @@ async def test_sars_data_scraper_update_tax_data():
     mock_db = MagicMock()
 
     #Mock the SARSDataService
-    with patch("app.core.data_scraper.SARSDataService") as mock_service_class:
+    with patch('app.core.data_scraper.SARSDataService') as mock_service_class:
         mock_service = MagicMock()
         mock_service_class.return_value = mock_service
 
@@ -145,7 +136,7 @@ async def test_sars_data_scraper_update_tax_data():
             "brackets": [],
             "rebates": {},
             "thresholds": {},
-            "medical_credits": {},
+            "medical_credits": {}
         }
         mock_service.update_tax_data.return_value = expected_result
 
@@ -158,7 +149,6 @@ async def test_sars_data_scraper_update_tax_data():
 
         #Check result
         assert result == expected_result
-
 
 @pytest.mark.asyncio
 async def test_manual_tax_data_fallback():

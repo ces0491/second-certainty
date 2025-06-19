@@ -1,10 +1,11 @@
 # app/schemas/tax_schemas.py
-from pydantic import BaseModel, EmailStr, validator
-from typing import Optional
 from datetime import date
 from decimal import Decimal
+from typing import Optional
 
-# Add the missing DeductibleExpenseType schema
+from pydantic import BaseModel, EmailStr, validator
+
+
 class DeductibleExpenseTypeResponse(BaseModel):
     id: int
     name: str
@@ -16,7 +17,7 @@ class DeductibleExpenseTypeResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# Updated ExpenseResponse with proper nested schema
+
 class ExpenseResponse(BaseModel):
     id: int
     user_id: int
@@ -25,13 +26,12 @@ class ExpenseResponse(BaseModel):
     amount: float
     tax_year: Optional[str] = None
     created_at: date
-    # Use the proper nested schema instead of dict
     expense_type: Optional[DeductibleExpenseTypeResponse] = None
 
     class Config:
         from_attributes = True
 
-# Keep your other schemas unchanged...
+
 class UserBase(BaseModel):
     email: EmailStr
     name: str
@@ -39,27 +39,31 @@ class UserBase(BaseModel):
     date_of_birth: date
     is_provisional_taxpayer: bool = False
 
+
 class UserCreate(UserBase):
     password: str
 
+
 class UserUpdate(BaseModel):
     """User profile update model - all fields are optional"""
+
     name: Optional[str] = None
     surname: Optional[str] = None
     date_of_birth: Optional[date] = None
     is_provisional_taxpayer: Optional[bool] = None
-    
-    @validator('name', 'surname')
+
+    @validator("name", "surname")
     def validate_names(cls, v):
         if v is not None and len(v.strip()) == 0:
-            raise ValueError('Name fields cannot be empty')
+            raise ValueError("Name fields cannot be empty")
         return v.strip() if v else v
-    
-    @validator('date_of_birth')
+
+    @validator("date_of_birth")
     def validate_date_of_birth(cls, v):
         if v is not None and v >= date.today():
-            raise ValueError('Date of birth must be in the past')
+            raise ValueError("Date of birth must be in the past")
         return v
+
 
 class UserResponse(UserBase):
     id: int
@@ -69,6 +73,7 @@ class UserResponse(UserBase):
     class Config:
         from_attributes = True
 
+
 # Income schemas
 class IncomeBase(BaseModel):
     source_type: str
@@ -77,8 +82,10 @@ class IncomeBase(BaseModel):
     is_paye: bool = True
     tax_year: Optional[str] = None
 
+
 class IncomeCreate(IncomeBase):
     pass
+
 
 class IncomeUpdate(BaseModel):
     source_type: Optional[str] = None
@@ -86,6 +93,7 @@ class IncomeUpdate(BaseModel):
     annual_amount: Optional[float] = None
     is_paye: Optional[bool] = None
     tax_year: Optional[str] = None
+
 
 class IncomeResponse(IncomeBase):
     id: int
@@ -95,6 +103,7 @@ class IncomeResponse(IncomeBase):
     class Config:
         from_attributes = True
 
+
 # Expense schemas
 class ExpenseBase(BaseModel):
     expense_type_id: int
@@ -102,14 +111,17 @@ class ExpenseBase(BaseModel):
     amount: float
     tax_year: Optional[str] = None
 
+
 class ExpenseCreate(ExpenseBase):
     pass
+
 
 class ExpenseUpdate(BaseModel):
     expense_type_id: Optional[int] = None
     description: Optional[str] = None
     amount: Optional[float] = None
     tax_year: Optional[str] = None
+
 
 # Tax bracket schemas
 class TaxBracketBase(BaseModel):
@@ -119,9 +131,11 @@ class TaxBracketBase(BaseModel):
     base_amount: int
     tax_year: str
 
+
 class TaxBracketResponse(TaxBracketBase):
     class Config:
         from_attributes = True
+
 
 # Tax calculation schemas
 class TaxCalculationBase(BaseModel):
@@ -134,9 +148,11 @@ class TaxCalculationBase(BaseModel):
     effective_tax_rate: float
     monthly_tax_rate: float
 
+
 class TaxCalculationResponse(TaxCalculationBase):
     class Config:
         from_attributes = True
+
 
 # Provisional tax schemas
 class ProvisionalTaxBase(BaseModel):
@@ -145,9 +161,12 @@ class ProvisionalTaxBase(BaseModel):
     second_payment: float
     final_payment: float
 
+
 class PaymentInfo(BaseModel):
     amount: float
     due_date: str
+
+
 class ProvisionalTaxResponse(BaseModel):
     total_tax: float
     taxable_income: float
@@ -158,17 +177,20 @@ class ProvisionalTaxResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # Legacy schemas for backward compatibility
 class TaxCalculationRequest(BaseModel):
     total_income: Decimal
     total_expenses: Decimal
     is_provisional_taxpayer: bool = False
 
+
 class TaxBracket(BaseModel):
     min_income: Decimal
     max_income: Optional[Decimal]
     rate: Decimal
     threshold: Decimal
+
 
 # Provisional tax legacy schemas
 class ProvisionalTaxCreate(BaseModel):
@@ -177,6 +199,7 @@ class ProvisionalTaxCreate(BaseModel):
     estimated_expenses: Decimal
     payment_amount: Decimal
     due_date: date
+
 
 class ProvisionalTaxUpdate(BaseModel):
     estimated_income: Optional[Decimal] = None

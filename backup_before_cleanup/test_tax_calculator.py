@@ -1,20 +1,10 @@
 #tests/test_core/test_tax_calculator
+import pytest
 from datetime import date
 from unittest.mock import MagicMock
 
-import pytest
-
 from app.core.tax_calculator import TaxCalculator
-from app.models.tax_models import (
-    IncomeSource,
-    MedicalTaxCredit,
-    TaxBracket,
-    TaxRebate,
-    TaxThreshold,
-    UserExpense,
-    UserProfile,
-)
-
+from app.models.tax_models import UserProfile, IncomeSource, UserExpense, TaxBracket, TaxRebate, TaxThreshold, MedicalTaxCredit
 
 class TestTaxCalculator:
 
@@ -37,15 +27,29 @@ class TestTaxCalculator:
             test_db.add(bracket)
 
         #Add rebates
-        rebate = TaxRebate(primary=17235, secondary=9444, tertiary=3145, tax_year=tax_year)
+        rebate = TaxRebate(
+            primary=17235,
+            secondary=9444,
+            tertiary=3145,
+            tax_year=tax_year
+        )
         test_db.add(rebate)
 
         #Add thresholds
-        threshold = TaxThreshold(below_65=95750, age_65_to_74=148217, age_75_plus=165689, tax_year=tax_year)
+        threshold = TaxThreshold(
+            below_65=95750,
+            age_65_to_74=148217,
+            age_75_plus=165689,
+            tax_year=tax_year
+        )
         test_db.add(threshold)
 
         #Add medical credits
-        medical_credit = MedicalTaxCredit(main_member=347, additional_member=347, tax_year=tax_year)
+        medical_credit = MedicalTaxCredit(
+            main_member=347,
+            additional_member=347,
+            tax_year=tax_year
+        )
         test_db.add(medical_credit)
 
         test_db.commit()
@@ -108,7 +112,7 @@ class TestTaxCalculator:
             name="Test",
             surname="Calculator",
             date_of_birth=date(1985, 1, 1),
-            is_provisional_taxpayer=False,
+            is_provisional_taxpayer=False
         )
         test_db.add(user)
         test_db.commit()
@@ -121,7 +125,7 @@ class TestTaxCalculator:
             description="Test salary",
             annual_amount=350000,
             is_paye=True,
-            tax_year=get_tax_year(),
+            tax_year=get_tax_year()
         )
         test_db.add(income)
         test_db.commit()

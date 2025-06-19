@@ -1,29 +1,29 @@
 # app/main.py
-from fastapi import FastAPI, Depends
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from sqlalchemy.orm import Session
-from sqlalchemy import text
 import logging
-import os
-from pathlib import Path
 from contextlib import asynccontextmanager
 from datetime import datetime
+from pathlib import Path
 
-from app.core.config import settings, get_db, engine
-from app.models.tax_models import Base
-from app.api.routes import tax_calculator, admin
-from app.api.routes import auth
-from app.core.data_scraper import SARSDataScraper
-from app.models.tax_models import TaxBracket, TaxRebate, TaxThreshold, MedicalTaxCredit
-from app.utils.tax_utils import get_tax_year
-from app.utils.logging_utils import setup_logging, get_logger
+import uvicorn
+from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
+from app.api.routes import admin, auth, tax_calculator
+from app.core.config import engine, get_db, settings
+from app.models.tax_models import (
+    Base,
+    MedicalTaxCredit,
+    TaxBracket,
+    TaxRebate,
+    TaxThreshold,
+)
+from app.utils.logging_utils import get_logger, setup_logging
 
 # Set up application logging
-logger = setup_logging(
-    app_name="second_certainty",
-    log_level=logging.DEBUG if settings.DEBUG else logging.INFO
-)
+logger = setup_logging(app_name="second_certainty", log_level=logging.DEBUG if settings.DEBUG else logging.INFO)
+
 
 # Define lifespan context manager
 @asynccontextmanager
@@ -34,29 +34,31 @@ async def lifespan(app: FastAPI):
     """
     # STARTUP
     logger.info("Application starting up")
-    
+
     # Create logs directory if it doesn't exist
     logs_dir = Path("logs")
     logs_dir.mkdir(exist_ok=True)
-    
+
     # Initialize database with seed data if needed
     db = next(get_db())
-    
+
     try:
         from scripts.seed_data import initialize_database
+
         await initialize_database(db)
         logger.info("Database initialization completed")
     except Exception as e:
         logger.error(f"Error initializing database: {e}", exc_info=True)
     finally:
         db.close()
-    
+
     logger.info("Application startup complete")
-    
-    yield  # This is where the application runs
-    
+
+    yield  #This is where the application runs
+
     # SHUTDOWN
     logger.info("Application shutting down")
+
 
 # Create the app with the lifespan parameter
 app = FastAPI(
@@ -66,7 +68,7 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # Create database tables
@@ -76,10 +78,10 @@ Base.metadata.create_all(bind=engine)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://second-certainty.onrender.com",  # production frontend
-        "http://localhost:3000",                   # development frontend
-        "http://127.0.0.1:3000",                  # alternative localhost
-        "https://localhost:3000",                  # HTTPS localhost
+        "https://second-certainty.onrender.com",  #production frontend
+        "http://localhost:3000",  #development frontend
+        "http://127.0.0.1:3000",  #alternative localhost
+        "https://localhost:3000",  #HTTPS localhost
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -88,25 +90,14 @@ app.add_middleware(
 )
 
 # Include the auth router (critical for authentication)
-app.include_router(
-    auth.router,
-    prefix=f"{settings.API_PREFIX}/auth",
-    tags=["auth"]
-)
+app.include_router(auth.router, prefix=f"{settings.API_PREFIX}/auth", tags=["auth"])
 
 # Include tax calculator router
-app.include_router(
-    tax_calculator.router,
-    prefix=f"{settings.API_PREFIX}/tax",
-    tags=["tax"]
-)
+app.include_router(tax_calculator.router, prefix=f"{settings.API_PREFIX}/tax", tags=["tax"])
 
 # Include the admin router
-app.include_router(
-    admin.router,
-    prefix=f"{settings.API_PREFIX}/admin",
-    tags=["admin"]
-)
+app.include_router(admin.router, prefix=f"{settings.API_PREFIX}/admin", tags=["admin"])
+
 
 @app.get("/")
 def read_root():
@@ -115,8 +106,9 @@ def read_root():
     return {
         "app_name": settings.APP_NAME,
         "version": settings.APP_VERSION,
-        "message": "Welcome to the Second Certainty Tax API"
+        "message": "Welcome to the Second Certainty Tax API",
     }
+
 
 @app.get("/api/health")
 async def health_check(db: Session = Depends(get_db)):
@@ -136,40 +128,36 @@ async def health_check(db: Session = Depends(get_db)):
         except Exception as e:
             db_status = "unhealthy"
             db_error = str(e)
-        
+
         # Check required environment variables
         env_vars = {
             "DATABASE_URL": bool(settings.DATABASE_URL),
             "SECRET_KEY": bool(settings.SECRET_KEY),
-            "API_PREFIX": bool(settings.API_PREFIX)
+            "API_PREFIX": bool(settings.API_PREFIX),
         }
         missing_vars = [key for key, value in env_vars.items() if not value]
-        
+
         return {
             "status": "healthy" if db_status == "healthy" and not missing_vars else "unhealthy",
             "timestamp": datetime.utcnow().isoformat(),
             "version": settings.APP_VERSION,
-            "database": {
-                "status": db_status,
-                "error": db_error
-            },
+            "database": {"status": db_status, "error": db_error},
             "environment": {
                 "status": "healthy" if not missing_vars else "missing variables",
-                "missing": missing_vars if missing_vars else None
-            }
+                "missing": missing_vars if missing_vars else None,
+            },
         }
     except Exception as e:
         logger.error(f"Health check failed: {e}")
-        return {
-            "status": "unhealthy",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
+        return {"status": "unhealthy", "error": str(e), "timestamp": datetime.utcnow().isoformat()}
+
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
 
+
 def run_app():
     """Entry point for the application when used as a package."""
     import uvicorn
+
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000)
