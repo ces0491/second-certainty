@@ -23,7 +23,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-#Add the parent directory to the path so we can import app modules
+# Add the parent directory to the path so we can import app modules
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from app.core.config import get_db
@@ -31,11 +31,11 @@ from app.core.scraping.sars_service import SARSDataService
 from app.utils.logging_utils import setup_logging
 from app.utils.tax_utils import get_tax_year
 
-#Create logs directory if it doesn't exist
+# Create logs directory if it doesn't exist
 logs_dir = Path("logs")
 logs_dir.mkdir(exist_ok=True)
 
-#Set up logging
+# Set up logging
 logger = setup_logging(app_name="tax_data_fetcher", log_level=logging.INFO)
 
 
@@ -51,7 +51,7 @@ async def fetch_and_save_tax_data(tax_year: Optional[str] = None, force: bool = 
     Returns:
         True if the operation was successful, False otherwise
     """
-    #Use current tax year if not specified
+    # Use current tax year if not specified
     if not tax_year:
         tax_year = get_tax_year()
 
@@ -59,21 +59,21 @@ async def fetch_and_save_tax_data(tax_year: Optional[str] = None, force: bool = 
     logger.info(f"Force override: {force}")
     logger.info(f"Manual data: {manual}")
 
-    #Get database session
+    # Get database session
     db = next(get_db())
 
     try:
-        #Create the service and run it
+        # Create the service and run it
         service = SARSDataService(db)
 
         if manual:
-            #Use the manual tax data provider
+            # Use the manual tax data provider
             from app.core.scraping.tax_provider import TaxDataProvider
 
             provider = TaxDataProvider()
             data = provider.get_manual_tax_data(tax_year)
 
-            #Save the data to the database
+            # Save the data to the database
             from app.core.scraping.tax_repository import TaxDataRepository
 
             repository = TaxDataRepository(db)
@@ -86,7 +86,7 @@ async def fetch_and_save_tax_data(tax_year: Optional[str] = None, force: bool = 
                 logger.error(f"Failed to save manual tax data: {error}")
                 return False
         else:
-            #Use the SARS data service
+            # Use the SARS data service
             result = await service.update_tax_data(tax_year, force)
 
             if result:
@@ -111,10 +111,10 @@ async def main():
     parser.add_argument("--manual", action="store_true", help="Skip scraping and use manual data")
     args = parser.parse_args()
 
-    #Use current tax year if not specified
+    # Use current tax year if not specified
     tax_year = args.year if args.year else get_tax_year()
 
-    #Set up log file with tax year in the name
+    # Set up log file with tax year in the name
     file_handler = logging.FileHandler(f"logs/tax_data_{tax_year}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
     file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
     logger.addHandler(file_handler)

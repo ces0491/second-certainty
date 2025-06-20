@@ -1,6 +1,8 @@
 # app/core/tax_calculator.py
 from typing import Any, Dict, List, Optional
+
 from sqlalchemy.orm import Session
+
 from app.models.tax_models import (
     IncomeSource,
     MedicalTaxCredit,
@@ -13,6 +15,7 @@ from app.models.tax_models import (
 )
 from app.utils.logging_utils import get_logger
 from app.utils.tax_utils import calculate_age, get_tax_year
+
 # Get module logger
 logger = get_logger("tax_calculator")
 
@@ -21,6 +24,7 @@ class TaxCalculator:
     """
     Handles all South African personal income tax calculations.
     """
+
     def __init__(self, db: Session):
         self.db = db
         logger.debug("TaxCalculator initialized")

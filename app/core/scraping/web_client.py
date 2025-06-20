@@ -1,12 +1,15 @@
 # app/core/scraping/web_client.py
 import logging
 from typing import Optional
+
 import httpx
+
 logger = logging.getLogger(__name__)
 
 
 class SARSWebClient:
     """Client for fetching content from the SARS website."""
+
     SARS_BASE_URL = "https://www.sars.gov.za"
     TAX_RATES_URL = f"{SARS_BASE_URL}/tax-rates/income-tax/rates-of-tax-for-individuals/"
     ARCHIVE_URL = f"{SARS_BASE_URL}/tax-rates/archive-tax-rates/"

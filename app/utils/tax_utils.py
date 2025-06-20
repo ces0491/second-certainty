@@ -110,7 +110,7 @@ def extract_birth_date_from_id(id_number: str) -> date:
         raise ValueError(error)
 
     # Determine century based on current year logic
-    year_suffix = int(id_number[0:2])    # current_century_start = current_year - (current_year % 100)
+    year_suffix = int(id_number[0:2])  # current_century_start = current_year - (current_year % 100)
 
     # If year suffix > 20, assume 1900s, otherwise 2000s
     # This is a simplified heuristic and may need adjustment over time

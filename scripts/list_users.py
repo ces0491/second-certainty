@@ -1,10 +1,10 @@
-#list_users.py
+# list_users.py
 import os
 import sys
 
 from sqlalchemy.orm import Session
 
-#Add parent directory to path
+# Add parent directory to path
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from app.core.config import get_db

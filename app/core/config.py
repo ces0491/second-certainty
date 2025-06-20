@@ -3,16 +3,19 @@ import logging
 import os
 import time
 from typing import Optional
+
 from pydantic import ConfigDict, field_validator
 from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
+
 from app.utils.logging_utils import setup_logging
 
 
 class Settings(BaseSettings):
     """Application settings with proper Pydantic v2 configuration."""
+
     # Core app settings
     APP_NAME: str = "Second Certainty"
     APP_VERSION: str = "1.0.0"
@@ -79,10 +82,12 @@ class Settings(BaseSettings):
                 return int(v)
             # If it's not all digits, try to extract just the number part
             import re
+
             match = re.match(r"^\d+", v)
             if match:
                 return int(match.group())
         return v
+
     # Pydantic v2 configuration
     model_config = ConfigDict(
         env_file=".env",
@@ -113,6 +118,7 @@ except Exception as e:
         UPLOAD_DIR = "uploads"
         LOG_LEVEL = "INFO"
         ENVIRONMENT = "development"
+
     settings = MinimalSettings()
 
 

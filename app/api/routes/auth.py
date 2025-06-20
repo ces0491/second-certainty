@@ -7,12 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr, validator
 from sqlalchemy.orm import Session
 
-from app.core.auth import (
-    authenticate_user,
-    create_access_token,
-    get_current_user,
-    get_password_hash,
-)
+from app.core.auth import authenticate_user, create_access_token, get_current_user, get_password_hash
 from app.core.config import get_db, settings
 from app.models.tax_models import UserProfile
 from app.schemas.tax_schemas import UserResponse
@@ -76,7 +71,6 @@ class LoginResponse(BaseModel):
     user: Dict[str, Any]
 
 
-# FIXED: Use the correct endpoint that frontend expects
 @router.post("/login", response_model=LoginResponse)
 async def login_user(email: str, password: str, db: Session = Depends(get_db)):
     """Alternative login endpoint for JSON requests."""

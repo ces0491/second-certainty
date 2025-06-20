@@ -1,17 +1,21 @@
 # app/core/scraping/sars_service.py
 import logging
 from typing import Any, Dict, Optional
+
 from sqlalchemy.orm import Session
+
 from app.core.scraping.tax_parser import TaxDataParser
 from app.core.scraping.tax_provider import TaxDataProvider
 from app.core.scraping.tax_repository import TaxDataRepository
 from app.core.scraping.web_client import SARSWebClient
 from app.utils.tax_utils import get_tax_year
+
 logger = logging.getLogger(__name__)
 
 
 class SARSTaxException(Exception):
     """Exception raised for errors in SARS tax data scraping."""
+
     pass
 
 

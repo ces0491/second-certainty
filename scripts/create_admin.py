@@ -1,11 +1,11 @@
-#create_admin.py
+# create_admin.py
 import os
 import sys
 from datetime import date
 
 from sqlalchemy.orm import Session
 
-#Add parent directory to path
+# Add parent directory to path
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from app.core.auth import get_password_hash
@@ -17,7 +17,7 @@ def create_admin_user(email, password, name, surname):
     """Create an admin user directly in the database."""
     db = next(get_db())
     try:
-        #Check if user already exists
+        # Check if user already exists
         existing_user = db.query(UserProfile).filter(UserProfile.email == email).first()
         if existing_user:
             print(f"User with email {email} already exists. Setting as admin...")
@@ -26,7 +26,7 @@ def create_admin_user(email, password, name, surname):
             print(f"User {email} is now an admin.")
             return
 
-        #Create new admin user
+        # Create new admin user
         hashed_password = get_password_hash(password)
 
         new_user = UserProfile(
@@ -34,7 +34,7 @@ def create_admin_user(email, password, name, surname):
             hashed_password=hashed_password,
             name=name,
             surname=surname,
-            date_of_birth=date(1990, 1, 1),  #Default date, change as needed
+            date_of_birth=date(1990, 1, 1),  # Default date, change as needed
             is_provisional_taxpayer=False,
             is_admin=True,
         )

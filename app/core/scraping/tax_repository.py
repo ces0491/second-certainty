@@ -1,8 +1,11 @@
 # app/core/scraping/tax_repository.py
 import logging
 from typing import Any, Dict, Optional, Tuple
+
 from sqlalchemy.orm import Session
+
 from app.models.tax_models import MedicalTaxCredit, TaxBracket, TaxRebate, TaxThreshold
+
 logger = logging.getLogger(__name__)
 
 

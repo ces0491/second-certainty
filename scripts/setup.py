@@ -5,7 +5,7 @@ import re
 from setuptools import find_packages, setup
 
 
-#Read the package version from __init__.py
+# Read the package version from __init__.py
 def get_version():
     with open(os.path.join("app", "__init__.py"), encoding="utf-8") as f:
         version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", f.read(), re.M)
@@ -14,13 +14,13 @@ def get_version():
     raise RuntimeError("Unable to find version string.")
 
 
-#Read the package description from README.md
+# Read the package description from README.md
 def get_long_description():
     with open("README.md", encoding="utf-8") as f:
         return f.read()
 
 
-#Read requirements from requirements.txt
+# Read requirements from requirements.txt
 def get_requirements():
     with open("requirements.txt", encoding="utf-8") as f:
         return [line.strip() for line in f if line.strip() and not line.startswith("#")]
@@ -30,7 +30,7 @@ setup(
     name="second-certainty",
     version=get_version(),
     author="Cesaire Tobias",
-    author_email="cesaire@example.com",  #Replace with your actual email
+    author_email="cesaire@example.com",  # Replace with your actual email
     description="A South African tax liability management tool",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
@@ -56,7 +56,7 @@ setup(
             "sct-seed-data=scripts.seed_data:main",
         ],
     },
-    #Add package data
+    # Add package data
     package_data={
         "app": ["templates/*.html", "static/**/*"],
     },

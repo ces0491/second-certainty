@@ -8,12 +8,7 @@ from app.core.auth import get_current_user
 from app.core.config import get_db
 from app.core.data_scraper import SARSDataScraper
 from app.core.tax_calculator import TaxCalculator
-from app.models.tax_models import (
-    DeductibleExpenseType,
-    IncomeSource,
-    UserExpense,
-    UserProfile,
-)
+from app.models.tax_models import DeductibleExpenseType, IncomeSource, UserExpense, UserProfile
 from app.schemas.tax_schemas import (
     DeductibleExpenseTypeResponse,
     ExpenseCreate,
@@ -37,7 +32,7 @@ def add_income_source(
     current_user: UserProfile = Depends(get_current_user),
 ):
     """Add an income source for a user."""
-    # Security: Ensure users can only add income to their own profile
+    # Ensure users can only add income to their own profile
     if current_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to add income to this user")
 
@@ -66,7 +61,7 @@ def get_user_income(
     current_user: UserProfile = Depends(get_current_user),
 ):
     """Get all income sources for a user."""
-    # Security: Ensure users can only view their own income
+    # Ensure users can only view their own income
     if current_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to view this user's income")
 
@@ -89,7 +84,7 @@ def add_expense(
     current_user: UserProfile = Depends(get_current_user),
 ):
     """Add a deductible expense for a user."""
-    # Security: Ensure users can only add expenses to their own profile
+    # Ensure users can only add expenses to their own profile
     if current_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to add expenses to this user")
 
@@ -125,7 +120,7 @@ def get_user_expenses(
     current_user: UserProfile = Depends(get_current_user),
 ):
     """Get all expenses for a user."""
-    # Security: Ensure users can only view their own expenses
+    # Ensure users can only view their own expenses
     if current_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to view this user's expenses")
 
@@ -183,7 +178,7 @@ def calculate_tax(
     current_user: UserProfile = Depends(get_current_user),
 ):
     """Calculate tax liability for a user."""
-    # Security: Ensure users can only calculate their own tax
+    # Ensure users can only calculate their own tax
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to calculate tax for this user"
@@ -208,7 +203,7 @@ def calculate_provisional_tax(
     current_user: UserProfile = Depends(get_current_user),
 ):
     """Calculate provisional tax for a provisional taxpayer."""
-    # Security: Ensure users can only calculate their own provisional tax
+    # Ensure users can only calculate their own provisional tax
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to calculate provisional tax for this user"
@@ -241,9 +236,6 @@ async def update_tax_data(db: Session = Depends(get_db), current_user: UserProfi
         raise HTTPException(status_code=500, detail=f"Failed to update tax data: {str(e)}")
 
 
-# app/api/routes/tax_calculator.py - Add this new endpoint
-
-
 @router.post("/users/{user_id}/custom-tax-calculation/", response_model=TaxCalculationResponse)
 def calculate_custom_tax(
     user_id: int,
@@ -256,7 +248,7 @@ def calculate_custom_tax(
     Calculate tax liability based on custom parameters.
     Allows for "what-i" tax scenarios without modifying the user"s actual data.
     """
-    # Security: Ensure users can only calculate their own tax
+    # Ensure users can only calculate their own tax
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to calculate tax for this user"
@@ -325,7 +317,7 @@ def delete_income(
     user_id: int, income_id: int, db: Session = Depends(get_db), current_user: UserProfile = Depends(get_current_user)
 ):
     """Delete an income source."""
-    # Security: Ensure users can only delete their own income
+    # Ensure users can only delete their own income
     if current_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this income")
 
@@ -344,7 +336,7 @@ def delete_expense(
     user_id: int, expense_id: int, db: Session = Depends(get_db), current_user: UserProfile = Depends(get_current_user)
 ):
     """Delete an expense."""
-    # Security: Ensure users can only delete their own expenses
+    # Ensure users can only delete their own expenses
     if current_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this expense")
 

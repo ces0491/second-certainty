@@ -1,4 +1,4 @@
-#simple_debug.py - Debug script that bypasses config issues
+# simple_debug.py - Debug script that bypasses config issues
 import os
 import sys
 from datetime import date
@@ -6,16 +6,16 @@ from datetime import date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-#Add parent directory to path
+# Add parent directory to path
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-#Set required environment variables if not present
+# Set required environment variables if not present
 if not os.getenv("DATABASE_URL"):
     os.environ["DATABASE_URL"] = "sqlite:///./second_certainty.db"
 if not os.getenv("SECRET_KEY"):
     os.environ["SECRET_KEY"] = "debug-secret-key"
 
-#Now try importing after setting env vars
+# Now try importing after setting env vars
 try:
     from app.core.tax_calculator import TaxCalculator
     from app.models.tax_models import IncomeSource, UserExpense, UserProfile
@@ -24,7 +24,7 @@ except Exception as e:
     print(f"Import error: {e}")
     print("Trying direct database connection...")
 
-    #Create direct database connection
+    # Create direct database connection
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./second_certainty.db")
     engine = create_engine(DATABASE_URL)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -36,7 +36,7 @@ except Exception as e:
 def debug_user_profile(user_id: int):
     """Debug user profile and related data with detailed provisional tax info."""
     try:
-        #Try to get DB session
+        # Try to get DB session
         if "get_db_direct" in locals():
             db = get_db_direct()
         else:
@@ -47,7 +47,7 @@ def debug_user_profile(user_id: int):
         print(f"🔍 Debugging User Profile for ID {user_id}")
         print("=" * 50)
 
-        #Get user profile
+        # Get user profile
         user = db.query(UserProfile).filter(UserProfile.id == user_id).first()
         if not user:
             print(f"❌ User with ID {user_id} not found")
@@ -60,16 +60,16 @@ def debug_user_profile(user_id: int):
         print(f"   Is Provisional Taxpayer: {user.is_provisional_taxpayer}")
         print(f"   Is Admin: {getattr(user, 'is_admin', False)}")
 
-        #Calculate age
+        # Calculate age
         if user.date_of_birth:
             age = calculate_age(user.date_of_birth)
             print(f"   Current Age: {age}")
 
-        #Get current tax year
+        # Get current tax year
         current_tax_year = get_tax_year()
         print(f"\n📅 Current Tax Year: {current_tax_year}")
 
-        #Check income sources
+        # Check income sources
         income_sources = (
             db.query(IncomeSource)
             .filter(IncomeSource.user_id == user_id, IncomeSource.tax_year == current_tax_year)
@@ -88,7 +88,7 @@ def debug_user_profile(user_id: int):
         else:
             print("   ❌ No income sources found")
 
-        #Check expenses
+        # Check expenses
         expenses = (
             db.query(UserExpense).filter(UserExpense.user_id == user_id, UserExpense.tax_year == current_tax_year).all()
         )
@@ -103,20 +103,20 @@ def debug_user_profile(user_id: int):
         else:
             print("   No expenses found")
 
-        #If user is provisional taxpayer, try tax calculations
+        # If user is provisional taxpayer, try tax calculations
         if user.is_provisional_taxpayer and income_sources:
             print(f"\n🧮 Provisional Tax Calculations:")
             try:
                 calculator = TaxCalculator(db)
 
-                #Calculate regular tax liability
+                # Calculate regular tax liability
                 tax_result = calculator.calculate_tax_liability(user_id, current_tax_year)
                 print(f"   Gross Income: R{tax_result['gross_income']:,.2f}")
                 print(f"   Taxable Income: R{tax_result['taxable_income']:,.2f}")
                 print(f"   Final Tax: R{tax_result['final_tax']:,.2f}")
                 print(f"   Effective Tax Rate: {tax_result['effective_tax_rate']:.2%}")
 
-                #Calculate provisional tax
+                # Calculate provisional tax
                 prov_tax_result = calculator.calculate_provisional_tax(user_id, current_tax_year)
                 print(f"\n📋 Provisional Tax Payments:")
                 print(f"   Total Annual Tax: R{prov_tax_result['total_tax']:,.2f}")
@@ -137,7 +137,7 @@ def debug_user_profile(user_id: int):
         else:
             print(f"\n💡 User is not a provisional taxpayer")
 
-        #Check all tax years for this user
+        # Check all tax years for this user
         print(f"\n📈 All Income Data for User:")
         all_income = db.query(IncomeSource).filter(IncomeSource.user_id == user_id).all()
         if all_income:

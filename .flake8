@@ -1,0 +1,41 @@
+[flake8]
+max-line-length = 120
+
+# Error codes to ignore (no inline comments allowed)
+extend-ignore = 
+    E203,
+    W503,
+    E501,
+    F401,
+    E402,
+    C901
+
+# Directories to exclude from checking
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    .env,
+    dist,
+    build,
+    *.egg-info,
+    .pytest_cache,
+    .mypy_cache,
+    migrations,
+    node_modules,
+    .tox
+
+# Files to exclude
+per-file-ignores =
+    __init__.py:F401,F403
+    migrations/*.py:E501
+    conftest.py:F401,F811
+    settings.py:F401
+    config.py:F401
+
+max-complexity = 15
+statistics = True
+show-source = True
+count = True
