@@ -97,24 +97,6 @@ def main():
         print("❌ Some required files are missing. Please check your setup.")
         return False
     
-    # Check for redundant files that should be removed
-    print("\n🗑️  Checking for files that should be removed:")
-    redundant_files = [
-        "app/models/user.py",
-        "app/models/income.py", 
-        "app/models/expense.py",
-        "app/models/provisional_tax.py",
-        "app/core/database.py",
-        "app/api/dependencies/auth.py",
-        "scripts/init_db.py"
-    ]
-    
-    for file_path in redundant_files:
-        if Path(file_path).exists():
-            print(f"⚠️  Found redundant file: {file_path} (should be removed)")
-        else:
-            print(f"✅ Redundant file properly removed: {file_path}")
-    
     # Install dependencies
     print("\n📦 Installing dependencies...")
     if not run_command("pip install -r requirements.txt", "Installing requirements", timeout=120):
@@ -236,7 +218,6 @@ def main():
         print("\n⚠️  Some tests failed or require attention.")
         print("\n🔧 Common solutions:")
         print("   • Ensure all dependencies are installed: pip install -r requirements.txt")
-        print("   • Check that redundant files are removed")
         print("   • Verify environment variables in .env file")
         print("   • Ensure database is properly configured")
         print("   • Check specific test failures above for details")
