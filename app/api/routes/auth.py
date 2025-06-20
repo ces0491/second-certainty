@@ -45,6 +45,12 @@ class UserCreate(BaseModel):
     def password_strength(cls, v):
         if len(v) < 8:
             raise ValueError("Password must be at least 8 characters long")
+        if v.isdigit():
+            raise ValueError("Password cannot be only numbers")
+        if v.isalpha():
+            raise ValueError("Password cannot be only letters")
+        if v.lower() in ["password", "12345678", "abcdefgh", "123"]:
+            raise ValueError("Password is too common")
         return v
 
 
@@ -67,6 +73,12 @@ class PasswordChange(BaseModel):
     def password_strength(cls, v):
         if len(v) < 8:
             raise ValueError("New password must be at least 8 characters long")
+        if v.isdigit():
+            raise ValueError("Password cannot be only numbers")
+        if v.isalpha():
+            raise ValueError("Password cannot be only letters")
+        if v.lower() in ["password", "12345678", "abcdefgh", "123"]:
+            raise ValueError("Password is too common")
         return v
 
 

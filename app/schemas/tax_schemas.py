@@ -14,7 +14,6 @@ class DeductibleExpenseTypeResponse(BaseModel):
     max_percentage: Optional[float] = None
     is_active: bool = True
 
-
     class Config:
         from_attributes = True
 
@@ -52,7 +51,7 @@ class UserCreate(UserBase):
             raise ValueError("Password cannot be only numbers")
         if v.isalpha():
             raise ValueError("Password cannot be only letters")
-        if v.lower() in ['password', '12345678', 'abcdefgh', '123']:
+        if v.lower() in ["password", "12345678", "abcdefgh", "123"]:
             raise ValueError("Password is too common")
         return v
 
@@ -82,7 +81,6 @@ class UserResponse(UserBase):
     id: int
     created_at: date
     is_admin: Optional[bool] = False
-
 
     class Config:
         from_attributes = True
@@ -117,7 +115,6 @@ class IncomeResponse(IncomeBase):
     id: int
     user_id: int
     created_at: date
-
 
     class Config:
         from_attributes = True
@@ -196,7 +193,6 @@ class ProvisionalTaxResponse(BaseModel):
     effective_tax_rate: float
     first_payment: PaymentInfo
     second_payment: PaymentInfo
-
 
     class Config:
         from_attributes = True

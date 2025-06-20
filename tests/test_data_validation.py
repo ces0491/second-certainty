@@ -1,5 +1,6 @@
 # tests/test_data_validation.py
 from datetime import date
+from unittest.mock import patch
 
 import pytest
 
@@ -22,8 +23,6 @@ class TestDataValidation:
 
     def test_age_calculation_validation(self):
         """Test age calculation with various dates."""
-        from unittest.mock import patch
-
         birth_date = date(1990, 6, 15)
 
         # Test birthday not yet reached this year

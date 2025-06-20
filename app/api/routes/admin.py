@@ -19,15 +19,21 @@ def run_tax_data_update(force: bool = False, year: str = None):
     if year:
         cmd.extend(["--year", year])
 
-    # Execute the script
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    try:
+        # Execute the script
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
 
-    # Log the result
-    print(f"Tax data update completed with return code: {result.returncode}")
-    if result.stdout:
-        print(f"Output: {result.stdout}")
-    if result.stderr:
-        print(f"Errors: {result.stderr}")
+        # Log the result
+        print(f"Tax data update completed with return code: {result.returncode}")
+        if result.stdout:
+            print(f"Output: {result.stdout}")
+        if result.stderr:
+            print(f"Errors: {result.stderr}")
+
+    except subprocess.TimeoutExpired:
+        print("Tax data update script timed out")
+    except Exception as e:
+        print(f"Error running tax data update script: {e}")
 
 
 @router.post("/update-tax-data")
