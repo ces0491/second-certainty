@@ -67,10 +67,15 @@ class TestAuthentication:
         assert "must be in the past" in response.json()["detail"]
 
     def test_login_success(self, client, test_user):
-        """Test successful login."""
-        login_data = {"email": test_user.email, "password": "testpass123"}
-
-        response = client.post("/api/auth/login", json=login_data)
+        """Test successful login with proper request format."""
+        # Use the JSON login endpoint with named parameters
+        response = client.post(
+            "/api/auth/login",
+            json={
+                "email": test_user.email,
+                "password": "testpass123"
+            }
+        )
         assert response.status_code == status.HTTP_200_OK
 
         data = response.json()
@@ -82,16 +87,24 @@ class TestAuthentication:
 
     def test_login_wrong_password(self, client, test_user):
         """Test login with wrong password fails."""
-        login_data = {"email": test_user.email, "password": "wrongpassword"}
-
-        response = client.post("/api/auth/login", json=login_data)
+        response = client.post(
+            "/api/auth/login",
+            json={
+                "email": test_user.email,
+                "password": "wrongpassword"
+            }
+        )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_login_nonexistent_user(self, client):
         """Test login with non-existent user fails."""
-        login_data = {"email": "nobody@test.com", "password": "somepassword"}
-
-        response = client.post("/api/auth/login", json=login_data)
+        response = client.post(
+            "/api/auth/login",
+            json={
+                "email": "nobody@test.com",
+                "password": "somepassword"
+            }
+        )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_get_current_user(self, client, test_user, auth_headers):
@@ -129,13 +142,23 @@ class TestAuthentication:
         assert response.status_code == status.HTTP_200_OK
 
         # Verify old password no longer works
-        login_data = {"email": test_user.email, "password": "testpass123"}
-        login_response = client.post("/api/auth/login", json=login_data)
+        login_response = client.post(
+            "/api/auth/login",
+            json={
+                "email": test_user.email,
+                "password": "testpass123"
+            }
+        )
         assert login_response.status_code == status.HTTP_401_UNAUTHORIZED
 
         # Verify new password works
-        new_login_data = {"email": test_user.email, "password": "newtestpass123"}
-        new_login_response = client.post("/api/auth/login", json=new_login_data)
+        new_login_response = client.post(
+            "/api/auth/login",
+            json={
+                "email": test_user.email,
+                "password": "newtestpass123"
+            }
+        )
         assert new_login_response.status_code == status.HTTP_200_OK
 
     def test_oauth2_token_endpoint(self, client, test_user):

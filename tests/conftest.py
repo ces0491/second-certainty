@@ -124,6 +124,14 @@ def complete_tax_data(test_db):
     """Set up complete tax data for testing."""
     tax_year = get_tax_year()
 
+    # Clear any existing data first to prevent constraint violations
+    test_db.query(TaxBracket).filter(TaxBracket.tax_year == tax_year).delete()
+    test_db.query(TaxRebate).filter(TaxRebate.tax_year == tax_year).delete()
+    test_db.query(TaxThreshold).filter(TaxThreshold.tax_year == tax_year).delete()
+    test_db.query(MedicalTaxCredit).filter(MedicalTaxCredit.tax_year == tax_year).delete()
+    test_db.query(DeductibleExpenseType).delete()  # Clear all expense types
+    test_db.commit()
+
     # Tax brackets - 2024-2025 South African tax brackets
     brackets = [
         {"lower_limit": 1, "upper_limit": 237100, "rate": 0.18, "base_amount": 0, "tax_year": tax_year},
@@ -164,25 +172,25 @@ def complete_tax_data(test_db):
     )
     test_db.add(medical)
 
-    # Deductible expense types
+    # Deductible expense types - use unique names to avoid constraint violations
     expense_types = [
         {
-            "name": "Retirement Annuity",
-            "description": "Retirement annuity contributions",
+            "name": "Test Retirement Annuity",
+            "description": "Retirement annuity contributions for testing",
             "max_percentage": 27.5,  # 27.5% of income or R350,000
             "max_deduction": 350000,
             "is_active": True,
         },
         {
-            "name": "Medical Expenses",
-            "description": "Out of pocket medical expenses",
+            "name": "Test Medical Expenses",
+            "description": "Out of pocket medical expenses for testing",
             "max_percentage": None,
             "max_deduction": None,
             "is_active": True,
         },
         {
-            "name": "Donations",
-            "description": "Donations to Public Benefit Organizations",
+            "name": "Test Donations",
+            "description": "Donations to Public Benefit Organizations for testing",
             "max_percentage": 10.0,  # 10% of taxable income
             "max_deduction": None,
             "is_active": True,
@@ -193,6 +201,8 @@ def complete_tax_data(test_db):
         test_db.add(DeductibleExpenseType(**expense_data))
 
     test_db.commit()
+    
+    print("Deductible expense types seeded successfully.")
     return tax_year
 
 

@@ -103,6 +103,9 @@ def verify_token(token: str) -> Optional[str]:
     Returns:
         The email (subject) from the token if valid, None otherwise
     """
+    if not token:
+        return None
+
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         email: str = payload.get("sub")

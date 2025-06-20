@@ -1,0 +1,34 @@
+[run]
+source = app
+omit = 
+    */migrations/*
+    */venv/*
+    */.venv/*
+    */tests/*
+    */test_*
+    setup.py
+    */conftest.py
+    app/main.py
+    */alembic/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    pass
+    ...
+
+show_missing = True
+precision = 2
+skip_covered = False
+
+[html]
+directory = htmlcov
+title = Second Certainty Coverage Report
+
+[json]
+output = coverage.json

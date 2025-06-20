@@ -5,106 +5,12 @@ import pytest
 
 from app.utils.tax_utils import (
     calculate_age,
-    extract_birth_date_from_id,
     format_currency,
-    get_gender_from_id,
-    is_sa_citizen_from_id,
-    validate_id_number,
 )
 
 
 class TestDataValidation:
-    """Test data validation functions."""
-
-    def test_valid_sa_id_numbers(self):
-        """Test validation of valid SA ID numbers."""
-        # These are test IDs with correct check digits
-        valid_ids = [
-            "9001015009087",  # 1990-01-01, Male, SA Citizen
-            "8512034000081",  # 1985-12-03, Female, SA Citizen
-        ]
-
-        for id_number in valid_ids:
-            is_valid, message = validate_id_number(id_number)
-            assert is_valid, f"ID {id_number} should be valid: {message}"
-            assert message == "Valid ID number"
-
-    def test_invalid_sa_id_numbers(self):
-        """Test validation of invalid SA ID numbers."""
-        invalid_cases = [
-            ("12345", "too short"),
-            ("1234567890123456", "too long"),
-            ("abcdefghijklm", "non-numeric"),
-            ("9013010001080", "invalid month"),
-            ("9001320001080", "invalid day"),
-        ]
-
-        for id_number, reason in invalid_cases:
-            is_valid, message = validate_id_number(id_number)
-            assert not is_valid, f"ID should be invalid ({reason}): {message}"
-
-    def test_birth_date_extraction(self):
-        """Test birth date extraction from ID."""
-        test_id = "9001015009087"  # 1990-01-01
-        birth_date = extract_birth_date_from_id(test_id)
-
-        assert birth_date.year == 1990
-        assert birth_date.month == 1
-        assert birth_date.day == 1
-
-    def test_birth_date_extraction_2000s(self):
-        """Test birth date extraction for 2000s births."""
-        test_id = "0101010001083"  # 2001-01-01 (assuming year <= 20 means 2000s)
-        birth_date = extract_birth_date_from_id(test_id)
-
-        assert birth_date.year == 2001
-        assert birth_date.month == 1
-        assert birth_date.day == 1
-
-    def test_gender_extraction_male(self):
-        """Test gender extraction for male ID."""
-        male_id = "9001015009087"  # Gender digit 5 (male)
-        gender = get_gender_from_id(male_id)
-        assert gender == "Male"
-
-    def test_gender_extraction_female(self):
-        """Test gender extraction for female ID."""
-        female_id = "8512034000081"  # Gender digit 4 (female)
-        gender = get_gender_from_id(female_id)
-        assert gender == "Female"
-
-    def test_citizenship_sa_citizen(self):
-        """Test citizenship check for SA citizen."""
-        citizen_id = "9001015009087"  # Citizenship digit 0 (SA citizen)
-        is_citizen = is_sa_citizen_from_id(citizen_id)
-        assert is_citizen is True
-
-    def test_id_number_validation_edge_cases(self):
-        """Test edge cases in ID number validation."""
-        # Test None input
-        is_valid, message = validate_id_number(None)
-        assert not is_valid
-        assert "must be a string" in message
-
-        # Test empty string
-        is_valid, message = validate_id_number("")
-        assert not is_valid
-
-        # Test invalid check digit
-        invalid_check_digit = "9001015009088"  # Wrong check digit
-        is_valid, message = validate_id_number(invalid_check_digit)
-        assert not is_valid
-        assert "Invalid check digit" in message
-
-    def test_invalid_date_components(self):
-        """Test ID numbers with invalid date components."""
-        # Invalid month (13)
-        with pytest.raises(ValueError, match="Invalid month"):
-            extract_birth_date_from_id("9013010001080")
-
-        # Invalid day (32)
-        with pytest.raises(ValueError, match="Invalid day"):
-            extract_birth_date_from_id("9001320001080")
+    """Test data validation functions (ID validation removed as not used in app)."""
 
     def test_format_currency(self):
         """Test currency formatting utility."""
@@ -138,84 +44,129 @@ class TestDataValidation:
             age = calculate_age(birth_date)
             assert age == 35
 
-    def test_comprehensive_id_validation_workflow(self):
-        """Test complete ID validation and extraction workflow."""
-        test_id = "8512034000081"  # 1985-12-03, Female, SA Citizen
-
-        # Step 1: Validate
-        is_valid, message = validate_id_number(test_id)
-        assert is_valid
-        assert message == "Valid ID number"
-
-        # Step 2: Extract birth date
-        birth_date = extract_birth_date_from_id(test_id)
-        assert birth_date == date(1985, 12, 3)
-
-        # Step 3: Extract gender
-        gender = get_gender_from_id(test_id)
-        assert gender == "Female"
-
-        # Step 4: Check citizenship
-        is_citizen = is_sa_citizen_from_id(test_id)
-        assert is_citizen is True
-
-        # Step 5: Calculate age (with mocked current date)
-        with patch("app.utils.tax_utils.date") as mock_date:
-            mock_date.today.return_value = date(2025, 6, 15)
-            age = calculate_age(birth_date)
-            assert age == 39  # Born Dec 1985, current June 2025
-
     def test_input_sanitization(self):
         """Test that inputs are properly sanitized."""
-        # Test with spaces in ID number
-        id_with_spaces = " 9001015009087 "
-        # This should fail validation as we expect exact format
-        is_valid, message = validate_id_number(id_with_spaces)
-        assert not is_valid
-
-        # Test with non-string input
-        is_valid, message = validate_id_number(123456789)
-        assert not is_valid
-        assert "must be a string" in message
-
-    def test_luhn_algorithm_validation(self):
-        """Test the Luhn algorithm implementation for SA ID numbers."""
-        # Test known valid IDs
-        valid_test_cases = [
-            "9001015009087",
-            "8512034000081",
-        ]
-
-        for id_number in valid_test_cases:
-            is_valid, message = validate_id_number(id_number)
-            assert is_valid, f"Valid ID {id_number} failed validation: {message}"
-
-        # Test known invalid check digits
-        invalid_test_cases = [
-            "9001015009088",  # Wrong check digit
-            "8512034000080",  # Wrong check digit
-        ]
-
-        for id_number in invalid_test_cases:
-            is_valid, message = validate_id_number(id_number)
-            assert not is_valid, f"Invalid ID {id_number} passed validation"
-            assert "Invalid check digit" in message
+        # Test currency formatting with various inputs
+        assert format_currency(1000.0) == "R 1,000.00"
+        assert format_currency(1000) == "R 1,000.00"
 
     def test_date_boundary_validation(self):
-        """Test date boundary validation in ID numbers."""
+        """Test date boundary validation."""
         # Test leap year dates
-        # February 29 in a leap year (2000)
-        leap_year_id = "0002290001083"  # 2000-02-29
+        leap_year_birth = date(2000, 2, 29)
+        
+        with patch("app.utils.tax_utils.date") as mock_date:
+            mock_date.today.return_value = date(2025, 3, 1)
+            age = calculate_age(leap_year_birth)
+            assert age == 25
 
-        try:
-            birth_date = extract_birth_date_from_id(leap_year_id)
-            assert birth_date.month == 2
-            assert birth_date.day == 29
-        except ValueError:
-            # If validation fails due to check digit, that's also acceptable
-            # The important thing is it doesn't crash
-            pass
+    def test_age_calculation_edge_cases(self):
+        """Test edge cases in age calculation."""
+        # Test with very recent birth date
+        recent_birth = date(2024, 12, 31)
+        
+        with patch("app.utils.tax_utils.date") as mock_date:
+            mock_date.today.return_value = date(2025, 1, 1)
+            age = calculate_age(recent_birth)
+            assert age == 0
 
-        # Test invalid February 29 in non-leap year
-        with pytest.raises(ValueError):
-            extract_birth_date_from_id("9902290001080")  # 1999-02-29 (invalid)
+        # Test with very old birth date
+        old_birth = date(1900, 1, 1)
+        
+        with patch("app.utils.tax_utils.date") as mock_date:
+            mock_date.today.return_value = date(2025, 6, 15)
+            age = calculate_age(old_birth)
+            assert age == 125
+
+    def test_currency_formatting_edge_cases(self):
+        """Test currency formatting with edge cases."""
+        # Test very large numbers
+        assert format_currency(999999999.99) == "R 999,999,999.99"
+        
+        # Test very small positive numbers
+        assert format_currency(0.01) == "R 0.01"
+        
+        # Test negative numbers
+        assert format_currency(-1234.56) == "R -1,234.56"
+        
+        # Test zero variants
+        assert format_currency(0.0) == "R 0.00"
+        assert format_currency(-0.0) == "R 0.00"
+
+    def test_age_calculation_performance(self):
+        """Test that age calculation is performant."""
+        import time
+        
+        birth_date = date(1990, 6, 15)
+        
+        start_time = time.time()
+        for _ in range(1000):
+            age = calculate_age(birth_date)
+        end_time = time.time()
+        
+        # Should complete 1000 calculations in less than 0.1 seconds
+        assert (end_time - start_time) < 0.1
+        assert age >= 0  # Sanity check
+
+    def test_data_validation_consistency(self):
+        """Test that validation functions return consistent results."""
+        # Test that multiple calls to the same function return the same result
+        birth_date = date(1985, 3, 15)
+        
+        with patch("app.utils.tax_utils.date") as mock_date:
+            mock_date.today.return_value = date(2025, 6, 15)
+            
+            ages = [calculate_age(birth_date) for _ in range(10)]
+            assert all(age == ages[0] for age in ages)
+            assert ages[0] == 40
+
+    def test_currency_formatting_consistency(self):
+        """Test currency formatting consistency."""
+        amount = 1234.56
+        
+        # Multiple calls should return the same result
+        formatted_amounts = [format_currency(amount) for _ in range(10)]
+        assert all(formatted == formatted_amounts[0] for formatted in formatted_amounts)
+        assert formatted_amounts[0] == "R 1,234.56"
+
+    def test_invalid_date_handling(self):
+        """Test handling of edge case dates."""
+        # Test with today's date as birth date (age 0)
+        with patch("app.utils.tax_utils.date") as mock_date:
+            today = date(2025, 6, 15)
+            mock_date.today.return_value = today
+            
+            age = calculate_age(today)
+            assert age == 0
+
+    def test_leap_year_birthday_edge_cases(self):
+        """Test leap year birthday calculations."""
+        # Born on leap day
+        leap_birth = date(2000, 2, 29)
+        
+        # Test in non-leap year
+        with patch("app.utils.tax_utils.date") as mock_date:
+            # Before leap day equivalent in non-leap year
+            mock_date.today.return_value = date(2025, 2, 28)
+            age = calculate_age(leap_birth)
+            assert age == 24  # Birthday hasn't happened yet
+            
+            # After leap day equivalent in non-leap year
+            mock_date.today.return_value = date(2025, 3, 1)
+            age = calculate_age(leap_birth)
+            assert age == 25  # Birthday has happened
+
+    def test_currency_precision(self):
+        """Test currency formatting precision."""
+        # Test various decimal places
+        test_cases = [
+            (1234.1, "R 1,234.10"),
+            (1234.12, "R 1,234.12"),
+            (1234.123, "R 1,234.12"),  # Should round to 2 decimal places
+            (1234.126, "R 1,234.13"),  # Should round up
+            (1234.125, "R 1,234.12"),  # Banker's rounding (round to even)
+        ]
+        
+        for amount, expected in test_cases:
+            result = format_currency(amount)
+            assert result == expected, f"Expected {expected}, got {result} for amount {amount}"

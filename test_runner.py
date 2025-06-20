@@ -69,13 +69,13 @@ class TestResult:
 def print_header(title: str, char: str = "="):
     """Print a formatted header."""
     print(f"\n{char * 60}")
-    print(f"🧪 {title}")
+    print(f"[TEST] {title}")
     print(f"{char * 60}")
 
 
 def print_section(title: str):
     """Print a section header."""
-    print(f"\n📋 {title}")
+    print(f"\n[INFO] {title}")
     print("-" * 50)
 
 
@@ -92,7 +92,7 @@ def run_command(command: str, description: str, timeout: int = 60, capture_outpu
     Returns:
         Tuple of (success, output/error, duration)
     """
-    print(f"🔍 {description}")
+    print(f"[RUN] {description}")
     print(f"   Command: {command}")
     
     start_time = time.time()
@@ -108,7 +108,7 @@ def run_command(command: str, description: str, timeout: int = 60, capture_outpu
         )
         duration = time.time() - start_time
         
-        status = "✅ PASS" if result.returncode == 0 else "❌ FAIL"
+        status = "[PASS]" if result.returncode == 0 else "[FAIL]"
         print(f"   Result: {status} ({duration:.2f}s)")
         
         if result.stdout.strip() and len(result.stdout) < 500:
@@ -118,7 +118,7 @@ def run_command(command: str, description: str, timeout: int = 60, capture_outpu
         
     except subprocess.CalledProcessError as e:
         duration = time.time() - start_time
-        print(f"   Result: ❌ FAIL ({duration:.2f}s)")
+        print(f"   Result: [FAIL] ({duration:.2f}s)")
         print(f"   Exit code: {e.returncode}")
         
         error_output = e.stderr if e.stderr else e.stdout
@@ -129,12 +129,12 @@ def run_command(command: str, description: str, timeout: int = 60, capture_outpu
         
     except subprocess.TimeoutExpired:
         duration = time.time() - start_time
-        print(f"   Result: ⏱️ TIMEOUT ({duration:.2f}s)")
+        print(f"   Result: [TIMEOUT] ({duration:.2f}s)")
         return False, f"Command timed out after {timeout}s", duration
         
     except Exception as e:
         duration = time.time() - start_time
-        print(f"   Result: ❌ ERROR ({duration:.2f}s)")
+        print(f"   Result: [ERROR] ({duration:.2f}s)")
         print(f"   Exception: {str(e)}")
         return False, str(e), duration
 
@@ -142,19 +142,19 @@ def run_command(command: str, description: str, timeout: int = 60, capture_outpu
 def check_file_exists(filepath: str, description: str) -> bool:
     """Check if a file exists and report result."""
     if Path(filepath).exists():
-        print(f"✅ {description}: {filepath}")
+        print(f"[OK] {description}: {filepath}")
         return True
     else:
-        print(f"❌ Missing {description}: {filepath}")
+        print(f"[MISSING] {description}: {filepath}")
         return False
 
 
 def check_python_version() -> bool:
     """Check Python version compatibility."""
     if sys.version_info < (3, 10):
-        print(f"❌ Python 3.10+ required. Current: {sys.version}")
+        print(f"[ERROR] Python 3.10+ required. Current: {sys.version}")
         return False
-    print(f"✅ Python version: {sys.version.split()[0]}")
+    print(f"[OK] Python version: {sys.version.split()[0]}")
     return True
 
 
@@ -179,7 +179,7 @@ def check_environment() -> Tuple[bool, List[str]]:
     # Check logs directory
     if not Path("logs").exists():
         Path("logs").mkdir(exist_ok=True)
-        print("✅ Created logs directory")
+        print("[OK] Created logs directory")
     
     return len(issues) == 0, issues
 
@@ -199,23 +199,23 @@ def run_setup_checks(result: TestResult) -> bool:
     
     # Working directory
     if not Path("app/main.py").exists():
-        print("❌ Please run this script from the project root directory")
+        print("[ERROR] Please run this script from the project root directory")
         print(f"   Current directory: {os.getcwd()}")
         result.add_result(False, "working_directory", 0, "Wrong working directory")
         return False
     
-    print(f"✅ Working directory: {os.getcwd()}")
+    print(f"[OK] Working directory: {os.getcwd()}")
     result.add_result(True, "working_directory")
     
     # Environment setup
     env_ok, env_issues = check_environment()
     if not env_ok:
-        print("⚠️  Environment issues:")
+        print("[WARN] Environment issues:")
         for issue in env_issues:
             print(f"   • {issue}")
             result.add_warning(issue)
     else:
-        print("✅ Environment configuration looks good")
+        print("[OK] Environment configuration looks good")
     
     # Required files
     required_files = [
@@ -229,7 +229,7 @@ def run_setup_checks(result: TestResult) -> bool:
         ("alembic.ini", "Database migrations config"),
     ]
     
-    print("\n📁 Required Files:")
+    print("\n[INFO] Required Files:")
     files_ok = True
     for filepath, description in required_files:
         if not check_file_exists(filepath, description):
@@ -242,14 +242,56 @@ def run_setup_checks(result: TestResult) -> bool:
 
 
 def install_dependencies(result: TestResult) -> bool:
-    """Install project dependencies."""
+    """Install project dependencies with enhanced error handling."""
     print_section("Dependency Installation")
     
+    # First, upgrade pip to ensure compatibility
+    pip_upgrade_success, _, _ = run_command(
+        "python -m pip install --upgrade pip",
+        "Upgrading pip",
+        timeout=60
+    )
+    
+    if not pip_upgrade_success:
+        result.add_warning("Could not upgrade pip - some packages may fail to install")
+    
+    # Install main requirements
     success, output, duration = run_command(
         "pip install -r requirements.txt", 
         "Installing Python dependencies",
         timeout=TEST_CONFIG["timeout_long"]
     )
+    
+    if not success:
+        print("[INFO] Main requirements installation failed, trying individual critical packages...")
+        
+        # Try installing critical packages individually
+        critical_packages = [
+            "fastapi",
+            "uvicorn",
+            "sqlalchemy", 
+            "pytest",
+            "pytest-cov",
+            "coverage",
+            "black",
+            "flake8",
+            "isort"
+        ]
+        
+        individual_success = True
+        for package in critical_packages:
+            pkg_success, _, _ = run_command(
+                f"pip install {package}",
+                f"Installing {package}",
+                timeout=60
+            )
+            if not pkg_success:
+                individual_success = False
+                result.add_warning(f"Failed to install {package}")
+        
+        if individual_success:
+            success = True
+            result.add_warning("Main requirements failed but critical packages installed individually")
     
     result.add_result(success, "dependency_installation", duration, output if not success else None)
     
@@ -324,7 +366,7 @@ def run_individual_tests(result: TestResult) -> Dict[str, bool]:
             test_results[test_file] = success
             result.add_result(success, test_file.replace("/", "_").replace(".py", ""), duration, output if not success else None)
         else:
-            print(f"⚠️  Test file not found: {test_file}")
+            print(f"[WARN] Test file not found: {test_file}")
             result.add_warning(f"Missing test file: {test_file}")
             test_results[test_file] = False
     
@@ -346,16 +388,56 @@ def run_comprehensive_tests(result: TestResult) -> bool:
 
 
 def run_coverage_analysis(result: TestResult) -> Tuple[bool, float]:
-    """Run test coverage analysis."""
+    """Run test coverage analysis with fallback methods."""
     print_section("Test Coverage Analysis")
     
+    coverage_percentage = 0.0
+    
+    # First try pytest-cov
     success, output, duration = run_command(
         "python -m pytest tests/ --cov=app --cov-report=term-missing --cov-report=html --cov-report=json",
-        "Running coverage analysis",
+        "Running coverage analysis (pytest-cov)",
         timeout=TEST_CONFIG["timeout_long"]
     )
     
-    coverage_percentage = 0.0
+    if not success:
+        print("[INFO] pytest-cov failed, trying alternative coverage method...")
+        
+        # Try installing coverage packages first
+        install_success, _, _ = run_command(
+            "pip install pytest-cov coverage",
+            "Installing coverage packages",
+            timeout=60
+        )
+        
+        if install_success:
+            # Retry with pytest-cov
+            success, output, duration = run_command(
+                "python -m pytest tests/ --cov=app --cov-report=term-missing --cov-report=html",
+                "Retrying coverage analysis",
+                timeout=TEST_CONFIG["timeout_long"]
+            )
+        
+        if not success:
+            # Fallback to basic coverage
+            print("[INFO] Using basic coverage measurement...")
+            success, output, duration = run_command(
+                "python -m coverage run -m pytest tests/ && python -m coverage report",
+                "Basic coverage analysis",
+                timeout=TEST_CONFIG["timeout_long"]
+            )
+            
+            if not success:
+                # Final fallback - just run tests without coverage
+                print("[INFO] Running tests without coverage measurement...")
+                success, output, duration = run_command(
+                    "python -m pytest tests/",
+                    "Running tests without coverage",
+                    timeout=TEST_CONFIG["timeout_long"]
+                )
+                result.add_warning("Coverage analysis not available - install pytest-cov for coverage reporting")
+    
+    # Try to extract coverage percentage
     if success:
         try:
             # Try to read coverage percentage from coverage.json
@@ -369,10 +451,14 @@ def run_coverage_analysis(result: TestResult) -> Tuple[bool, float]:
                     if 'TOTAL' in line and '%' in line:
                         parts = line.split()
                         for part in parts:
-                            if '%' in part:
-                                coverage_percentage = float(part.replace('%', ''))
-                                break
-                        break
+                            if '%' in part and part.replace('%', '').replace('.', '').isdigit():
+                                try:
+                                    coverage_percentage = float(part.replace('%', ''))
+                                    break
+                                except ValueError:
+                                    continue
+                        if coverage_percentage > 0:
+                            break
         except Exception as e:
             result.add_warning(f"Could not parse coverage percentage: {e}")
     
@@ -383,14 +469,14 @@ def run_coverage_analysis(result: TestResult) -> Tuple[bool, float]:
 
 
 def run_application_tests(result: TestResult) -> Dict[str, bool]:
-    """Run application-specific tests."""
+    """Run application-specific tests with ASCII-safe commands."""
     print_section("Application Integration Tests")
     
     app_results = {}
     
     # Application import test
     success, output, duration = run_command(
-        "python -c \"from app.main import app; print('✅ Application imports successfully')\"",
+        "python -c \"from app.main import app; print('Application imports successfully')\"",
         "Testing application import",
         timeout=TEST_CONFIG["timeout_short"]
     )
@@ -399,7 +485,7 @@ def run_application_tests(result: TestResult) -> Dict[str, bool]:
     
     # Database connection test
     success, output, duration = run_command(
-        "python -c \"from app.core.config import get_db; next(get_db()); print('✅ Database connection works')\"",
+        "python -c \"from app.core.config import get_db; next(get_db()); print('Database connection works')\"",
         "Testing database connection",
         timeout=TEST_CONFIG["timeout_short"]
     )
@@ -408,7 +494,7 @@ def run_application_tests(result: TestResult) -> Dict[str, bool]:
     
     # Configuration test
     success, output, duration = run_command(
-        "python -c \"from app.core.config import settings; print(f'✅ Configuration loaded: {settings.APP_NAME}')\"",
+        "python -c \"from app.core.config import settings; print(f'Configuration loaded: {settings.APP_NAME}')\"",
         "Testing configuration loading",
         timeout=TEST_CONFIG["timeout_short"]
     )
@@ -417,7 +503,7 @@ def run_application_tests(result: TestResult) -> Dict[str, bool]:
     
     # Tax calculator test
     success, output, duration = run_command(
-        "python -c \"from app.core.tax_calculator import TaxCalculator; print('✅ Tax calculator available')\"",
+        "python -c \"from app.core.tax_calculator import TaxCalculator; print('Tax calculator available')\"",
         "Testing tax calculator import",
         timeout=TEST_CONFIG["timeout_short"]
     )
@@ -427,34 +513,20 @@ def run_application_tests(result: TestResult) -> Dict[str, bool]:
     return app_results
 
 
-def monitor_memory_usage() -> Dict[str, float]:
-    """Monitor memory usage during tests."""
-    try:
-        import psutil
-        process = psutil.Process()
-        memory_info = process.memory_info()
-        return {
-            "rss_mb": memory_info.rss / 1024 / 1024,
-            "vms_mb": memory_info.vms / 1024 / 1024,
-        }
-    except ImportError:
-        return {"rss_mb": 0, "vms_mb": 0}
-
-
 def generate_report(result: TestResult, quality_results: Dict, test_results: Dict, 
                    app_results: Dict, coverage_percentage: float) -> None:
     """Generate comprehensive test report."""
-    print_header("📊 COMPREHENSIVE TEST REPORT")
+    print_header("COMPREHENSIVE TEST REPORT")
     
     # Summary statistics
-    print(f"⏱️  Total Runtime: {result.total_time:.1f} seconds")
-    print(f"✅ Tests Passed: {result.passed}")
-    print(f"❌ Tests Failed: {result.failed}")
-    print(f"📈 Success Rate: {result.success_rate:.1f}%")
-    print(f"📊 Code Coverage: {coverage_percentage:.1f}%")
+    print(f"Total Runtime: {result.total_time:.1f} seconds")
+    print(f"Tests Passed: {result.passed}")
+    print(f"Tests Failed: {result.failed}")
+    print(f"Success Rate: {result.success_rate:.1f}%")
+    print(f"Code Coverage: {coverage_percentage:.1f}%")
     
     # Performance summary
-    print(f"\n🚀 Performance Summary:")
+    print(f"\nPerformance Summary:")
     slow_tests = [(name, duration) for name, duration in result.performance_data.items() 
                   if duration > TEST_CONFIG["performance_threshold"]]
     if slow_tests:
@@ -462,30 +534,30 @@ def generate_report(result: TestResult, quality_results: Dict, test_results: Dic
         for name, duration in sorted(slow_tests, key=lambda x: x[1], reverse=True)[:5]:
             print(f"   • {name}: {duration:.2f}s")
     else:
-        print("   ✅ All tests completed within performance thresholds")
+        print("   [OK] All tests completed within performance thresholds")
     
     # Code quality results
-    print(f"\n🔍 Code Quality:")
+    print(f"\nCode Quality:")
     for check, passed in quality_results.items():
-        status = "✅ PASS" if passed else "❌ FAIL"
+        status = "[PASS]" if passed else "[FAIL]"
         print(f"   {check.replace('_', ' ').title()}: {status}")
     
     # Test module results
-    print(f"\n📋 Test Modules:")
+    print(f"\nTest Modules:")
     for test_file, passed in test_results.items():
-        status = "✅ PASS" if passed else "❌ FAIL"
+        status = "[PASS]" if passed else "[FAIL]"
         module_name = Path(test_file).stem.replace("test_", "").replace("_", " ").title()
         print(f"   {module_name}: {status}")
     
     # Application integration results
-    print(f"\n🔧 Application Integration:")
+    print(f"\nApplication Integration:")
     for test_name, passed in app_results.items():
-        status = "✅ PASS" if passed else "❌ FAIL"
+        status = "[PASS]" if passed else "[FAIL]"
         print(f"   {test_name.replace('_', ' ').title()}: {status}")
     
     # Warnings and recommendations
     if result.warnings:
-        print(f"\n⚠️  Warnings ({len(result.warnings)}):")
+        print(f"\nWarnings ({len(result.warnings)}):")
         for warning in result.warnings[:10]:  # Show first 10 warnings
             print(f"   • {warning}")
         if len(result.warnings) > 10:
@@ -493,7 +565,7 @@ def generate_report(result: TestResult, quality_results: Dict, test_results: Dic
     
     # Errors (if any)
     if result.errors:
-        print(f"\n❌ Errors ({len(result.errors)}):")
+        print(f"\nErrors ({len(result.errors)}):")
         for error in result.errors[:5]:  # Show first 5 errors
             print(f"   • {error}")
         if len(result.errors) > 5:
@@ -502,7 +574,7 @@ def generate_report(result: TestResult, quality_results: Dict, test_results: Dic
 
 def provide_recommendations(result: TestResult, coverage_percentage: float) -> None:
     """Provide recommendations based on test results."""
-    print_header("💡 RECOMMENDATIONS & NEXT STEPS")
+    print_header("RECOMMENDATIONS & NEXT STEPS")
     
     overall_success = (
         result.success_rate > 85 and
@@ -511,8 +583,8 @@ def provide_recommendations(result: TestResult, coverage_percentage: float) -> N
     )
     
     if overall_success:
-        print("🎉 Excellent! Your test suite is in great shape.")
-        print("\n📋 Next Steps:")
+        print("[SUCCESS] Excellent! Your test suite is in great shape.")
+        print("\nNext Steps:")
         print("   • Run the application: uvicorn app.main:app --reload")
         print("   • Check API docs: http://localhost:8000/api/docs")
         print("   • Initialize data: python scripts/seed_data.py")
@@ -520,8 +592,8 @@ def provide_recommendations(result: TestResult, coverage_percentage: float) -> N
         print("   • Consider setting up CI/CD automation")
         
     else:
-        print("⚠️  Your test suite needs attention.")
-        print("\n🔧 Priority Actions:")
+        print("[ATTENTION] Your test suite needs attention.")
+        print("\nPriority Actions:")
         
         if result.success_rate < 85:
             print(f"   • Fix failing tests (current success rate: {result.success_rate:.1f}%)")
@@ -534,7 +606,7 @@ def provide_recommendations(result: TestResult, coverage_percentage: float) -> N
             for error in result.errors[:3]:
                 print(f"     - {error}")
         
-        print("\n📚 Resources:")
+        print("\nResources:")
         print("   • Check test logs for detailed error information")
         print("   • Review failing test output above")
         print("   • Ensure all dependencies are installed")
@@ -545,7 +617,7 @@ def provide_recommendations(result: TestResult, coverage_percentage: float) -> N
     slow_tests = [(name, duration) for name, duration in result.performance_data.items() 
                   if duration > TEST_CONFIG["performance_threshold"]]
     if slow_tests:
-        print(f"\n⚡ Performance:")
+        print(f"\nPerformance:")
         print("   • Consider optimizing slow tests:")
         for name, duration in sorted(slow_tests, key=lambda x: x[1], reverse=True)[:3]:
             print(f"     - {name}: {duration:.2f}s")
@@ -577,7 +649,7 @@ def cleanup_test_artifacts() -> None:
 def main() -> bool:
     """Main test runner function."""
     print_header("Second Certainty Enhanced Test Suite")
-    print(f"🕐 Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     # Initialize result tracking
     result = TestResult()
@@ -591,7 +663,7 @@ def main() -> bool:
         # Phase 1: Setup checks
         setup_ok = run_setup_checks(result)
         if not setup_ok:
-            print("\n❌ Setup checks failed. Cannot continue.")
+            print("\n[ERROR] Setup checks failed. Cannot continue.")
             return False
         
         # Phase 2: Dependencies
@@ -626,18 +698,18 @@ def main() -> bool:
         )
         
         status = "SUCCESS" if overall_success else "NEEDS ATTENTION"
-        icon = "🎉" if overall_success else "⚠️"
+        icon = "[SUCCESS]" if overall_success else "[ATTENTION]"
         
         print_header(f"{icon} OVERALL STATUS: {status}")
         
         return overall_success
         
     except KeyboardInterrupt:
-        print("\n\n⚠️  Test run interrupted by user.")
+        print("\n\n[INTERRUPT] Test run interrupted by user.")
         return False
         
     except Exception as e:
-        print(f"\n\n❌ Unexpected error during test run: {e}")
+        print(f"\n\n[ERROR] Unexpected error during test run: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -645,7 +717,7 @@ def main() -> bool:
     finally:
         # Cleanup
         cleanup_test_artifacts()
-        print(f"\n🏁 Test run completed in {result.total_time:.1f} seconds")
+        print(f"\n[COMPLETE] Test run completed in {result.total_time:.1f} seconds")
 
 
 if __name__ == "__main__":

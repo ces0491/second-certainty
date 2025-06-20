@@ -24,6 +24,13 @@ class Token(BaseModel):
     token_type: str
 
 
+class LoginRequest(BaseModel):
+    """Login request model for JSON login"""
+
+    email: EmailStr
+    password: str
+
+
 class UserCreate(BaseModel):
     """User registration model"""
 
@@ -72,9 +79,9 @@ class LoginResponse(BaseModel):
 
 
 @router.post("/login", response_model=LoginResponse)
-async def login_user(email: str, password: str, db: Session = Depends(get_db)):
+async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
     """Alternative login endpoint for JSON requests."""
-    user = authenticate_user(db, email, password)
+    user = authenticate_user(db, login_data.email, login_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
