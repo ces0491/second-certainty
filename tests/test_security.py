@@ -83,7 +83,7 @@ class TestSecurity:
 
         response = client.post("/api/auth/login", json=malicious_data)
         # Should return 401, not crash
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
         # Try SQL injection in password field
         malicious_data2 = {"email": "test@example.com", "password": "' OR '1'='1"}

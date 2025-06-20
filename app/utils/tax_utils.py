@@ -38,4 +38,7 @@ def calculate_age(birth_date: date) -> int:
 
 def format_currency(amount: float) -> str:
     """Format amount as South African Rand."""
+    # Handle negative zero edge case
+    if amount == 0.0:
+        amount = 0.0  # Normalize -0.0 to 0.0
     return f"R {amount:,.2f}"

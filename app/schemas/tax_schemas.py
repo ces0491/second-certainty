@@ -14,6 +14,7 @@ class DeductibleExpenseTypeResponse(BaseModel):
     max_percentage: Optional[float] = None
     is_active: bool = True
 
+
     class Config:
         from_attributes = True
 
@@ -43,6 +44,18 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+    @validator("password")
+    def password_strength(cls, v):
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters long")
+        if v.isdigit():
+            raise ValueError("Password cannot be only numbers")
+        if v.isalpha():
+            raise ValueError("Password cannot be only letters")
+        if v.lower() in ['password', '12345678', 'abcdefgh', '123']:
+            raise ValueError("Password is too common")
+        return v
+
 
 class UserUpdate(BaseModel):
     """User profile update model - all fields are optional"""
@@ -70,6 +83,7 @@ class UserResponse(UserBase):
     created_at: date
     is_admin: Optional[bool] = False
 
+
     class Config:
         from_attributes = True
 
@@ -84,7 +98,11 @@ class IncomeBase(BaseModel):
 
 
 class IncomeCreate(IncomeBase):
-    pass
+    @validator("annual_amount")
+    def validate_amount(cls, v):
+        if v < 0:
+            raise ValueError("Annual amount must be positive")
+        return v
 
 
 class IncomeUpdate(BaseModel):
@@ -100,6 +118,7 @@ class IncomeResponse(IncomeBase):
     user_id: int
     created_at: date
 
+
     class Config:
         from_attributes = True
 
@@ -113,7 +132,11 @@ class ExpenseBase(BaseModel):
 
 
 class ExpenseCreate(ExpenseBase):
-    pass
+    @validator("amount")
+    def validate_amount(cls, v):
+        if v < 0:
+            raise ValueError("Expense amount must be positive")
+        return v
 
 
 class ExpenseUpdate(BaseModel):
@@ -173,6 +196,7 @@ class ProvisionalTaxResponse(BaseModel):
     effective_tax_rate: float
     first_payment: PaymentInfo
     second_payment: PaymentInfo
+
 
     class Config:
         from_attributes = True

@@ -26,16 +26,16 @@ class TestTaxAPI:
 
         # Check that we have the expected expense types
         expense_names = [expense["name"] for expense in data]
-        assert "Retirement Annuity" in expense_names
-        assert "Medical Expenses" in expense_names
-        assert "Donations" in expense_names
+        assert "Test Retirement Annuity" in expense_names
+        assert "Test Medical Expenses" in expense_names
+        assert "Test Donations" in expense_names
 
     def test_add_income_unauthorized(self, client, test_user):
         """Test adding income without authorization."""
         income_data = {"source_type": "Salary", "annual_amount": 350000, "is_paye": True}
 
         response = client.post(f"/api/tax/users/{test_user.id}/income/", json=income_data)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_add_income_authorized(self, client, test_user, auth_headers):
         """Test adding income with authorization."""

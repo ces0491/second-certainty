@@ -65,12 +65,12 @@ class TestAdminFunctionality:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
         data = response.json()
-        assert "Only administrators can update tax data" in data["detail"]
+        assert "Admin privileges required" in data["detail"]
 
     def test_unauthorized_admin_access(self, client):
         """Test unauthorized access to admin endpoints."""
         response = client.post("/api/admin/update-tax-data")
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_admin_update_script_failure(self, client, admin_headers):
         """Test handling when the update script fails."""

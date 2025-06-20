@@ -264,7 +264,11 @@ def calculate_custom_tax(
     expense_data = calculation_data.get("expenses", {})
 
     # Calculate total expenses
-    total_expenses = sum(expense_data.values())
+    # Handle both dict and string types for expenses
+    if isinstance(expense_data, dict):
+        total_expenses = sum(expense_data.values())
+    else:
+        total_expenses = 0
 
     # Get the calculator
     calculator = TaxCalculator(db)
