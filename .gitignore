@@ -30,12 +30,18 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+coverage.json
 *.cover
 .hypothesis/
 .pytest_cache/
+.ruff_cache/
 
 # Environments
 .env
+.env.local
+.env.development
+.env.test
+.env.production
 .venv
 env/
 venv/
@@ -43,10 +49,13 @@ ENV/
 env.bak/
 venv.bak/
 
-# Database
+# Database files
 *.db
 *.sqlite
 *.sqlite3
+test_*.db
+second_certainty.db
+test_second_certainty.db
 
 # IDE specific files
 .idea/
@@ -54,28 +63,63 @@ venv.bak/
 *.swp
 *.swo
 .DS_Store
+*.sublime-*
 
-# Documentation / LaTeX
+# Documentation builds
 docs/_build/
 docs/api/
-*.aux
-*.log
-*.toc
-*.bak
-*.dvi
-*.pdf
-*.fls
-*.fdb_latexmk
-*.synctex.gz
 
-# Application specific
+# Logs
 *.log
 logs/
+*.log.*
+
+# Application specific
 tax_app.db
 .env.local
 .env.development
 .env.test
 .env.production
 
-# Alembic generated files
+# Alembic
 app/db/migrations/versions/__pycache__/
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+temp/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# pyright
+.pyright/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Editor backups
+*~
+*.bak
+*.orig
