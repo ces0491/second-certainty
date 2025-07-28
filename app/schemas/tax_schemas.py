@@ -82,8 +82,17 @@ class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    created_at: date
+    created_at: date | None = None  # Allow None temporarily
     is_admin: bool | None = False
+    
+    @field_validator('created_at', mode='before')
+    @classmethod
+    def validate_created_at(cls, v):
+        """Ensure created_at is never None - use current date as fallback."""
+        if v is None:
+            from datetime import datetime, timezone
+            return datetime.now(timezone.utc).date()
+        return v
 
 
 # Income schemas

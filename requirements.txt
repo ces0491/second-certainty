@@ -9,9 +9,10 @@ psycopg2-binary==2.9.9  # PostgreSQL adapter
 alembic==1.13.1  # Database migrations
 aiosqlite==0.20.0  # Async SQLite support (needed for async tests)
 
-# Authentication and security
+# Authentication and security - FIXED VERSIONS
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
+bcrypt==4.0.1  # Specific compatible version
 python-dotenv==1.0.1
 
 # Validation and serialization

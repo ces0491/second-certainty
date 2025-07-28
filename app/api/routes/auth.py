@@ -141,6 +141,8 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
+# app/api/routes/auth.py - Fix for register_user function
+
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_user(user: UserCreate, db: Session = Depends(get_db)) -> dict[str, str | int]:
     """Register a new user account."""
@@ -167,6 +169,10 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)) -> dict
 
     # Hash password and create user
     hashed_password = get_password_hash(user.password)
+    
+    # Get current date for timestamps
+    current_date = datetime.now(timezone.utc).date()
+    
     db_user = UserProfile(
         email=user.email,
         hashed_password=hashed_password,
@@ -174,6 +180,8 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)) -> dict
         surname=user.surname,
         date_of_birth=date_of_birth,
         is_provisional_taxpayer=user.is_provisional_taxpayer if user.is_provisional_taxpayer is not None else False,
+        created_at=current_date,  # Explicitly set created_at
+        updated_at=current_date,  # Explicitly set updated_at
     )
 
     try:
