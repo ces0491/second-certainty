@@ -169,7 +169,7 @@ The repositories include comprehensive documentation covering:
 
 # Future Enhancements
 - **Rate Limiting**: Actually implement rate limiting (hooks in place for future development)
-- **Password Updates**: Updating profile data is not fully supported yet
+- **Profile Deletion**: Enable safe deletion of profiles
 - **Improve Standardization**: For logging, error handling, user input sanitization
 - **Enhanced Visualizations**: Use more sophisticated charting libraries like Highchart for better visualizations
 - **Improve Token Validation**

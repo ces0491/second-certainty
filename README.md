@@ -1,6 +1,6 @@
 # Second Certainty - Tax Management System
 
-A comprehensive South African tax liability management system that helps users track, calculate, and optimize their tax obligations throughout the fiscal year.
+A comprehensive South African tax liability management system that helps users calculate and track their tax obligations throughout the fiscal year.
 
 ![*logo generated using OpenAI's DALL·E model via ChatGPT (May 2025)](docs/images/sc_logo.png)
 
@@ -15,9 +15,9 @@ A comprehensive South African tax liability management system that helps users t
 
 ## Overview
 
-The Second Certainty Tax Tool addresses one of life's two certainties—taxes—by providing individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress.
+The Second Certainty Tax Tool addresses one of life's two certainties — taxes — by providing individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress.
 
-Our application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts provisional payments, and provides optimization strategies—all in real-time.
+This application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, and estimates provisional payments.
 
 ## Features
 
@@ -35,7 +35,7 @@ Our application transforms this approach by implementing a proactive, year-round
 - **Up-to-date Tax Information**: Current tax brackets, rebates, thresholds for South Africa
 - **SARS Integration**: Automatic scraping of latest tax rates from SARS website with multiple fallback strategies
 - **Historical Data**: Support for multiple tax years with automatic tax year detection
-- **Manual Data Entry**: Fallback to manual tax data when scraping fails
+- **Manual Data Entry**: Fallback to manual tax data if scraping fails
 
 ### Advanced Features
 
@@ -115,7 +115,7 @@ python scripts/seed_data.py
 
 uvicorn app.main:app --reload
 
-```text
+```
 
 ### Frontend Setup
 
@@ -138,7 +138,7 @@ echo "REACT_APP_API_BASE_URL=http://localhost:8000/api" > .env.local
 
 npm start
 
-```text
+```
 
 ## Environment Variables
 
@@ -190,7 +190,7 @@ ENABLE_RATE_LIMITING=True
 DEFAULT_RATE_LIMIT=100
 AUTH_RATE_LIMIT=5
 
-```text
+```
 
 ## API Endpoints
 
@@ -263,7 +263,7 @@ alembic upgrade head
 alembic current
 alembic history
 
-```text
+```
 
 ### Administrative Tools
 
@@ -285,7 +285,7 @@ python debug_user_profile.py <user_id>
 
 python fetch_tax_data.py --year 2024-2025 --force
 
-```text
+```
 
 ## Testing
 
@@ -307,7 +307,7 @@ pytest tests/test_api/test_tax_calculator.py
 
 pytest -v
 
-```text
+```
 
 ## Deployment
 

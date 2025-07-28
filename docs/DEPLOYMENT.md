@@ -9,6 +9,7 @@ This guide provides detailed instructions for deploying the Second Certainty Tax
 - **API Documentation**: [https://second-certainty-api.onrender.com/api/docs](https://second-certainty-api.onrender.com/api/docs)
 
 > **Note**: The application is deployed on Render's free tier, which results in:
+>
 > - Services "spin down" after 15 minutes of inactivity
 > - Cold start delays of 30+ seconds when accessing after inactivity
 > - Limited compute resources
@@ -121,7 +122,7 @@ AUTH_RATE_LIMIT=5
 SCRAPING_TIMEOUT=30
 SCRAPING_RETRIES=3
 
-```text
+```
 
 4. Click "Create Web Service"
 
@@ -147,7 +148,7 @@ python scripts/seed_data.py
 
 python create_admin.py admin@yourdomain.com secure_password Admin User
 
-```text
+```
 
 ### 4. Verify Backend Deployment
 
@@ -163,7 +164,7 @@ curl https://second-certainty-api.onrender.com/api/health
 
 open https://second-certainty-api.onrender.com/api/docs
 
-```text
+```
 
 ## Frontend Deployment (Render.com)
 
@@ -172,6 +173,7 @@ open https://second-certainty-api.onrender.com/api/docs
 Ensure your frontend repository has the correct API URL configuration:
 
 **In your React app (src/config/api.js or similar):**
+
 ```javascript
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 
@@ -179,9 +181,10 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL ||
 
 export default API_BASE_URL;
 
-```text
+```
 
 **Package.json build script:**
+
 ```json
 
 {
@@ -191,7 +194,7 @@ export default API_BASE_URL;
   }
 }
 
-```text
+```
 
 ### 2. Deploy the Frontend Static Site
 
@@ -211,12 +214,13 @@ export default API_BASE_URL;
 - **Publish Directory**: `build`
 
 **Environment Variables:**
+
 ```bash
 
 REACT_APP_API_BASE_URL=https://second-certainty-api.onrender.com/api
 NODE_VERSION=18
 
-```text
+```
 
 4. Click "Create Static Site"
 
@@ -291,7 +295,7 @@ CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
 ENABLE_QUERY_LOGGING=False
 LOG_LEVEL=INFO
 
-```text
+```
 
 ### Staging Environment
 
@@ -306,7 +310,7 @@ DEBUG=False
 CORS_ORIGINS=https://staging.yourdomain.com
 DATABASE_URL=<staging database URL>
 
-```text
+```
 
 ## Monitoring and Observability
 
@@ -324,13 +328,15 @@ Render provides:
 For enhanced monitoring, consider integrating:
 
 **Sentry (Error Tracking):**
+
 ```bash
 
 pip install sentry-sdk[fastapi]
 
-```text
+```
 
 Add to your FastAPI app:
+
 ```python
 
 import sentry_sdk
@@ -342,7 +348,7 @@ sentry_sdk.init(
     environment="production"
 )
 
-```text
+```
 
 **Log Management:**
 
@@ -359,6 +365,7 @@ Render automatically monitors your service health via:
 - Automatic restarts on failures
 
 Configure a custom health check endpoint:
+
 ```python
 
 @app.get("/health")
@@ -368,13 +375,14 @@ async def health_check():
         "timestamp": datetime.utcnow().isoformat()
     }
 
-```text
+```
 
 ## Performance Optimization
 
 ### Backend Optimization
 
 1. **Database Connection Pooling:**
+
 ```python
 
 # In app/core/config.py
@@ -387,18 +395,20 @@ engine = create_engine(
     pool_pre_ping=True
 )
 
-```text
+```
 
 2. **Caching (Future Enhancement):**
+
 ```bash
 
 # Add Redis for caching
 
 pip install redis
 
-```text
+```
 
 3. **Request Optimization:**
+
 - Implement database query optimization
 - Use database indexes appropriately
 - Consider API response caching
@@ -406,24 +416,26 @@ pip install redis
 ### Frontend Optimization
 
 1. **Build Optimization:**
+
 ```bash
 
 # Enable production build optimizations
 
 npm run build
 
-```text
+```
 
 2. **Static Asset Caching:**
 Render automatically handles static asset caching with appropriate headers.
 
 3. **Bundle Analysis:**
+
 ```bash
 
 npm install --save-dev webpack-bundle-analyzer
 npm run build -- --analyze
 
-```text
+```
 
 ## Backup and Disaster Recovery
 
@@ -435,6 +447,7 @@ npm run build -- --analyze
 - Paid plans: Daily automated backups with point-in-time recovery
 
 **Manual Backup:**
+
 ```bash
 
 # Create backup
@@ -445,7 +458,7 @@ pg_dump $DATABASE_URL > backup.sql
 
 psql $DATABASE_URL < backup.sql
 
-```text
+```
 
 ### Application Backup
 
@@ -484,6 +497,7 @@ psql $DATABASE_URL < backup.sql
    - Configure HSTS headers for additional security
 
 3. **CORS Configuration:**
+
 ```python
 
 app.add_middleware(
@@ -494,7 +508,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-```text
+```
 
 ### Database Security
 
@@ -511,6 +525,7 @@ app.add_middleware(
 ### Common Backend Issues
 
 **Build Failures:**
+
 ```bash
 
 # Check build logs in Render dashboard
@@ -523,9 +538,10 @@ app.add_middleware(
 
 # - Environment variable issues
 
-```text
+```
 
 **Runtime Errors:**
+
 ```bash
 
 # Check service logs for
@@ -538,9 +554,10 @@ app.add_middleware(
 
 # - Port binding issues
 
-```text
+```
 
 **Database Connection Issues:**
+
 ```bash
 
 # Verify DATABASE_URL format
@@ -549,11 +566,12 @@ app.add_middleware(
 
 # Ensure database and web service are in same region
 
-```text
+```
 
 ### Common Frontend Issues
 
 **Build Failures:**
+
 ```bash
 
 # Check build logs for
@@ -564,9 +582,10 @@ app.add_middleware(
 
 # - Environment variable issues
 
-```text
+```
 
 **API Connection Issues:**
+
 ```bash
 
 # Verify REACT_APP_API_BASE_URL is correct
@@ -575,11 +594,12 @@ app.add_middleware(
 
 # Ensure backend service is running
 
-```text
+```
 
 ### Performance Issues
 
 **Slow Response Times:**
+
 ```bash
 
 # Check service metrics in Render dashboard
@@ -590,9 +610,10 @@ app.add_middleware(
 
 # Implement caching strategies
 
-```text
+```
 
 **Service Downtime:**
+
 ```bash
 
 # Monitor service health checks
@@ -601,7 +622,7 @@ app.add_middleware(
 
 # Review error logs for issues
 
-```text
+```
 
 ## Upgrading and Maintenance
 
@@ -623,6 +644,7 @@ app.add_middleware(
 ### Regular Maintenance
 
 1. **Dependencies:**
+
 ```bash
 
 # Regularly update Python packages
@@ -635,14 +657,16 @@ pip install --upgrade package_name
 npm outdated
 npm update
 
-```text
+```
 
 2. **Security Updates:**
+
 - Monitor security advisories
 - Apply critical security patches promptly
 - Regular dependency audits
 
 3. **Database Maintenance:**
+
 - Monitor database performance
 - Clean up old data if applicable
 - Optimize slow queries
@@ -659,16 +683,19 @@ npm update
 ### Cost-Effective Strategies
 
 1. **Optimize Service Usage:**
+
    - Use sleep-friendly architectures
    - Implement efficient database queries
    - Minimize build frequency
 
 2. **Resource Right-Sizing:**
+
    - Start with smaller instances
    - Monitor usage and scale up as needed
    - Use staging environments efficiently
 
 3. **Alternative Architectures:**
+
    - Consider serverless functions for sporadic workloads
    - Use static hosting for frontend when possible
    - Implement client-side caching

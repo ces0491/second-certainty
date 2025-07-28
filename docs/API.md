@@ -24,7 +24,7 @@ The API uses JWT (JSON Web Token) for authentication with HTTPBearer security sc
 
 POST /api/auth/register
 
-```text
+```
 
 **Request Body:**
 
@@ -39,7 +39,7 @@ POST /api/auth/register
   "is_provisional_taxpayer": false
 }
 
-```text
+```
 
 **Response (201 Created):**
 
@@ -50,7 +50,7 @@ POST /api/auth/register
   "user_id": 1
 }
 
-```text
+```
 
 ### Login (JSON)
 
@@ -58,7 +58,7 @@ POST /api/auth/register
 
 POST /api/auth/login
 
-```text
+```
 
 **Request Body:**
 
@@ -69,7 +69,7 @@ POST /api/auth/login
   "password": "secure_password"
 }
 
-```text
+```
 
 **Response (200 OK):**
 
@@ -88,7 +88,7 @@ POST /api/auth/login
   }
 }
 
-```text
+```
 
 ### Login (OAuth2 Compatible)
 
@@ -96,7 +96,7 @@ POST /api/auth/login
 
 POST /api/auth/token
 
-```text
+```
 
 **Request Body (Form Data):**
 
@@ -112,7 +112,7 @@ POST /api/auth/token
   "token_type": "bearer"
 }
 
-```text
+```
 
 ### Get Current User
 
@@ -120,14 +120,14 @@ POST /api/auth/token
 
 GET /api/auth/me
 
-```text
+```
 
 **Headers:**
 
-```text
+```
 Authorization: Bearer {access_token}
 
-```text
+```
 
 **Response (200 OK):**
 
@@ -144,7 +144,7 @@ Authorization: Bearer {access_token}
   "created_at": "2025-01-01"
 }
 
-```text
+```
 
 ### Update Profile
 
@@ -152,7 +152,7 @@ Authorization: Bearer {access_token}
 
 PUT /api/auth/profile
 
-```text
+```
 
 **Request Body (all fields optional):**
 
@@ -165,7 +165,7 @@ PUT /api/auth/profile
   "is_provisional_taxpayer": true
 }
 
-```text
+```
 
 ### Change Password
 
@@ -173,7 +173,7 @@ PUT /api/auth/profile
 
 PUT /api/auth/change-password
 
-```text
+```
 
 **Request Body:**
 
@@ -184,7 +184,7 @@ PUT /api/auth/change-password
   "new_password": "new_secure_password"
 }
 
-```text
+```
 
 ### Logout
 
@@ -192,7 +192,7 @@ PUT /api/auth/change-password
 
 POST /api/auth/logout
 
-```text
+```
 
 **Response (200 OK):**
 
@@ -202,7 +202,7 @@ POST /api/auth/logout
   "message": "Successfully logged out"
 }
 
-```text
+```
 
 ## Tax Calculation Endpoints
 
@@ -212,7 +212,7 @@ POST /api/auth/logout
 
 GET /api/tax/tax-brackets/
 
-```text
+```
 
 **Query Parameters:**
 
@@ -239,7 +239,7 @@ GET /api/tax/tax-brackets/
   }
 ]
 
-```text
+```
 
 ### Get Deductible Expense Types
 
@@ -247,7 +247,7 @@ GET /api/tax/tax-brackets/
 
 GET /api/tax/deductible-expenses/
 
-```text
+```
 
 **Response (200 OK):**
 
@@ -264,7 +264,7 @@ GET /api/tax/deductible-expenses/
   }
 ]
 
-```text
+```
 
 ### Add Income Source
 
@@ -272,7 +272,7 @@ GET /api/tax/deductible-expenses/
 
 POST /api/tax/users/{user_id}/income/
 
-```text
+```
 
 **Request Body:**
 
@@ -286,7 +286,7 @@ POST /api/tax/users/{user_id}/income/
   "tax_year": "2024-2025"
 }
 
-```text
+```
 
 **Response (201 Created):**
 
@@ -304,7 +304,7 @@ POST /api/tax/users/{user_id}/income/
   "updated_at": "2025-05-14"
 }
 
-```text
+```
 
 ### Get Income Sources
 
@@ -312,7 +312,7 @@ POST /api/tax/users/{user_id}/income/
 
 GET /api/tax/users/{user_id}/income/
 
-```text
+```
 
 **Query Parameters:**
 
@@ -336,7 +336,7 @@ GET /api/tax/users/{user_id}/income/
   }
 ]
 
-```text
+```
 
 ### Delete Income Source
 
@@ -344,7 +344,7 @@ GET /api/tax/users/{user_id}/income/
 
 DELETE /api/tax/users/{user_id}/income/{income_id}
 
-```text
+```
 
 **Response (204 No Content)**
 
@@ -354,7 +354,7 @@ DELETE /api/tax/users/{user_id}/income/{income_id}
 
 POST /api/tax/users/{user_id}/expenses/
 
-```text
+```
 
 **Request Body:**
 
@@ -367,7 +367,7 @@ POST /api/tax/users/{user_id}/expenses/
   "tax_year": "2024-2025"
 }
 
-```text
+```
 
 **Response (201 Created):**
 
@@ -391,7 +391,7 @@ POST /api/tax/users/{user_id}/expenses/
   }
 }
 
-```text
+```
 
 ### Get Expenses
 
@@ -399,7 +399,7 @@ POST /api/tax/users/{user_id}/expenses/
 
 GET /api/tax/users/{user_id}/expenses/
 
-```text
+```
 
 **Query Parameters:**
 
@@ -429,7 +429,7 @@ GET /api/tax/users/{user_id}/expenses/
   }
 ]
 
-```text
+```
 
 ### Delete Expense
 
@@ -437,7 +437,7 @@ GET /api/tax/users/{user_id}/expenses/
 
 DELETE /api/tax/users/{user_id}/expenses/{expense_id}
 
-```text
+```
 
 **Response (204 No Content)**
 
@@ -447,7 +447,7 @@ DELETE /api/tax/users/{user_id}/expenses/{expense_id}
 
 GET /api/tax/users/{user_id}/tax-calculation/
 
-```text
+```
 
 **Query Parameters:**
 
@@ -468,7 +468,7 @@ GET /api/tax/users/{user_id}/tax-calculation/
   "monthly_tax_rate": 0.0215
 }
 
-```text
+```
 
 ### Calculate Custom Tax Scenario
 
@@ -476,7 +476,7 @@ GET /api/tax/users/{user_id}/tax-calculation/
 
 POST /api/tax/users/{user_id}/custom-tax-calculation/
 
-```text
+```
 
 **Request Body:**
 
@@ -491,7 +491,7 @@ POST /api/tax/users/{user_id}/custom-tax-calculation/
   }
 }
 
-```text
+```
 
 **Query Parameters:**
 
@@ -512,7 +512,7 @@ POST /api/tax/users/{user_id}/custom-tax-calculation/
   "monthly_tax_rate": 0.0213
 }
 
-```text
+```
 
 ### Calculate Provisional Tax
 
@@ -520,7 +520,7 @@ POST /api/tax/users/{user_id}/custom-tax-calculation/
 
 GET /api/tax/users/{user_id}/provisional-tax/
 
-```text
+```
 
 **Query Parameters:**
 
@@ -544,7 +544,7 @@ GET /api/tax/users/{user_id}/provisional-tax/
   }
 }
 
-```text
+```
 
 ## Administrative Endpoints
 
@@ -554,7 +554,7 @@ GET /api/tax/users/{user_id}/provisional-tax/
 
 POST /api/admin/update-tax-data
 
-```text
+```
 
 **Query Parameters:**
 
@@ -578,7 +578,7 @@ Authorization: Bearer {admin_access_token}
   "year": "2024-2025"
 }
 
-```text
+```
 
 ## Health Check Endpoints
 
@@ -588,7 +588,7 @@ Authorization: Bearer {admin_access_token}
 
 GET /
 
-```text
+```
 
 **Response (200 OK):**
 
@@ -600,7 +600,7 @@ GET /
   "message": "Welcome to the Second Certainty Tax API"
 }
 
-```text
+```
 
 ### Health Check
 
@@ -608,7 +608,7 @@ GET /
 
 GET /api/health
 
-```text
+```
 
 **Response (200 OK):**
 
@@ -628,7 +628,7 @@ GET /api/health
   }
 }
 
-```text
+```
 
 ## Error Responses
 
@@ -649,7 +649,7 @@ The API returns standard HTTP status codes:
   "detail": "Error message describing what went wrong"
 }
 
-```text
+```
 
 ### Validation Error Response
 
@@ -665,16 +665,16 @@ The API returns standard HTTP status codes:
   ]
 }
 
-```text
+```
 
 ## Authentication
 
 All protected endpoints require a valid JWT token in the Authorization header:
 
-```text
+```
 Authorization: Bearer {access_token}
 
-```text
+```
 
 Tokens expire after 7 days (10080 minutes) by default.
 

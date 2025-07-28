@@ -20,7 +20,7 @@ Before you begin, ensure you have the following:
 git clone https://github.com/ces0491/second-certainty.git
 cd second-certainty
 
-```text
+```
 
 ### 2. Create a Virtual Environment
 
@@ -29,7 +29,7 @@ cd second-certainty
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-```text
+```
 
 ### 3. Install Dependencies
 
@@ -37,7 +37,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 pip install -r requirements.txt
 
-```text
+```
 
 ### 4. Configure Environment Variables
 
@@ -45,7 +45,7 @@ pip install -r requirements.txt
 
 cp env.example .env
 
-```text
+```
 
 Edit the `.env` file with your configuration:
 
@@ -106,7 +106,7 @@ AUTH_RATE_LIMIT=5
 SCRAPING_TIMEOUT=30
 SCRAPING_RETRIES=3
 
-```text
+```
 
 For a secure `SECRET_KEY`, you can generate one with:
 
@@ -114,7 +114,7 @@ For a secure `SECRET_KEY`, you can generate one with:
 
 python -c "import secrets; print(secrets.token_hex(32))"
 
-```text
+```
 
 ### 5. Set Up the Database
 
@@ -132,7 +132,7 @@ python init_db.py
 
 python scripts/seed_data.py
 
-```text
+```
 
 #### Using PostgreSQL (Production-like Setup)
 
@@ -160,7 +160,7 @@ CREATE USER second_certainty_user WITH PASSWORD 'your_password';
 GRANT ALL PRIVILEGES ON DATABASE second_certainty TO second_certainty_user;
 \q
 
-```text
+```
 
 2. Update the `DATABASE_URL` in your `.env` file:
 
@@ -168,7 +168,7 @@ GRANT ALL PRIVILEGES ON DATABASE second_certainty TO second_certainty_user;
 
 DATABASE_URL=postgresql://second_certainty_user:your_password@localhost:5432/second_certainty
 
-```text
+```
 
 3. Initialize the database:
 
@@ -177,7 +177,7 @@ DATABASE_URL=postgresql://second_certainty_user:your_password@localhost:5432/sec
 python init_db.py
 python scripts/seed_data.py
 
-```text
+```
 
 ### 6. Run Database Migrations (if needed)
 
@@ -193,7 +193,7 @@ alembic current
 
 alembic upgrade head
 
-```text
+```
 
 ### 7. Create an Admin Account
 
@@ -203,7 +203,7 @@ To create an admin account for accessing administrative features:
 
 python create_admin.py your_email@example.com secure_password Your Name Surname
 
-```text
+```
 
 ### 8. Start the Backend Server
 
@@ -211,14 +211,14 @@ python create_admin.py your_email@example.com secure_password Your Name Surname
 
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
-```text
+```
 
 The API will be available at:
 
-- **Main API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/api/docs
-- **ReDoc**: http://localhost:8000/api/redoc
-- **Health Check**: http://localhost:8000/api/health
+- **Main API**: <http://localhost:8000>
+- **API Documentation**: <http://localhost:8000/api/docs>
+- **ReDoc**: <http://localhost:8000/api/redoc>
+- **Health Check**: <http://localhost:8000/api/health>
 
 ## Frontend Setup
 
@@ -229,7 +229,7 @@ The API will be available at:
 git clone https://github.com/ces0491/second-certainty-frontend.git
 cd second-certainty-frontend
 
-```text
+```
 
 ### 2. Install Dependencies
 
@@ -237,7 +237,7 @@ cd second-certainty-frontend
 
 npm install
 
-```text
+```
 
 ### 3. Configure Environment Variables
 
@@ -247,7 +247,7 @@ Create a `.env.local` file:
 
 REACT_APP_API_BASE_URL=http://localhost:8000/api
 
-```text
+```
 
 ### 4. Start the Development Server
 
@@ -255,9 +255,9 @@ REACT_APP_API_BASE_URL=http://localhost:8000/api
 
 npm start
 
-```text
+```
 
-The frontend will be available at http://localhost:3000.
+The frontend will be available at <http://localhost:3000>.
 
 ## Working with the Full Stack
 
@@ -271,7 +271,7 @@ cd /path/to/second-certainty
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 uvicorn app.main:app --reload
 
-```text
+```
 
 ### Terminal 2 (Frontend)
 
@@ -280,7 +280,7 @@ uvicorn app.main:app --reload
 cd /path/to/second-certainty-frontend
 npm start
 
-```text
+```
 
 ## Testing the Installation
 
@@ -290,9 +290,10 @@ npm start
 
 curl http://localhost:8000/api/health
 
-```text
+```
 
 Expected response:
+
 ```json
 
 {
@@ -305,7 +306,7 @@ Expected response:
   }
 }
 
-```text
+```
 
 ### 2. Test User Registration
 
@@ -322,11 +323,11 @@ curl -X POST "http://localhost:8000/api/auth/register" \
     "is_provisional_taxpayer": false
   }'
 
-```text
+```
 
 ### 3. Test Frontend Connection
 
-Open http://localhost:3000 in your browser and verify:
+Open <http://localhost:3000> in your browser and verify:
 
 - The application loads without errors
 - You can navigate to the registration page
@@ -354,7 +355,7 @@ python fetch_tax_data.py --year 2024-2025 --force
 
 python create_admin.py admin2@example.com password123 Admin Two
 
-```text
+```
 
 ### Database Migrations
 
@@ -376,7 +377,7 @@ alembic downgrade -1
 
 alembic history
 
-```text
+```
 
 ### Code Quality
 
@@ -394,7 +395,7 @@ isort app/
 
 flake8 app/
 
-```text
+```
 
 ## Testing
 
@@ -422,7 +423,7 @@ pytest -v
 
 pytest tests/test_core/test_data_scraper.py -v
 
-```text
+```
 
 ### Frontend Tests
 
@@ -438,7 +439,7 @@ npm test
 
 npm test -- --coverage
 
-```text
+```
 
 ## Troubleshooting
 
@@ -462,7 +463,7 @@ print('Database connection successful')
 db.close()
 "
 
-```text
+```
 
 #### Import Errors
 
@@ -476,7 +477,7 @@ which python  # Should point to your venv
 
 pip install --upgrade -r requirements.txt
 
-```text
+```
 
 #### Port Already in Use
 
@@ -490,7 +491,7 @@ sudo lsof -ti:8000 | xargs kill -9
 
 uvicorn app.main:app --reload --port 8001
 
-```text
+```
 
 #### Missing Environment Variables
 
@@ -509,7 +510,7 @@ print(f'Database URL: {settings.DATABASE_URL}')
 print(f'Secret Key: {settings.SECRET_KEY[:10]}...')
 "
 
-```text
+```
 
 ### Common Frontend Issues
 
@@ -529,7 +530,7 @@ curl -H "Origin: http://localhost:3000" \
      -X OPTIONS \
      http://localhost:8000/api/health
 
-```text
+```
 
 #### Node Module Errors
 
@@ -541,7 +542,7 @@ npm cache clean --force
 rm -rf node_modules package-lock.json
 npm install
 
-```text
+```
 
 #### Build Errors
 
@@ -555,20 +556,21 @@ npm run build
 
 echo $REACT_APP_API_BASE_URL
 
-```text
+```
 
 ### Logging and Debugging
 
 #### Enable Debug Logging
 
 In your `.env` file:
+
 ```bash
 
 DEBUG=True
 LOG_LEVEL=DEBUG
 ENABLE_QUERY_LOGGING=True
 
-```text
+```
 
 #### Check Log Files
 
@@ -582,7 +584,7 @@ tail -f logs/second_certainty.log
 
 tail -f logs/second_certainty_error.log
 
-```text
+```
 
 #### Debug Database Issues
 
@@ -608,7 +610,7 @@ print(f'Tax brackets in database: {count}')
 db.close()
 "
 
-```text
+```
 
 ## Next Steps
 
@@ -617,7 +619,7 @@ After successful installation:
 1. **Create a test user account** via the frontend registration page
 2. **Add sample income and expenses** to test calculations
 3. **Explore the tax calculation features**
-4. **Review the API documentation** at http://localhost:8000/api/docs
+4. **Review the API documentation** at <http://localhost:8000/api/docs>
 5. **Check the admin features** if you created an admin account
 
 For production deployment, see the [Deployment Guide](./DEPLOYMENT.md).
