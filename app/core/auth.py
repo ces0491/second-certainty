@@ -1,9 +1,9 @@
 # app/core/auth.py
-from datetime import datetime, timedelta
-from typing import Optional
+from datetime import datetime, timedelta, timezone
+from typing import Any
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, OAuth2PasswordBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
@@ -46,7 +46,7 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def authenticate_user(db: Session, email: str, password: str) -> Optional[UserProfile]:
+def authenticate_user(db: Session, email: str, password: str) -> UserProfile | None:
     """
     Authenticate a user by email and password.
 
@@ -65,13 +65,13 @@ def authenticate_user(db: Session, email: str, password: str) -> Optional[UserPr
         return None
 
     # Update last login timestamp
-    user.last_login = datetime.utcnow()
+    user.last_login = datetime.now(timezone.utc)
     db.commit()
 
     return user
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """
     Create a JWT access token.
 
@@ -84,21 +84,21 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     """
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
     return encoded_jwt
 
 
-def verify_token(token: str) -> Optional[str]:
+def verify_token(token: str | None) -> str | None:
     """
     Verify and decode a JWT token.
 
     Args:
-        token: The JWT token to verify
+        token: The JWT token to verify (can be None)
 
     Returns:
         The email (subject) from the token if valid, None otherwise
@@ -108,7 +108,7 @@ def verify_token(token: str) -> Optional[str]:
 
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        email: str = payload.get("sub")
+        email: str | None = payload.get("sub")
         if email is None:
             return None
         return email
@@ -116,7 +116,9 @@ def verify_token(token: str) -> Optional[str]:
         return None
 
 
-def get_current_user(token: str = Depends(security), db: Session = Depends(get_db)) -> UserProfile:
+def get_current_user(
+    token: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)
+) -> UserProfile:
     """
     Get the current user from JWT token (HTTPBearer).
 
@@ -141,7 +143,7 @@ def get_current_user(token: str = Depends(security), db: Session = Depends(get_d
         token_str = token.credentials if hasattr(token, "credentials") else str(token)
 
         payload = jwt.decode(token_str, settings.SECRET_KEY, algorithms=["HS256"])
-        email: str = payload.get("sub")
+        email: str | None = payload.get("sub")
         if email is None:
             raise credentials_exception
     except JWTError:
@@ -177,7 +179,7 @@ def get_current_user_oauth2(token: str = Depends(oauth2_scheme), db: Session = D
 
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        email: str = payload.get("sub")
+        email: str | None = payload.get("sub")
         if email is None:
             raise credentials_exception
     except JWTError:
@@ -232,7 +234,7 @@ def create_user(
     password: str,
     name: str,
     surname: str,
-    date_of_birth,
+    date_of_birth: Any,
     is_provisional_taxpayer: bool = False,
     is_admin: bool = False,
 ) -> UserProfile:
@@ -264,8 +266,8 @@ def create_user(
         date_of_birth=date_of_birth,
         is_provisional_taxpayer=is_provisional_taxpayer,
         is_admin=is_admin,
-        created_at=datetime.utcnow().date(),
-        updated_at=datetime.utcnow().date(),
+        created_at=datetime.now(timezone.utc).date(),
+        updated_at=datetime.now(timezone.utc).date(),
     )
 
     db.add(db_user)
@@ -288,7 +290,7 @@ def update_user_password(db: Session, user: UserProfile, new_password: str) -> b
     """
     try:
         user.hashed_password = get_password_hash(new_password)
-        user.updated_at = datetime.utcnow().date()
+        user.updated_at = datetime.now(timezone.utc).date()
         db.commit()
         return True
     except Exception:

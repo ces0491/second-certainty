@@ -21,7 +21,6 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 # Add the parent directory to the path so we can import app modules
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -39,7 +38,7 @@ logs_dir.mkdir(exist_ok=True)
 logger = setup_logging(app_name="tax_data_fetcher", log_level=logging.INFO)
 
 
-async def fetch_and_save_tax_data(tax_year: Optional[str] = None, force: bool = False, manual: bool = False) -> bool:
+async def fetch_and_save_tax_data(tax_year: str | None = None, force: bool = False, manual: bool = False) -> bool:
     """
     Main function to fetch tax data and save it to the database.
 

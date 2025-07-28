@@ -141,7 +141,7 @@ def debug_user_profile(user_id: int):
         print(f"\n📈 All Income Data for User:")
         all_income = db.query(IncomeSource).filter(IncomeSource.user_id == user_id).all()
         if all_income:
-            years = set(income.tax_year for income in all_income)
+            years = {income.tax_year for income in all_income}
             for year in sorted(years):
                 year_income = [inc for inc in all_income if inc.tax_year == year]
                 total = sum(inc.annual_amount for inc in year_income)

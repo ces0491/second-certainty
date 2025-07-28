@@ -15,20 +15,22 @@ format:
 
 # Project Description
 
-Second Certainty addresses one of life's two certainties, **taxes** by providing South African individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. 
+Second Certainty addresses one of life's two certainties - **taxes** - by providing South African individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year. 
 
-Traditional tax management often occurs reactively at the tax year-end, leading to unexpected liabilities, missed deductions, and stress. Second Certainty transforms this approach by implementing a proactive, year-round tax management system that calculates estimated tax liabilities based on current income and expense streams.
+Traditional tax management often occurs reactively at the tax year-end, leading to unexpected liabilities, missed deductions, and stress. Second Certainty transforms this approach by implementing a proactive, year-round tax management system that calculates estimated tax liabilities based on real-time income and expense streams.
 
 The system combines up-to-date South African tax regulations with personal financial data to deliver accurate tax calculations, visualizations, and insights, helping users optimize their tax position throughout the year.
 
 # Technical Requirements
 
 ## Backend
-- **Framework**: FastAPI 0.110.1 - chosen for its high performance, automatic documentation generation, and modern Python type annotations
+- **Framework**: FastAPI 0.110.1 - powerful, intuitive framework with modern Python type annotations
 - **ORM**: SQLAlchemy 2.0.40 - provides flexible database operations and ORM capabilities
 - **Validation**: Pydantic 2.6.0 with pydantic-settings 2.2.1 - ensures robust data validation with minimal code
-- **Database**: PostgreSQL (production), SQLite (development) - PostgreSQL chosen for scalability and reliability
-- **Authentication**: JWT with HTTPBearer security and bcrypt password hashing - modern secure authentication approach
+- **Database**: 
+  - PostgreSQL (production) - chosen for native support in Render (for deployment)
+  - SQLite (development)
+- **Authentication**: JWT with HTTPBearer security and bcrypt password hashing - secure authentication approach
 - **Testing**: Pytest 7.4.4 with pytest-asyncio 0.23.5 - comprehensive testing framework for Python including async support
 - **Documentation**: OpenAPI (Swagger UI) - automatic API documentation generation
 - **HTTP Client**: HTTPX 0.27.0 - modern async HTTP client for SARS website integration
@@ -85,29 +87,32 @@ The system combines up-to-date South African tax regulations with personal finan
 The Second Certainty application is deployed on Render's free tier, which may result in slow initial load times after periods of inactivity. When logging in, please note that you may need to retry after `No response from server` message - this is a function of deployment on Render's free tier which experiences "cold starts" after 15 minutes of inactivity.
 
 **Live Application URLs:**
-- **Frontend Application**: [https://second-certainty.onrender.com](https://second-certainty.onrender.com)
-- **Backend API**: [https://second-certainty-api.onrender.com](https://second-certainty-api.onrender.com)
-- **API Documentation**: [https://second-certainty-api.onrender.com/api/docs](https://second-certainty-api.onrender.com/api/docs)
+
+- **Frontend Application**: [https://second-certainty.onrender.com](https://second-certainty.onrender.com){target="_blank"}
+- **Backend API**: [https://second-certainty-api.onrender.com](https://second-certainty-api.onrender.com){target="_blank"}
+- **API Documentation**: [https://second-certainty-api.onrender.com/api/docs](https://second-certainty-api.onrender.com/api/docs){target="_blank"}
 
 **Performance Considerations:**
+
 - Initial load times may exceed 30 seconds due to service "spin-up" on free tier
 - Subsequent requests are responsive once the service is active
 - Database queries are optimized for performance despite platform limitations
 
 For more detailed information, please refer to the following documentation:
 
-- [Installation Guide](./docs/INSTALLATION.md): Complete setup instructions for local development
-- [Deployment Guide](./docs/DEPLOYMENT.md): Comprehensive production deployment instructions
-- [API Documentation](./docs/API.md): Detailed API reference with examples
+- [Installation Guide](https://github.com/ces0491/second-certainty/blob/main/docs/INSTALLATION.md){target="_blank"}: Complete setup instructions for local development
+- [Deployment Guide](https://github.com/ces0491/second-certainty/blob/main/docs/DEPLOYMENT.md){target="_blank"}: Comprehensive production deployment instructions
+- [API Documentation](https://github.com/ces0491/second-certainty/blob/main/docs/API.md){target="_blank"}: Detailed API reference with examples
 
 # Code Repository
 
 The project is maintained in two separate repositories:
 
-- **Backend Repository**: [https://github.com/ces0491/second-certainty](https://github.com/ces0491/second-certainty)
-- **Frontend Repository**: [https://github.com/ces0491/second-certainty-frontend](https://github.com/ces0491/second-certainty-frontend)
+- **Backend Repository**: [https://github.com/ces0491/second-certainty](https://github.com/ces0491/second-certainty){target="_blank"}
+- **Frontend Repository**: [https://github.com/ces0491/second-certainty-frontend](https://github.com/ces0491/second-certainty-frontend){target="_blank"}
 
 The repositories include comprehensive documentation covering:
+
 - **Installation and Setup**: Step-by-step local development environment setup
 - **API Documentation**: Complete endpoint reference with request/response examples  
 - **Database Schema**: Detailed model relationships and migration procedures
@@ -118,11 +123,11 @@ The repositories include comprehensive documentation covering:
 
 ## Dashboard
 ![Dashboard](./images/Dashboard.png)
-*The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations with real-time updates.*
+*The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations.*
 
 ## Income Tracking
 ![Income Tracking](./images/Income.png)
-*Comprehensive interface for managing multiple income sources with PAYE categorization and annual amount tracking.*
+*Interface for managing multiple income sources with PAYE categorization and annual amount tracking.*
 
 ## Expense Management
 ![Expense Management](./images/Expenses.png)
@@ -159,7 +164,7 @@ The repositories include comprehensive documentation covering:
 ## Security Implementation
 - **Authentication Flow**: JWT tokens with HTTPBearer security and automatic token refresh
 - **Password Security**: Bcrypt hashing with salt for secure password storage
-- **Input Sanitization**: Comprehensive validation at both API and database levels
+- **Input Sanitization**: validation at both API and database levels
 - **CORS Configuration**: Secure cross-origin resource sharing with whitelisted domains
 
 # Future Enhancements

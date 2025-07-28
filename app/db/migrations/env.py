@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
 
 # Make sure all models are imported to register with Base.metadata
 # This import needs to come after the Base import
-import app.db.base  #This imports all models
+import app.db.base  # This imports all models
 from app.core.config import settings
 
 # Import from the base_class file for the Base definition
@@ -20,6 +20,11 @@ from app.db.base_class import Base
 # Set up Alembic configuration
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+
+# Interpret the config file for Python logging.
+# This line sets up loggers basically.
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
 
 # Rest of the file remains the same...
 target_metadata = Base.metadata
@@ -41,8 +46,17 @@ def run_migrations_offline():
 
 def run_migrations_online():
     """Run migrations in 'online' mode."""
+    # Fixed: Handle potential None return from get_section
+    configuration = config.get_section(config.config_ini_section)
+    if configuration is None:
+        configuration = {}
+
+    # Add the database URL to configuration if not present
+    if "sqlalchemy.url" not in configuration:
+        configuration["sqlalchemy.url"] = settings.DATABASE_URL
+
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        configuration,  # Now guaranteed to be a dict, not None
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

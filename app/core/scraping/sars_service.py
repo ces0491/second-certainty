@@ -1,6 +1,6 @@
 # app/core/scraping/sars_service.py
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from sqlalchemy.orm import Session
 
@@ -36,7 +36,7 @@ class SARSDataService:
         self.success_count = 0
         self.error_count = 0
 
-    async def update_tax_data(self, tax_year: Optional[str] = None, force: bool = False) -> Dict[str, Any]:
+    async def update_tax_data(self, tax_year: str | None = None, force: bool = False) -> dict[str, Any]:
         """
         Update tax data for a specific tax year.
         Args:
@@ -71,7 +71,7 @@ class SARSDataService:
             raise SARSTaxException(f"Failed to save tax data: {error}")
         return data
 
-    async def try_current_page(self, tax_year: str) -> Optional[Dict[str, Any]]:
+    async def try_current_page(self, tax_year: str) -> dict[str, Any] | None:
         """
         Try to get tax data from the current tax rates page.
         Args:
@@ -112,7 +112,7 @@ class SARSDataService:
             logger.error(f"Error extracting tax data from current page: {e}")
             return None
 
-    async def try_archive_page(self, tax_year: str) -> Optional[Dict[str, Any]]:
+    async def try_archive_page(self, tax_year: str) -> dict[str, Any] | None:
         """
         Try to get tax data from the archive page.
         Args:
@@ -157,7 +157,7 @@ class SARSDataService:
             logger.error(f"Error extracting tax data from archive: {e}")
             return None
 
-    async def try_previous_year_data(self, tax_year: str) -> Optional[Dict[str, Any]]:
+    async def try_previous_year_data(self, tax_year: str) -> dict[str, Any] | None:
         """
         Try to use data from the previous tax year.
         Args:

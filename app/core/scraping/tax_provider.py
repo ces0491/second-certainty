@@ -1,6 +1,6 @@
 # app/core/scraping/tax_provider.py
 import logging
-from typing import Any, Dict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +9,7 @@ class TaxDataProvider:
     """Provider for manual tax data when scraping fails."""
 
     @staticmethod
-    def get_manual_tax_data(tax_year: str) -> Dict[str, Any]:
+    def get_manual_tax_data(tax_year: str) -> dict[str, Any]:
         """
         Provide manual tax data for a specific tax year.
 

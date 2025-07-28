@@ -1,35 +1,34 @@
 # app/schemas/tax_schemas.py
+from __future__ import annotations
+
 from datetime import date
 from decimal import Decimal
-from typing import Optional
 
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator, ConfigDict
 
 
 class DeductibleExpenseTypeResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     name: str
-    description: Optional[str] = None
-    max_deduction: Optional[float] = None
-    max_percentage: Optional[float] = None
+    description: str | None = None
+    max_deduction: float | None = None
+    max_percentage: float | None = None
     is_active: bool = True
-
-    class Config:
-        from_attributes = True
 
 
 class ExpenseResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     user_id: int
     expense_type_id: int
-    description: Optional[str] = None
+    description: str | None = None
     amount: float
-    tax_year: Optional[str] = None
+    tax_year: str | None = None
     created_at: date
-    expense_type: Optional[DeductibleExpenseTypeResponse] = None
-
-    class Config:
-        from_attributes = True
+    expense_type: DeductibleExpenseTypeResponse | None = None
 
 
 class UserBase(BaseModel):
@@ -43,8 +42,9 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
-    @validator("password")
-    def password_strength(cls, v):
+    @field_validator("password")
+    @classmethod
+    def password_strength(cls, v: str) -> str:
         if len(v) < 8:
             raise ValueError("Password must be at least 8 characters long")
         if v.isdigit():
@@ -58,103 +58,103 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     """User profile update model - all fields are optional"""
+    name: str | None = None
+    surname: str | None = None
+    date_of_birth: date | None = None
+    is_provisional_taxpayer: bool | None = None
 
-    name: Optional[str] = None
-    surname: Optional[str] = None
-    date_of_birth: Optional[date] = None
-    is_provisional_taxpayer: Optional[bool] = None
-
-    @validator("name", "surname")
-    def validate_names(cls, v):
+    @field_validator("name", "surname")
+    @classmethod
+    def validate_names(cls, v: str | None) -> str | None:
         if v is not None and len(v.strip()) == 0:
             raise ValueError("Name fields cannot be empty")
         return v.strip() if v else v
 
-    @validator("date_of_birth")
-    def validate_date_of_birth(cls, v):
+    @field_validator("date_of_birth")
+    @classmethod
+    def validate_date_of_birth(cls, v: date | None) -> date | None:
         if v is not None and v >= date.today():
             raise ValueError("Date of birth must be in the past")
         return v
 
 
 class UserResponse(UserBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     created_at: date
-    is_admin: Optional[bool] = False
-
-    class Config:
-        from_attributes = True
+    is_admin: bool | None = False
 
 
 # Income schemas
 class IncomeBase(BaseModel):
     source_type: str
-    description: Optional[str] = None
+    description: str | None = None
     annual_amount: float
     is_paye: bool = True
-    tax_year: Optional[str] = None
+    tax_year: str | None = None
 
 
 class IncomeCreate(IncomeBase):
-    @validator("annual_amount")
-    def validate_amount(cls, v):
+    @field_validator("annual_amount")
+    @classmethod
+    def validate_amount(cls, v: float) -> float:
         if v < 0:
             raise ValueError("Annual amount must be positive")
         return v
 
 
 class IncomeUpdate(BaseModel):
-    source_type: Optional[str] = None
-    description: Optional[str] = None
-    annual_amount: Optional[float] = None
-    is_paye: Optional[bool] = None
-    tax_year: Optional[str] = None
+    source_type: str | None = None
+    description: str | None = None
+    annual_amount: float | None = None
+    is_paye: bool | None = None
+    tax_year: str | None = None
 
 
 class IncomeResponse(IncomeBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     user_id: int
     created_at: date
-
-    class Config:
-        from_attributes = True
 
 
 # Expense schemas
 class ExpenseBase(BaseModel):
     expense_type_id: int
-    description: Optional[str] = None
+    description: str | None = None
     amount: float
-    tax_year: Optional[str] = None
+    tax_year: str | None = None
 
 
 class ExpenseCreate(ExpenseBase):
-    @validator("amount")
-    def validate_amount(cls, v):
+    @field_validator("amount")
+    @classmethod
+    def validate_amount(cls, v: float) -> float:
         if v < 0:
             raise ValueError("Expense amount must be positive")
         return v
 
 
 class ExpenseUpdate(BaseModel):
-    expense_type_id: Optional[int] = None
-    description: Optional[str] = None
-    amount: Optional[float] = None
-    tax_year: Optional[str] = None
+    expense_type_id: int | None = None
+    description: str | None = None
+    amount: float | None = None
+    tax_year: str | None = None
 
 
 # Tax bracket schemas
 class TaxBracketBase(BaseModel):
     lower_limit: int
-    upper_limit: Optional[int] = None
+    upper_limit: int | None = None
     rate: float
     base_amount: int
     tax_year: str
 
 
 class TaxBracketResponse(TaxBracketBase):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Tax calculation schemas
@@ -170,8 +170,7 @@ class TaxCalculationBase(BaseModel):
 
 
 class TaxCalculationResponse(TaxCalculationBase):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Provisional tax schemas
@@ -188,14 +187,13 @@ class PaymentInfo(BaseModel):
 
 
 class ProvisionalTaxResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     total_tax: float
     taxable_income: float
     effective_tax_rate: float
     first_payment: PaymentInfo
     second_payment: PaymentInfo
-
-    class Config:
-        from_attributes = True
 
 
 # Legacy schemas for backward compatibility
@@ -207,7 +205,7 @@ class TaxCalculationRequest(BaseModel):
 
 class TaxBracket(BaseModel):
     min_income: Decimal
-    max_income: Optional[Decimal]
+    max_income: Decimal | None = None
     rate: Decimal
     threshold: Decimal
 
@@ -222,7 +220,7 @@ class ProvisionalTaxCreate(BaseModel):
 
 
 class ProvisionalTaxUpdate(BaseModel):
-    estimated_income: Optional[Decimal] = None
-    estimated_expenses: Optional[Decimal] = None
-    payment_amount: Optional[Decimal] = None
-    due_date: Optional[date] = None
+    estimated_income: Decimal | None = None
+    estimated_expenses: Decimal | None = None
+    payment_amount: Decimal | None = None
+    due_date: date | None = None

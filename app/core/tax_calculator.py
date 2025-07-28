@@ -1,5 +1,5 @@
 # app/core/tax_calculator.py
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from sqlalchemy.orm import Session
 
@@ -29,7 +29,7 @@ class TaxCalculator:
         self.db = db
         logger.debug("TaxCalculator initialized")
 
-    def get_tax_brackets(self, tax_year: str) -> List[Dict[str, Any]]:
+    def get_tax_brackets(self, tax_year: str) -> list[dict[str, Any]]:
         """Get tax brackets for the specified tax year."""
         logger.debug(f"Getting tax brackets for {tax_year}")
         brackets = (
@@ -47,7 +47,7 @@ class TaxCalculator:
         logger.debug(f"Found {len(result)} tax brackets for {tax_year}")
         return result
 
-    def get_tax_rebates(self, tax_year: str) -> Dict[str, float]:
+    def get_tax_rebates(self, tax_year: str) -> dict[str, float]:
         """Get tax rebates for the specified tax year."""
         logger.debug(f"Getting tax rebates for {tax_year}")
         rebate = self.db.query(TaxRebate).filter(TaxRebate.tax_year == tax_year).first()
@@ -56,7 +56,7 @@ class TaxCalculator:
             return {"primary": 0, "secondary": 0, "tertiary": 0}
         return {"primary": rebate.primary, "secondary": rebate.secondary, "tertiary": rebate.tertiary}
 
-    def get_tax_thresholds(self, tax_year: str) -> Dict[str, int]:
+    def get_tax_thresholds(self, tax_year: str) -> dict[str, int]:
         """Get tax thresholds for the specified tax year."""
         logger.debug(f"Getting tax thresholds for {tax_year}")
         threshold = self.db.query(TaxThreshold).filter(TaxThreshold.tax_year == tax_year).first()
@@ -69,7 +69,7 @@ class TaxCalculator:
             "age_75_plus": threshold.age_75_plus,
         }
 
-    def get_medical_tax_credits(self, tax_year: str) -> Dict[str, float]:
+    def get_medical_tax_credits(self, tax_year: str) -> dict[str, float]:
         """Get medical tax credits for the specified tax year."""
         logger.debug(f"Getting medical tax credits for {tax_year}")
         credit = self.db.query(MedicalTaxCredit).filter(MedicalTaxCredit.tax_year == tax_year).first()
@@ -147,7 +147,7 @@ class TaxCalculator:
             total_deductible += expense.amount
         return total_deductible
 
-    def calculate_tax_liability(self, user_id: int, tax_year: Optional[str] = None) -> Dict[str, Any]:
+    def calculate_tax_liability(self, user_id: int, tax_year: str | None = None) -> dict[str, Any]:
         """
         Calculate complete tax liability for a user.
         Returns a dictionary with:
@@ -232,7 +232,7 @@ class TaxCalculator:
             "monthly_tax_rate": monthly_tax_rate,
         }
 
-    def calculate_provisional_tax(self, user_id: int, tax_year: Optional[str] = None) -> Dict[str, Any]:
+    def calculate_provisional_tax(self, user_id: int, tax_year: str | None = None) -> dict[str, Any]:
         """
         Calculate provisional tax payments for provisional taxpayers.
         Returns a dictionary with:

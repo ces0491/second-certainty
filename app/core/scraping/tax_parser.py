@@ -1,7 +1,7 @@
 # app/core/scraping/tax_parser.py
 import logging
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from bs4 import BeautifulSoup
 
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class TaxDataParser:
     """Parser for extracting tax data from SARS website HTML content."""
 
-    def find_year_section(self, html_content: str, tax_year: str) -> Optional[str]:
+    def find_year_section(self, html_content: str, tax_year: str) -> str | None:
         """
         Extract section for specific tax year from the page.
 
@@ -55,7 +55,7 @@ class TaxDataParser:
         logger.warning(f"Could not find section for tax year {tax_year}")
         return None
 
-    def extract_tax_brackets(self, html_content: str, tax_year: str) -> List[Dict[str, Any]]:
+    def extract_tax_brackets(self, html_content: str, tax_year: str) -> list[dict[str, Any]]:
         """
         Extract tax brackets from HTML content.
 
@@ -97,7 +97,7 @@ class TaxDataParser:
                         logger.info(f"Processing row: {income_range} | {rate_text}")
 
                         # Extract lower and upper bounds
-                        income_match = re.search(r"(\d[\d\s]*)\s*[–-]\s*(\d[\d\s]*)", income_range)
+                        income_match = re.search(r"(\d[\d\s]*)\s*[-]\s*(\d[\d\s]*)", income_range)
                         if income_match:
                             lower_limit = int(income_match.group(1).replace(" ", ""))
                             upper_limit = int(income_match.group(2).replace(" ", ""))
@@ -150,7 +150,7 @@ class TaxDataParser:
 
         return tax_brackets
 
-    def extract_tax_rebates(self, html_content: str, tax_year: str) -> Dict[str, Any]:
+    def extract_tax_rebates(self, html_content: str, tax_year: str) -> dict[str, Any]:
         """
         Extract tax rebates from HTML content.
 
@@ -188,7 +188,7 @@ class TaxDataParser:
 
         return rebates
 
-    def extract_tax_thresholds(self, html_content: str, tax_year: str) -> Dict[str, Any]:
+    def extract_tax_thresholds(self, html_content: str, tax_year: str) -> dict[str, Any]:
         """
         Extract tax thresholds from HTML content.
 
@@ -226,7 +226,7 @@ class TaxDataParser:
 
         return thresholds
 
-    def extract_medical_tax_credits(self, html_content: str, tax_year: str) -> Dict[str, Any]:
+    def extract_medical_tax_credits(self, html_content: str, tax_year: str) -> dict[str, Any]:
         """
         Extract medical tax credits from HTML content.
 
@@ -259,7 +259,7 @@ class TaxDataParser:
 
         return credits
 
-    def find_archive_link(self, archive_html: str, tax_year: str) -> Optional[str]:
+    def find_archive_link(self, archive_html: str, tax_year: str) -> str | None:
         """
         Find the link to a specific tax year archive page.
 
@@ -277,7 +277,7 @@ class TaxDataParser:
         for link in soup.find_all("a"):
             link_text = link.text.strip()
             if year_end in link_text and ("tax rate" in link_text.lower() or "individual" in link_text.lower()):
-                archive_link = link.get("hre")
+                archive_link = link.get("href")
                 logger.info(f"Found archive link for {tax_year}: {archive_link}")
                 return archive_link
 

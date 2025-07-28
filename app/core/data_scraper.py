@@ -1,5 +1,5 @@
 # app/core/data_scraper.py
-from typing import Any, Dict, Optional
+from typing import Any
 
 from sqlalchemy.orm import Session
 
@@ -20,7 +20,7 @@ class SARSDataScraper:
         """Initialize the scraper."""
         logger.debug("SARSDataScraper initialized")
 
-    async def update_tax_data(self, db: Session, tax_year: Optional[str] = None, force: bool = False) -> Dict[str, Any]:
+    async def update_tax_data(self, db: Session, tax_year: str | None = None, force: bool = False) -> dict[str, Any]:
         """
         Update tax data in the database for a specific tax year.
 

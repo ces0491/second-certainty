@@ -2,10 +2,9 @@
 import logging
 import os
 import time
-from typing import Optional
 
-from pydantic import ConfigDict, field_validator
-from pydantic_settings import BaseSettings
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
@@ -21,40 +20,50 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     API_PREFIX: str = "/api"
     DEBUG: bool = False
-    # Required settings
-    DATABASE_URL: str
-    SECRET_KEY: str
+
+    # Required settings with defaults for development
+    DATABASE_URL: str = "sqlite:///./second_certainty.db"
+    SECRET_KEY: str = "dev-secret-key-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 1 week
+
     # SARS related settings
     SARS_WEBSITE_URL: str = "https://www.sars.gov.za"
+
     # Optional database settings
-    DATABASE_POOL_SIZE: Optional[int] = 10
-    DATABASE_MAX_OVERFLOW: Optional[int] = 20
-    DATABASE_POOL_TIMEOUT: Optional[int] = 30
+    DATABASE_POOL_SIZE: int | None = 10
+    DATABASE_MAX_OVERFLOW: int | None = 20
+    DATABASE_POOL_TIMEOUT: int | None = 30
+
     # Security settings
-    PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: Optional[int] = 30
-    MAX_LOGIN_ATTEMPTS: Optional[int] = 5
-    ACCOUNT_LOCKOUT_DURATION: Optional[int] = 30
+    PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int | None = 30
+    MAX_LOGIN_ATTEMPTS: int | None = 5
+    ACCOUNT_LOCKOUT_DURATION: int | None = 30
+
     # Environment
-    ENVIRONMENT: Optional[str] = "development"
+    ENVIRONMENT: str | None = "development"
+
     # CORS settings
-    CORS_ORIGINS: Optional[str] = "http://localhost:3000"
+    CORS_ORIGINS: str | None = "http://localhost:3000"
+
     # Rate limiting
-    ENABLE_RATE_LIMITING: Optional[bool] = True
-    DEFAULT_RATE_LIMIT: Optional[int] = 100
-    AUTH_RATE_LIMIT: Optional[int] = 5
+    ENABLE_RATE_LIMITING: bool | None = True
+    DEFAULT_RATE_LIMIT: int | None = 100
+    AUTH_RATE_LIMIT: int | None = 5
+
     # File upload settings - Fixed to handle string values with comments
-    MAX_FILE_SIZE: Optional[int] = 10485760  # 10MB
-    UPLOAD_DIR: Optional[str] = "uploads"
-    ALLOWED_FILE_TYPES: Optional[str] = ".pdf,.jpg,.jpeg,.png"
+    MAX_FILE_SIZE: int | None = 10485760  # 10MB
+    UPLOAD_DIR: str | None = "uploads"
+    ALLOWED_FILE_TYPES: str | None = ".pdf,.jpg,.jpeg,.png"
+
     # Logging settings
-    LOG_LEVEL: Optional[str] = "INFO"
-    LOG_FILE: Optional[str] = "logs/app.log"
-    ENABLE_QUERY_LOGGING: Optional[bool] = False
-    SLOW_QUERY_THRESHOLD: Optional[float] = 1.0
+    LOG_LEVEL: str | None = "INFO"
+    LOG_FILE: str | None = "logs/app.log"
+    ENABLE_QUERY_LOGGING: bool | None = False
+    SLOW_QUERY_THRESHOLD: float | None = 1.0
+
     # Scraping settings
-    SCRAPING_TIMEOUT: Optional[int] = 30
-    SCRAPING_RETRIES: Optional[int] = 3
+    SCRAPING_TIMEOUT: int | None = 30
+    SCRAPING_RETRIES: int | None = 3
 
     # Validator to clean up integer fields that might have comments
     @field_validator(
@@ -88,8 +97,8 @@ class Settings(BaseSettings):
                 return int(match.group())
         return v
 
-    # Pydantic v2 configuration
-    model_config = ConfigDict(
+    # Pydantic v2 configuration - Fixed: Use SettingsConfigDict
+    model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
@@ -99,7 +108,7 @@ class Settings(BaseSettings):
 
 # Initialize settings with error handling
 try:
-    settings = Settings()
+    settings = Settings()  # Pydantic will automatically load from .env and environment
 except Exception as e:
     print(f"Error loading settings: {e}")
     print("Creating minimal settings for debugging...")
@@ -126,6 +135,7 @@ except Exception as e:
 logger = setup_logging(
     app_name="second_certainty", log_level=logging.DEBUG if getattr(settings, "DEBUG", False) else logging.INFO
 )
+
 # Database setup
 engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -137,7 +147,6 @@ def get_db():
     retries = 3
     while retries > 0:
         try:
-            # Properly use the text() function for raw SQL
             db.execute(text("SELECT 1"))
             break
         except SQLAlchemyError as e:

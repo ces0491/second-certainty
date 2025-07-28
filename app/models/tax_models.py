@@ -1,8 +1,8 @@
 # app/models/tax_models.py
-from datetime import datetime
+from datetime import date
 
-from sqlalchemy import Boolean, Column, Date, Float, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Date, Float, ForeignKey, Integer, String, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
 
@@ -12,12 +12,12 @@ class TaxBracket(Base):
 
     __tablename__ = "tax_brackets"
 
-    id = Column(Integer, primary_key=True, index=True)
-    tax_year = Column(String, index=True)  # e.g., "2024-2025"
-    lower_limit = Column(Integer, nullable=False)
-    upper_limit = Column(Integer, nullable=True)  # Null for highest bracket
-    rate = Column(Float, nullable=False)  # Decimal rate (e.g., 0.18 for 18%)
-    base_amount = Column(Integer, nullable=False)  # Base amount for this bracket
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    tax_year: Mapped[str] = mapped_column(String, index=True)  # e.g., "2024-2025"
+    lower_limit: Mapped[int] = mapped_column(Integer, nullable=False)
+    upper_limit: Mapped[int | None] = mapped_column(Integer, nullable=True)  # Null for highest bracket
+    rate: Mapped[float] = mapped_column(Float, nullable=False)  # Decimal rate (e.g., 0.18 for 18%)
+    base_amount: Mapped[int] = mapped_column(Integer, nullable=False)  # Base amount for this bracket
 
 
 class TaxRebate(Base):
@@ -25,11 +25,11 @@ class TaxRebate(Base):
 
     __tablename__ = "tax_rebates"
 
-    id = Column(Integer, primary_key=True, index=True)
-    tax_year = Column(String, index=True)
-    primary = Column(Float, nullable=False)  # Primary rebate for all taxpayers
-    secondary = Column(Float, nullable=False)  # Additional rebate for 65+
-    tertiary = Column(Float, nullable=False)  # Additional rebate for 75+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    tax_year: Mapped[str] = mapped_column(String, index=True)
+    primary: Mapped[float] = mapped_column(Float, nullable=False)  # Primary rebate for all taxpayers
+    secondary: Mapped[float] = mapped_column(Float, nullable=False)  # Additional rebate for 65+
+    tertiary: Mapped[float] = mapped_column(Float, nullable=False)  # Additional rebate for 75+
 
 
 class TaxThreshold(Base):
@@ -37,11 +37,11 @@ class TaxThreshold(Base):
 
     __tablename__ = "tax_thresholds"
 
-    id = Column(Integer, primary_key=True, index=True)
-    tax_year = Column(String, index=True)
-    below_65 = Column(Integer, nullable=False)
-    age_65_to_74 = Column(Integer, nullable=False)
-    age_75_plus = Column(Integer, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    tax_year: Mapped[str] = mapped_column(String, index=True)
+    below_65: Mapped[int] = mapped_column(Integer, nullable=False)
+    age_65_to_74: Mapped[int] = mapped_column(Integer, nullable=False)
+    age_75_plus: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
 class MedicalTaxCredit(Base):
@@ -49,10 +49,10 @@ class MedicalTaxCredit(Base):
 
     __tablename__ = "medical_tax_credits"
 
-    id = Column(Integer, primary_key=True, index=True)
-    tax_year = Column(String, index=True)
-    main_member = Column(Float, nullable=False)
-    additional_member = Column(Float, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    tax_year: Mapped[str] = mapped_column(String, index=True)
+    main_member: Mapped[float] = mapped_column(Float, nullable=False)
+    additional_member: Mapped[float] = mapped_column(Float, nullable=False)
 
 
 class DeductibleExpenseType(Base):
@@ -60,12 +60,14 @@ class DeductibleExpenseType(Base):
 
     __tablename__ = "deductible_expense_types"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
-    description = Column(String, nullable=True)
-    max_deduction = Column(Float, nullable=True)  # Maximum deductible amount, if applicable
-    max_percentage = Column(Float, nullable=True)  # Maximum percentage, if applicable
-    is_active = Column(Boolean, default=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
+    max_deduction: Mapped[float | None] = mapped_column(
+        Float, nullable=True
+    )  # Maximum deductible amount, if applicable
+    max_percentage: Mapped[float | None] = mapped_column(Float, nullable=True)  # Maximum percentage, if applicable
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
 
 class UserProfile(Base):
@@ -73,21 +75,21 @@ class UserProfile(Base):
 
     __tablename__ = "user_profiles"
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    name = Column(String)
-    surname = Column(String)
-    date_of_birth = Column(Date)
-    hashed_password = Column(String)
-    is_provisional_taxpayer = Column(Boolean, default=False)
-    is_admin = Column(Boolean, default=False)
-    created_at = Column(Date, default=datetime.utcnow)
-    updated_at = Column(Date, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String, unique=True, index=True)
+    name: Mapped[str] = mapped_column(String)
+    surname: Mapped[str] = mapped_column(String)
+    date_of_birth: Mapped[date] = mapped_column(Date)
+    hashed_password: Mapped[str] = mapped_column(String)
+    is_provisional_taxpayer: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[date] = mapped_column(Date, server_default=func.current_date())
+    updated_at: Mapped[date | None] = mapped_column(Date, onupdate=func.current_date())
 
     # Relationships
-    income_sources = relationship("IncomeSource", back_populates="user")
-    expenses = relationship("UserExpense", back_populates="user")
-    tax_calculations = relationship("TaxCalculation", back_populates="user")
+    income_sources: Mapped[list["IncomeSource"]] = relationship("IncomeSource", back_populates="user")
+    expenses: Mapped[list["UserExpense"]] = relationship("UserExpense", back_populates="user")
+    tax_calculations: Mapped[list["TaxCalculation"]] = relationship("TaxCalculation", back_populates="user")
 
 
 class IncomeSource(Base):
@@ -95,18 +97,18 @@ class IncomeSource(Base):
 
     __tablename__ = "income_sources"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user_profiles.id"))
-    source_type = Column(String)  # e.g., "Salary", "Rental", "Investment"
-    description = Column(String, nullable=True)
-    annual_amount = Column(Float)
-    is_paye = Column(Boolean, default=True)  # Whether PAYE is deducted from this income
-    tax_year = Column(String)
-    created_at = Column(Date, default=datetime.utcnow)
-    updated_at = Column(Date, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user_profiles.id"))
+    source_type: Mapped[str] = mapped_column(String)  # e.g., "Salary", "Rental", "Investment"
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
+    annual_amount: Mapped[float] = mapped_column(Float)
+    is_paye: Mapped[bool] = mapped_column(Boolean, default=True)  # Whether PAYE is deducted from this income
+    tax_year: Mapped[str] = mapped_column(String)
+    created_at: Mapped[date] = mapped_column(Date, server_default=func.current_date())
+    updated_at: Mapped[date | None] = mapped_column(Date, onupdate=func.current_date())
 
     # Relationships
-    user = relationship("UserProfile", back_populates="income_sources")
+    user: Mapped["UserProfile"] = relationship("UserProfile", back_populates="income_sources")
 
 
 class UserExpense(Base):
@@ -114,18 +116,18 @@ class UserExpense(Base):
 
     __tablename__ = "user_expenses"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user_profiles.id"))
-    expense_type_id = Column(Integer, ForeignKey("deductible_expense_types.id"))
-    description = Column(String, nullable=True)
-    amount = Column(Float)
-    tax_year = Column(String)
-    created_at = Column(Date, default=datetime.utcnow)
-    updated_at = Column(Date, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user_profiles.id"))
+    expense_type_id: Mapped[int] = mapped_column(Integer, ForeignKey("deductible_expense_types.id"))
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
+    amount: Mapped[float] = mapped_column(Float)
+    tax_year: Mapped[str] = mapped_column(String)
+    created_at: Mapped[date] = mapped_column(Date, server_default=func.current_date())
+    updated_at: Mapped[date | None] = mapped_column(Date, onupdate=func.current_date())
 
     # Relationships
-    user = relationship("UserProfile", back_populates="expenses")
-    expense_type = relationship("DeductibleExpenseType")
+    user: Mapped["UserProfile"] = relationship("UserProfile", back_populates="expenses")
+    expense_type: Mapped["DeductibleExpenseType"] = relationship("DeductibleExpenseType")
 
 
 class TaxCalculation(Base):
@@ -133,17 +135,17 @@ class TaxCalculation(Base):
 
     __tablename__ = "tax_calculations"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user_profiles.id"))
-    tax_year = Column(String)
-    gross_income = Column(Float)
-    taxable_income = Column(Float)
-    tax_liability = Column(Float)
-    tax_credits = Column(Float)
-    final_tax = Column(Float)
-    effective_tax_rate = Column(Float)
-    monthly_tax_rate = Column(Float)
-    calculation_date = Column(Date, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user_profiles.id"))
+    tax_year: Mapped[str] = mapped_column(String)
+    gross_income: Mapped[float] = mapped_column(Float)
+    taxable_income: Mapped[float] = mapped_column(Float)
+    tax_liability: Mapped[float] = mapped_column(Float)
+    tax_credits: Mapped[float] = mapped_column(Float)
+    final_tax: Mapped[float] = mapped_column(Float)
+    effective_tax_rate: Mapped[float] = mapped_column(Float)
+    monthly_tax_rate: Mapped[float] = mapped_column(Float)
+    calculation_date: Mapped[date] = mapped_column(Date, server_default=func.current_date())
 
     # Relationships
-    user = relationship("UserProfile", back_populates="tax_calculations")
+    user: Mapped["UserProfile"] = relationship("UserProfile", back_populates="tax_calculations")
