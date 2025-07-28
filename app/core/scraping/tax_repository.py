@@ -1,6 +1,6 @@
 # app/core/scraping/tax_repository.py
 import logging
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 from sqlalchemy.orm import Session
 
@@ -43,7 +43,7 @@ class TaxDataRepository:
         self.db.query(TaxThreshold).filter(TaxThreshold.tax_year == tax_year).delete()
         self.db.query(MedicalTaxCredit).filter(MedicalTaxCredit.tax_year == tax_year).delete()
 
-    def save_tax_data(self, data: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
+    def save_tax_data(self, data: dict[str, Any]) -> tuple[bool, str | None]:
         """
         Save tax data to the database.
         Args:
@@ -73,7 +73,7 @@ class TaxDataRepository:
             logger.error(error_message)
             return False, error_message
 
-    def get_previous_tax_year_data(self, previous_tax_year: str, target_tax_year: str) -> Optional[Dict[str, Any]]:
+    def get_previous_tax_year_data(self, previous_tax_year: str, target_tax_year: str) -> dict[str, Any] | None:
         """
         Get tax data from a previous tax year and update for a new tax year.
         Args:

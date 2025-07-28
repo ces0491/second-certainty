@@ -1,4 +1,4 @@
-# tests/conftest.py
+# tests/conftest.py - Fixed database connection handling
 import os
 from datetime import date, datetime
 
@@ -33,23 +33,37 @@ TEST_DATABASE_URL = "sqlite:///./test_second_certainty.db"
 
 @pytest.fixture(scope="function")
 def test_db():
-    """Create a fresh test database for each test."""
+    """Create a fresh test database for each test with improved concurrency handling."""
     engine = create_engine(
         TEST_DATABASE_URL,
-        connect_args={"check_same_thread": False},
+        connect_args={
+            "check_same_thread": False,
+            "timeout": 30,  # Increase timeout for database locks
+            "isolation_level": None,  # Use autocommit mode for better concurrency
+        },
         poolclass=StaticPool,
+        pool_pre_ping=True,  # Validate connections before use
+        echo=False,  # Set to True for SQL debugging
     )
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
+    TestingSessionLocal = sessionmaker(
+        autocommit=False, 
+        autoflush=False, 
+        bind=engine,
+        expire_on_commit=False  # Prevent issues with concurrent access to objects
+    )
 
     # Create tables
     Base.metadata.create_all(bind=engine)
 
     def override_get_db():
+        db = None
         try:
             db = TestingSessionLocal()
             yield db
         finally:
-            db.close()
+            if db is not None:
+                db.close()
 
     app.dependency_overrides[get_db] = override_get_db
 
@@ -62,9 +76,92 @@ def test_db():
     app.dependency_overrides.clear()
 
 
+@pytest.fixture(scope="function") 
+def test_db_concurrent():
+    """
+    Special database fixture for concurrent tests with enhanced configuration.
+    Use this fixture instead of test_db for tests that involve concurrency.
+    """
+    import tempfile
+    
+    # Create a unique temporary database for concurrent tests
+    temp_db = tempfile.NamedTemporaryFile(delete=False, suffix='.db')
+    temp_db.close()
+    
+    concurrent_db_url = f"sqlite:///{temp_db.name}"
+    
+    engine = create_engine(
+        concurrent_db_url,
+        connect_args={
+            "check_same_thread": False,
+            "timeout": 60,  # Longer timeout for concurrent operations
+            "isolation_level": None,
+        },
+        poolclass=StaticPool,
+        pool_pre_ping=True,
+        pool_recycle=300,  # Recycle connections every 5 minutes
+        echo=False,
+    )
+    
+    TestingSessionLocal = sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=engine,
+        expire_on_commit=False,
+    )
+
+    # Create tables
+    Base.metadata.create_all(bind=engine)
+
+    def override_get_db():
+        max_retries = 3
+        for attempt in range(max_retries):
+            db = None
+            try:
+                db = TestingSessionLocal()
+                yield db
+                break
+            except Exception as e:
+                if db is not None:
+                    db.close()
+                if attempt == max_retries - 1:
+                    raise e
+                import time
+                time.sleep(0.1 * (attempt + 1))  # Exponential backoff
+            finally:
+                if db is not None:
+                    try:
+                        db.close()
+                    except:
+                        pass
+
+    app.dependency_overrides[get_db] = override_get_db
+
+    db = TestingSessionLocal()
+    yield db
+
+    # Cleanup
+    db.close()
+    Base.metadata.drop_all(bind=engine)
+    app.dependency_overrides.clear()
+    
+    # Remove temporary file
+    try:
+        os.unlink(temp_db.name)
+    except OSError:
+        pass
+
+
 @pytest.fixture
 def client(test_db):
     """Create test client."""
+    with TestClient(app) as c:
+        yield c
+
+
+@pytest.fixture
+def client_concurrent(test_db_concurrent):
+    """Create test client for concurrent tests."""
     with TestClient(app) as c:
         yield c
 
@@ -84,6 +181,24 @@ def test_user(test_db):
     test_db.add(user)
     test_db.commit()
     test_db.refresh(user)
+    return user
+
+
+@pytest.fixture
+def test_user_concurrent(test_db_concurrent):
+    """Create test user for concurrent tests."""
+    user = UserProfile(
+        email="test@example.com",
+        hashed_password=get_password_hash("testpass123"),
+        name="Test",
+        surname="User",
+        date_of_birth=date(1990, 5, 15),
+        is_provisional_taxpayer=True,
+        is_admin=False,
+    )
+    test_db_concurrent.add(user)
+    test_db_concurrent.commit()
+    test_db_concurrent.refresh(user)
     return user
 
 
@@ -109,6 +224,13 @@ def admin_user(test_db):
 def auth_headers(test_user):
     """Create auth headers for test user."""
     token = create_access_token(data={"sub": test_user.email})
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+def auth_headers_concurrent(test_user_concurrent):
+    """Create auth headers for concurrent test user."""
+    token = create_access_token(data={"sub": test_user_concurrent.email})
     return {"Authorization": f"Bearer {token}"}
 
 
@@ -201,6 +323,93 @@ def complete_tax_data(test_db):
         test_db.add(DeductibleExpenseType(**expense_data))
 
     test_db.commit()
+    
+    print("Deductible expense types seeded successfully.")
+    return tax_year
+
+
+@pytest.fixture
+def complete_tax_data_concurrent(test_db_concurrent):
+    """Set up complete tax data for concurrent testing."""
+    tax_year = get_tax_year()
+
+    # Clear any existing data first to prevent constraint violations
+    test_db_concurrent.query(TaxBracket).filter(TaxBracket.tax_year == tax_year).delete()
+    test_db_concurrent.query(TaxRebate).filter(TaxRebate.tax_year == tax_year).delete()
+    test_db_concurrent.query(TaxThreshold).filter(TaxThreshold.tax_year == tax_year).delete()
+    test_db_concurrent.query(MedicalTaxCredit).filter(MedicalTaxCredit.tax_year == tax_year).delete()
+    test_db_concurrent.query(DeductibleExpenseType).delete()
+    test_db_concurrent.commit()
+
+    # Tax brackets - 2024-2025 South African tax brackets
+    brackets = [
+        {"lower_limit": 1, "upper_limit": 237100, "rate": 0.18, "base_amount": 0, "tax_year": tax_year},
+        {"lower_limit": 237101, "upper_limit": 370500, "rate": 0.26, "base_amount": 42678, "tax_year": tax_year},
+        {"lower_limit": 370501, "upper_limit": 512800, "rate": 0.31, "base_amount": 77362, "tax_year": tax_year},
+        {"lower_limit": 512801, "upper_limit": 673000, "rate": 0.36, "base_amount": 121475, "tax_year": tax_year},
+        {"lower_limit": 673001, "upper_limit": 857900, "rate": 0.39, "base_amount": 179147, "tax_year": tax_year},
+        {"lower_limit": 857901, "upper_limit": 1817000, "rate": 0.41, "base_amount": 251258, "tax_year": tax_year},
+        {"lower_limit": 1817001, "upper_limit": None, "rate": 0.45, "base_amount": 644489, "tax_year": tax_year},
+    ]
+
+    for bracket_data in brackets:
+        test_db_concurrent.add(TaxBracket(**bracket_data))
+
+    # Tax rebates - 2024-2025 values
+    rebate = TaxRebate(
+        primary=17235,
+        secondary=9444,
+        tertiary=3145,
+        tax_year=tax_year,
+    )
+    test_db_concurrent.add(rebate)
+
+    # Tax thresholds - 2024-2025 values
+    threshold = TaxThreshold(
+        below_65=95750,
+        age_65_to_74=148217,
+        age_75_plus=165689,
+        tax_year=tax_year,
+    )
+    test_db_concurrent.add(threshold)
+
+    # Medical tax credits - 2024-2025 values
+    medical = MedicalTaxCredit(
+        main_member=347,
+        additional_member=347,
+        tax_year=tax_year,
+    )
+    test_db_concurrent.add(medical)
+
+    # Deductible expense types
+    expense_types = [
+        {
+            "name": "Test Retirement Annuity",
+            "description": "Retirement annuity contributions for testing",
+            "max_percentage": 27.5,
+            "max_deduction": 350000,
+            "is_active": True,
+        },
+        {
+            "name": "Test Medical Expenses",
+            "description": "Out of pocket medical expenses for testing",
+            "max_percentage": None,
+            "max_deduction": None,
+            "is_active": True,
+        },
+        {
+            "name": "Test Donations",
+            "description": "Donations to Public Benefit Organizations for testing",
+            "max_percentage": 10.0,
+            "max_deduction": None,
+            "is_active": True,
+        },
+    ]
+
+    for expense_data in expense_types:
+        test_db_concurrent.add(DeductibleExpenseType(**expense_data))
+
+    test_db_concurrent.commit()
     
     print("Deductible expense types seeded successfully.")
     return tax_year

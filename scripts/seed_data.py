@@ -169,7 +169,7 @@ async def seed_tax_data(db: Session):
         return result
 
 
-async def initialize_database(db: Session, current_tax_year: str = None):
+async def initialize_database(db: Session, current_tax_year: str | None = None):
     """
     Initialize the database with required seed data.
     Can be used during startup or manually via script.

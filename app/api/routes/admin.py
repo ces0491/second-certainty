@@ -11,12 +11,12 @@ from app.models.tax_models import UserProfile
 router = APIRouter()
 
 
-def run_tax_data_update(force: bool = False, year: str = None):
+def run_tax_data_update(force: bool = False, year: str | None = None) -> None:
     """Run the tax data update script as a background task."""
     cmd = ["python", "fetch_tax_data.py"]
     if force:
         cmd.append("--force")
-    if year:
+    if year is not None:  # Explicit None check
         cmd.extend(["--year", year])
 
     try:
@@ -40,21 +40,27 @@ def run_tax_data_update(force: bool = False, year: str = None):
 async def update_tax_data(
     background_tasks: BackgroundTasks,
     force: bool = False,
-    year: str = None,
+    year: str | None = None,  # Modern Python 3.10+ union syntax
     db: Session = Depends(get_db),
     current_user: UserProfile = Depends(get_current_admin_user),
-):
+) -> dict[str, str | bool]:  # Modern return type annotation
     """
     Admin endpoint to update tax data from SARS website.
 
     This endpoint runs the tax data update script in the background
     and returns immediately.
     """
-    # Check if user is an admin
-    if not hasattr(current_user, "is_admin") or not current_user.is_admin:
+    # Check if user is an admin - More explicit approach to avoid SQLAlchemy column issues
+    try:
+        is_admin = bool(current_user.is_admin) if hasattr(current_user, "is_admin") else False
+    except Exception:
+        # Fallback if there are any issues accessing the attribute
+        is_admin = False
+
+    if not is_admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only administrators can update tax data")
 
     # Add the task to run in the background
     background_tasks.add_task(run_tax_data_update, force, year)
 
-    return {"message": "Tax data update initiated", "force": force, "year": year if year else "current"}
+    return {"message": "Tax data update initiated", "force": force, "year": year or "current"}  # Simpler None handling

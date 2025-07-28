@@ -1,10 +1,9 @@
 # app/api/routes/auth.py
-from datetime import datetime, timedelta
-from typing import Any, Dict, Optional
+from datetime import datetime, timedelta, timezone  # Fixed: removed typos "timezo, timezonene"
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator
 from sqlalchemy.orm import Session
 
 from app.core.auth import authenticate_user, create_access_token, get_current_user, get_password_hash
@@ -39,10 +38,11 @@ class UserCreate(BaseModel):
     name: str
     surname: str
     date_of_birth: str
-    is_provisional_taxpayer: Optional[bool] = False
+    is_provisional_taxpayer: bool | None = False  # Modern Python 3.10+ syntax
 
-    @validator("password")
-    def password_strength(cls, v):
+    @field_validator("password")
+    @classmethod
+    def password_strength(cls, v: str) -> str:
         if len(v) < 8:
             raise ValueError("Password must be at least 8 characters long")
         if v.isdigit():
@@ -57,10 +57,10 @@ class UserCreate(BaseModel):
 class UserProfileUpdate(BaseModel):
     """User profile update model"""
 
-    name: Optional[str] = None
-    surname: Optional[str] = None
-    date_of_birth: Optional[str] = None
-    is_provisional_taxpayer: Optional[bool] = None
+    name: str | None = None  # Modern Python 3.10+ syntax
+    surname: str | None = None
+    date_of_birth: str | None = None
+    is_provisional_taxpayer: bool | None = None
 
 
 class PasswordChange(BaseModel):
@@ -69,8 +69,9 @@ class PasswordChange(BaseModel):
     current_password: str
     new_password: str
 
-    @validator("new_password")
-    def password_strength(cls, v):
+    @field_validator("new_password")
+    @classmethod
+    def password_strength(cls, v: str) -> str:
         if len(v) < 8:
             raise ValueError("New password must be at least 8 characters long")
         if v.isdigit():
@@ -87,11 +88,11 @@ class LoginResponse(BaseModel):
 
     access_token: str
     token_type: str
-    user: Dict[str, Any]
+    user: dict[str, str | int | bool]
 
 
 @router.post("/login", response_model=LoginResponse)
-async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
+async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)) -> LoginResponse:
     """Alternative login endpoint for JSON requests."""
     user = authenticate_user(db, login_data.email, login_data.password)
     if not user:
@@ -112,17 +113,19 @@ async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
         "is_admin": getattr(user, "is_admin", False),
     }
 
-    return {"access_token": access_token, "token_type": "bearer", "user": user_data}
+    return LoginResponse(access_token=access_token, token_type="bearer", user=user_data)
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user_profile(current_user: UserProfile = Depends(get_current_user)):
+async def get_current_user_profile(current_user: UserProfile = Depends(get_current_user)) -> UserResponse:
     """Get the current user's profile based on JWT token."""
     return current_user
 
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+async def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+) -> Token:
     """Authenticate user and generate JWT token (OAuth2 compatible)."""
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -135,11 +138,11 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return Token(access_token=access_token, token_type="bearer")
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register_user(user: UserCreate, db: Session = Depends(get_db)):
+async def register_user(user: UserCreate, db: Session = Depends(get_db)) -> dict[str, str | int]:
     """Register a new user account."""
     # Check if user already exists
     db_user = db.query(UserProfile).filter(UserProfile.email == user.email).first()
@@ -170,7 +173,7 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
         name=user.name,
         surname=user.surname,
         date_of_birth=date_of_birth,
-        is_provisional_taxpayer=user.is_provisional_taxpayer,
+        is_provisional_taxpayer=user.is_provisional_taxpayer if user.is_provisional_taxpayer is not None else False,
     )
 
     try:
@@ -188,7 +191,7 @@ async def update_user_profile(
     profile_data: UserProfileUpdate,
     current_user: UserProfile = Depends(get_current_user),
     db: Session = Depends(get_db),
-):
+) -> dict[str, str | bool | int]:
     """Update user profile."""
     try:
         # Update fields if provided
@@ -215,8 +218,8 @@ async def update_user_profile(
         if profile_data.is_provisional_taxpayer is not None:
             current_user.is_provisional_taxpayer = profile_data.is_provisional_taxpayer
 
-        # Update timestamp
-        current_user.updated_at = datetime.utcnow().date()
+        # Update timestamp - Use current date with timezone
+        current_user.updated_at = datetime.now(timezone.utc).date()
 
         db.commit()
         db.refresh(current_user)
@@ -241,7 +244,7 @@ async def update_user_profile(
 @router.put("/change-password")
 async def change_user_password(
     password_data: PasswordChange, current_user: UserProfile = Depends(get_current_user), db: Session = Depends(get_db)
-):
+) -> dict[str, str]:
     """Change user password."""
     from app.core.auth import get_password_hash, verify_password
 
@@ -252,7 +255,8 @@ async def change_user_password(
     try:
         # Update password
         current_user.hashed_password = get_password_hash(password_data.new_password)
-        current_user.updated_at = datetime.utcnow().date()
+        # Update timestamp - Use current date with timezone
+        current_user.updated_at = datetime.now(timezone.utc).date()
 
         db.commit()
         return {"message": "Password changed successfully"}
@@ -264,6 +268,6 @@ async def change_user_password(
 
 
 @router.post("/logout")
-async def logout(response: Response):
+async def logout(response: Response) -> dict[str, str]:
     """Endpoint for client-side logout."""
     return {"message": "Successfully logged out"}

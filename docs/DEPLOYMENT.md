@@ -18,11 +18,10 @@ This guide provides detailed instructions for deploying the Second Certainty Tax
 Recommended deployment options in order of preference:
 
 1. **Render.com** (Current deployment) - Easy setup, good free tier
-2. **Railway** - Modern platform with excellent developer experience
-3. **Heroku** - Established platform with extensive add-ons
-4. **Fly.io** - Fast global deployment with Docker support
-5. **AWS** (EC2/ECS/EKS) - Full control but more complex setup
-6. **Digital Ocean** - Good balance of features and pricing
+2. **Heroku** - Established platform with extensive add-ons
+3. **Fly.io** - Fast global deployment with Docker support
+4. **AWS** (EC2/ECS/EKS) - Full control but more complex setup
+5. **Digital Ocean** - Good balance of features and pricing
 
 This guide focuses on deployment to Render.com.
 
@@ -59,6 +58,7 @@ Before deploying, ensure you have:
 3. Configure the web service:
 
 **Basic Settings:**
+
 - **Name**: `second-certainty-api`
 - **Environment**: `Python 3`
 - **Region**: Same as your database
@@ -66,20 +66,25 @@ Before deploying, ensure you have:
 - **Root Directory**: Leave blank (unless backend is in subdirectory)
 
 **Build & Deploy:**
+
 - **Build Command**: `pip install -r requirements.txt`
 - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 
 **Advanced Settings - Environment Variables:**
 
 ```bash
+
 # Database
+
 DATABASE_URL=<Internal Database URL from PostgreSQL service>
 
 # Security
+
 SECRET_KEY=<generate a secure 64-character secret key>
 ACCESS_TOKEN_EXPIRE_MINUTES=10080
 
 # Application
+
 APP_NAME=Second Certainty
 APP_VERSION=1.0.0
 API_PREFIX=/api
@@ -87,29 +92,36 @@ DEBUG=False
 ENVIRONMENT=production
 
 # SARS Configuration
+
 SARS_WEBSITE_URL=https://www.sars.gov.za
 
 # CORS - Update with your frontend URL
+
 CORS_ORIGINS=https://second-certainty.onrender.com
 
 # Logging
+
 LOG_LEVEL=INFO
 ENABLE_QUERY_LOGGING=False
 
 # File Upload
+
 MAX_FILE_SIZE=10485760
 UPLOAD_DIR=uploads
 ALLOWED_FILE_TYPES=.pdf,.jpg,.jpeg,.png
 
 # Rate Limiting
+
 ENABLE_RATE_LIMITING=True
 DEFAULT_RATE_LIMIT=100
 AUTH_RATE_LIMIT=5
 
 # Scraping
+
 SCRAPING_TIMEOUT=30
 SCRAPING_RETRIES=3
-```
+
+```text
 
 4. Click "Create Web Service"
 
@@ -122,27 +134,36 @@ After your service is deployed successfully:
 3. Run the following commands one by one:
 
 ```bash
+
 # Initialize database schema
+
 python init_db.py
 
 # Seed with initial data
+
 python scripts/seed_data.py
 
 # Create an admin user (replace with your details)
+
 python create_admin.py admin@yourdomain.com secure_password Admin User
-```
+
+```text
 
 ### 4. Verify Backend Deployment
 
 Test your backend deployment:
 
 ```bash
+
 # Health check
+
 curl https://second-certainty-api.onrender.com/api/health
 
 # API documentation
+
 open https://second-certainty-api.onrender.com/api/docs
-```
+
+```text
 
 ## Frontend Deployment (Render.com)
 
@@ -152,21 +173,25 @@ Ensure your frontend repository has the correct API URL configuration:
 
 **In your React app (src/config/api.js or similar):**
 ```javascript
+
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 
   'https://second-certainty-api.onrender.com/api';
 
 export default API_BASE_URL;
-```
+
+```text
 
 **Package.json build script:**
 ```json
+
 {
   "scripts": {
     "build": "react-scripts build",
     "start": "react-scripts start"
   }
 }
-```
+
+```text
 
 ### 2. Deploy the Frontend Static Site
 
@@ -175,19 +200,23 @@ export default API_BASE_URL;
 3. Configure the static site:
 
 **Basic Settings:**
+
 - **Name**: `second-certainty`
 - **Root Directory**: Leave blank (unless frontend is in subdirectory)
 - **Branch**: `main`
 
 **Build Settings:**
+
 - **Build Command**: `npm install && npm run build`
 - **Publish Directory**: `build`
 
 **Environment Variables:**
 ```bash
+
 REACT_APP_API_BASE_URL=https://second-certainty-api.onrender.com/api
 NODE_VERSION=18
-```
+
+```text
 
 4. Click "Create Static Site"
 
@@ -195,7 +224,7 @@ NODE_VERSION=18
 
 In your frontend repository, create a `public/_headers` file for security headers:
 
-```
+```text
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
@@ -205,7 +234,8 @@ In your frontend repository, create a `public/_headers` file for security header
 
 /static/*
   Cache-Control: public, max-age=31536000, immutable
-```
+
+```text
 
 ## Custom Domain Setup (Optional)
 
@@ -228,6 +258,7 @@ In your frontend repository, create a `public/_headers` file for security header
 ## SSL Certificates
 
 Render automatically provisions and renews Let's Encrypt SSL certificates for:
+
 - All `.onrender.com` subdomains
 - Custom domains (after verification)
 
@@ -240,39 +271,49 @@ No additional configuration required.
 Ensure these are properly set in production:
 
 ```bash
+
 # Critical Production Settings
+
 DEBUG=False
 ENVIRONMENT=production
 SECRET_KEY=<64-character secure random string>
 
 # Database
+
 DATABASE_URL=<production PostgreSQL URL>
 
 # Security
+
 CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
 
 # Performance
+
 ENABLE_QUERY_LOGGING=False
 LOG_LEVEL=INFO
-```
+
+```text
 
 ### Staging Environment
 
 For a staging environment, create separate services with:
 
 ```bash
+
 # Staging Configuration
+
 ENVIRONMENT=staging
 DEBUG=False
 CORS_ORIGINS=https://staging.yourdomain.com
 DATABASE_URL=<staging database URL>
-```
+
+```text
 
 ## Monitoring and Observability
 
 ### Render Built-in Monitoring
 
 Render provides:
+
 - Real-time logs accessible via dashboard
 - Service metrics (CPU, memory, requests)
 - Health check monitoring
@@ -284,11 +325,14 @@ For enhanced monitoring, consider integrating:
 
 **Sentry (Error Tracking):**
 ```bash
+
 pip install sentry-sdk[fastapi]
-```
+
+```text
 
 Add to your FastAPI app:
 ```python
+
 import sentry_sdk
 from sentry_sdk.integrations.fastapi import FastApiIntegration
 
@@ -297,9 +341,11 @@ sentry_sdk.init(
     integrations=[FastApiIntegration(auto_enable=False)],
     environment="production"
 )
-```
+
+```text
 
 **Log Management:**
+
 - **Render Logs**: Built-in log aggregation
 - **LogTail**: Simple log management
 - **DataDog**: Comprehensive monitoring (paid)
@@ -307,19 +353,22 @@ sentry_sdk.init(
 ### Health Checks
 
 Render automatically monitors your service health via:
+
 - HTTP health checks on your configured port
 - Process monitoring
 - Automatic restarts on failures
 
 Configure a custom health check endpoint:
 ```python
+
 @app.get("/health")
 async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat()
     }
-```
+
+```text
 
 ## Performance Optimization
 
@@ -327,7 +376,9 @@ async def health_check():
 
 1. **Database Connection Pooling:**
 ```python
+
 # In app/core/config.py
+
 engine = create_engine(
     settings.DATABASE_URL,
     pool_size=10,
@@ -335,13 +386,17 @@ engine = create_engine(
     pool_timeout=30,
     pool_pre_ping=True
 )
-```
+
+```text
 
 2. **Caching (Future Enhancement):**
 ```bash
+
 # Add Redis for caching
+
 pip install redis
-```
+
+```text
 
 3. **Request Optimization:**
 - Implement database query optimization
@@ -352,35 +407,45 @@ pip install redis
 
 1. **Build Optimization:**
 ```bash
+
 # Enable production build optimizations
+
 npm run build
-```
+
+```text
 
 2. **Static Asset Caching:**
 Render automatically handles static asset caching with appropriate headers.
 
 3. **Bundle Analysis:**
 ```bash
+
 npm install --save-dev webpack-bundle-analyzer
 npm run build -- --analyze
-```
+
+```text
 
 ## Backup and Disaster Recovery
 
 ### Database Backups
 
 **Render PostgreSQL:**
+
 - Free tier: No automatic backups
 - Paid plans: Daily automated backups with point-in-time recovery
 
 **Manual Backup:**
 ```bash
+
 # Create backup
+
 pg_dump $DATABASE_URL > backup.sql
 
 # Restore backup
+
 psql $DATABASE_URL < backup.sql
-```
+
+```text
 
 ### Application Backup
 
@@ -420,6 +485,7 @@ psql $DATABASE_URL < backup.sql
 
 3. **CORS Configuration:**
 ```python
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://yourdomain.com"],
@@ -427,7 +493,8 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
-```
+
+```text
 
 ### Database Security
 
@@ -445,74 +512,110 @@ app.add_middleware(
 
 **Build Failures:**
 ```bash
+
 # Check build logs in Render dashboard
-# Common issues:
+
+# Common issues
+
 # - Missing dependencies in requirements.txt
+
 # - Python version conflicts
+
 # - Environment variable issues
-```
+
+```text
 
 **Runtime Errors:**
 ```bash
-# Check service logs for:
+
+# Check service logs for
+
 # - Database connection errors
+
 # - Missing environment variables
+
 # - Import errors
+
 # - Port binding issues
-```
+
+```text
 
 **Database Connection Issues:**
 ```bash
+
 # Verify DATABASE_URL format
+
 # Check database service status
+
 # Ensure database and web service are in same region
-```
+
+```text
 
 ### Common Frontend Issues
 
 **Build Failures:**
 ```bash
-# Check build logs for:
+
+# Check build logs for
+
 # - npm install errors
+
 # - Build script failures
+
 # - Environment variable issues
-```
+
+```text
 
 **API Connection Issues:**
 ```bash
+
 # Verify REACT_APP_API_BASE_URL is correct
+
 # Check CORS configuration
+
 # Ensure backend service is running
-```
+
+```text
 
 ### Performance Issues
 
 **Slow Response Times:**
 ```bash
+
 # Check service metrics in Render dashboard
+
 # Consider upgrading to paid plan for better performance
+
 # Optimize database queries
+
 # Implement caching strategies
-```
+
+```text
 
 **Service Downtime:**
 ```bash
+
 # Monitor service health checks
+
 # Check for resource limitations
+
 # Review error logs for issues
-```
+
+```text
 
 ## Upgrading and Maintenance
 
 ### Service Upgrades
 
 **Upgrading to Paid Plans:**
+
 - Better performance and reliability
 - Automatic backups (database)
 - Priority support
 - No service sleep on inactivity
 
 **Resource Scaling:**
+
 - Monitor service metrics
 - Upgrade when consistently hitting resource limits
 - Consider horizontal scaling for high traffic
@@ -521,14 +624,18 @@ app.add_middleware(
 
 1. **Dependencies:**
 ```bash
+
 # Regularly update Python packages
+
 pip list --outdated
 pip install --upgrade package_name
 
 # Update Node.js packages
+
 npm outdated
 npm update
-```
+
+```text
 
 2. **Security Updates:**
 - Monitor security advisories

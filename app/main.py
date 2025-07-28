@@ -1,7 +1,7 @@
 # app/main.py
 import logging
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import uvicorn
@@ -133,7 +133,7 @@ async def health_check(db: Session = Depends(get_db)):
 
         return {
             "status": "healthy" if db_status == "healthy" and not missing_vars else "unhealthy",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "version": settings.APP_VERSION,
             "database": {"status": db_status, "error": db_error},
             "environment": {
@@ -143,7 +143,7 @@ async def health_check(db: Session = Depends(get_db)):
         }
     except Exception as e:
         logger.error(f"Health check failed: {e}")
-        return {"status": "unhealthy", "error": str(e), "timestamp": datetime.utcnow().isoformat()}
+        return {"status": "unhealthy", "error": str(e), "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
 if __name__ == "__main__":

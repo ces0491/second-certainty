@@ -122,20 +122,24 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <section id="project-description" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Project Description</h1>
-<p>Second Certainty addresses one of life’s two certainties—taxes—by providing South African individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year.</p>
-<p>Traditional tax management often occurs reactively at year-end, leading to unexpected liabilities, missed deductions, and financial stress. This application transforms this approach by implementing a proactive, year-round tax management system that continuously calculates estimated tax liabilities based on income streams, identifies potential deductions, forecasts provisional payments, and provides optimization strategies—all in real-time.</p>
-<p>The system combines up-to-date South African tax regulations with personal financial data to deliver accurate tax calculations, visualizations, and strategic recommendations, helping users optimize their tax position throughout the year rather than scrambling at tax season.</p>
+<p>Second Certainty addresses one of life’s two certainties - <strong>taxes</strong> - by providing South African individuals and small businesses with an intuitive platform for managing tax liabilities throughout the fiscal year.</p>
+<p>Traditional tax management often occurs reactively at the tax year-end, leading to unexpected liabilities, missed deductions, and stress. Second Certainty transforms this approach by implementing a proactive, year-round tax management system that calculates estimated tax liabilities based on real-time income and expense streams.</p>
+<p>The system combines up-to-date South African tax regulations with personal financial data to deliver accurate tax calculations, visualizations, and insights, helping users optimize their tax position throughout the year.</p>
 </section>
 <section id="technical-requirements" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Technical Requirements</h1>
 <section id="backend" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="backend"><span class="header-section-number">2.1</span> Backend</h2>
 <ul>
-<li><strong>Framework</strong>: FastAPI 0.110.1 - chosen for its high performance, automatic documentation generation, and modern Python type annotations</li>
+<li><strong>Framework</strong>: FastAPI 0.110.1 - powerful, intuitive framework with modern Python type annotations</li>
 <li><strong>ORM</strong>: SQLAlchemy 2.0.40 - provides flexible database operations and ORM capabilities</li>
 <li><strong>Validation</strong>: Pydantic 2.6.0 with pydantic-settings 2.2.1 - ensures robust data validation with minimal code</li>
-<li><strong>Database</strong>: PostgreSQL (production), SQLite (development) - PostgreSQL chosen for scalability and reliability</li>
-<li><strong>Authentication</strong>: JWT with HTTPBearer security and bcrypt password hashing - modern secure authentication approach</li>
+<li><strong>Database</strong>:
+<ul>
+<li>PostgreSQL (production) - chosen for native support in Render (for deployment)</li>
+<li>SQLite (development)</li>
+</ul></li>
+<li><strong>Authentication</strong>: JWT with HTTPBearer security and bcrypt password hashing - secure authentication approach</li>
 <li><strong>Testing</strong>: Pytest 7.4.4 with pytest-asyncio 0.23.5 - comprehensive testing framework for Python including async support</li>
 <li><strong>Documentation</strong>: OpenAPI (Swagger UI) - automatic API documentation generation</li>
 <li><strong>HTTP Client</strong>: HTTPX 0.27.0 - modern async HTTP client for SARS website integration</li>
@@ -190,7 +194,6 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><strong>South African Tax Compliance</strong>: Current tax brackets, rebates, and thresholds for all age groups</li>
 <li><strong>Provisional Tax Management</strong>: Automated calculation and tracking of provisional tax payments for eligible taxpayers</li>
-<li><strong>Custom Tax Scenarios</strong>: “What-if” tax calculations for financial planning</li>
 <li><strong>Age-based Calculations</strong>: Automatic rebate and threshold adjustments based on user age</li>
 </ul>
 </section>
@@ -206,44 +209,60 @@ ul.task-list li input[type="checkbox"] {
 <section id="security-and-performance" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="security-and-performance"><span class="header-section-number">3.5</span> Security and Performance</h2>
 <ul>
-<li><strong>Input Validation</strong>: Comprehensive data validation using Pydantic schemas</li>
-<li><strong>Rate Limiting</strong>: Configurable API rate limiting to prevent abuse</li>
+<li><strong>Input Validation</strong>: Data validation using Pydantic schemas</li>
 <li><strong>CORS Management</strong>: Secure cross-origin resource sharing configuration</li>
-<li><strong>Error Handling</strong>: Standardized error responses and comprehensive exception management</li>
+<li><strong>Error Handling</strong>: Error responses and exception management</li>
 </ul>
 </section>
 </section>
 <section id="deployment" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Deployment</h1>
 <p>The Second Certainty application is deployed on Render’s free tier, which may result in slow initial load times after periods of inactivity. When logging in, please note that you may need to retry after <code>No response from server</code> message - this is a function of deployment on Render’s free tier which experiences “cold starts” after 15 minutes of inactivity.</p>
-<p><strong>Live Application URLs:</strong> - <strong>Frontend Application</strong>: <a href="https://second-certainty.onrender.com">https://second-certainty.onrender.com</a> - <strong>Backend API</strong>: <a href="https://second-certainty-api.onrender.com">https://second-certainty-api.onrender.com</a> - <strong>API Documentation</strong>: <a href="https://second-certainty-api.onrender.com/api/docs">https://second-certainty-api.onrender.com/api/docs</a></p>
-<p><strong>Performance Considerations:</strong> - Initial load times may exceed 30 seconds due to service “spin-up” on free tier - Subsequent requests are fast once the service is active - Database queries are optimized for performance despite platform limitations</p>
-<p>For more detailed information on deployment, please refer to the following documentation:</p>
+<p><strong>Live Application URLs:</strong></p>
 <ul>
-<li><a href="./docs/INSTALLATION.md">Installation Guide</a>: Complete setup instructions for local development</li>
-<li><a href="./docs/DEPLOYMENT.md">Deployment Guide</a>: Comprehensive production deployment instructions</li>
-<li><a href="./docs/API.md">API Documentation</a>: Detailed API reference with examples</li>
+<li><strong>Frontend Application</strong>: <a href="https://second-certainty.onrender.com" target="_blank">https://second-certainty.onrender.com</a></li>
+<li><strong>Backend API</strong>: <a href="https://second-certainty-api.onrender.com" target="_blank">https://second-certainty-api.onrender.com</a></li>
+<li><strong>API Documentation</strong>: <a href="https://second-certainty-api.onrender.com/api/docs" target="_blank">https://second-certainty-api.onrender.com/api/docs</a></li>
+</ul>
+<p><strong>Performance Considerations:</strong></p>
+<ul>
+<li>Initial load times may exceed 30 seconds due to service “spin-up” on free tier</li>
+<li>Subsequent requests are responsive once the service is active</li>
+<li>Database queries are optimized for performance despite platform limitations</li>
+</ul>
+<p>For more detailed information, please refer to the following documentation:</p>
+<ul>
+<li><a href="https://github.com/ces0491/second-certainty/blob/main/docs/INSTALLATION.md" target="_blank">Installation Guide</a>: Complete setup instructions for local development</li>
+<li><a href="https://github.com/ces0491/second-certainty/blob/main/docs/DEPLOYMENT.md" target="_blank">Deployment Guide</a>: Comprehensive production deployment instructions</li>
+<li><a href="https://github.com/ces0491/second-certainty/blob/main/docs/API.md" target="_blank">API Documentation</a>: Detailed API reference with examples</li>
 </ul>
 </section>
 <section id="code-repository" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Code Repository</h1>
-<p>The project is maintained in separate repositories for optimal development workflow:</p>
+<p>The project is maintained in two separate repositories:</p>
 <ul>
-<li><strong>Backend Repository</strong>: <a href="https://github.com/ces0491/second-certainty">https://github.com/ces0491/second-certainty</a></li>
-<li><strong>Frontend Repository</strong>: <a href="https://github.com/ces0491/second-certainty-frontend">https://github.com/ces0491/second-certainty-frontend</a></li>
+<li><strong>Backend Repository</strong>: <a href="https://github.com/ces0491/second-certainty" target="_blank">https://github.com/ces0491/second-certainty</a></li>
+<li><strong>Frontend Repository</strong>: <a href="https://github.com/ces0491/second-certainty-frontend" target="_blank">https://github.com/ces0491/second-certainty-frontend</a></li>
 </ul>
-<p>The repositories include comprehensive documentation covering: - <strong>Installation and Setup</strong>: Step-by-step local development environment setup - <strong>API Documentation</strong>: Complete endpoint reference with request/response examples<br>
-- <strong>Database Schema</strong>: Detailed model relationships and migration procedures - <strong>Testing Framework</strong>: Unit, integration, and API testing suites - <strong>Deployment Procedures</strong>: Production deployment with security best practices</p>
+<p>The repositories include comprehensive documentation covering:</p>
+<ul>
+<li><strong>Installation and Setup</strong>: Step-by-step local development environment setup</li>
+<li><strong>API Documentation</strong>: Complete endpoint reference with request/response examples<br>
+</li>
+<li><strong>Database Schema</strong>: Detailed model relationships and migration procedures</li>
+<li><strong>Testing Framework</strong>: Unit, integration, and API testing suites</li>
+<li><strong>Deployment Procedures</strong>: Production deployment with security best practices</li>
+</ul>
 </section>
 <section id="screenshots" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Screenshots</h1>
 <section id="dashboard" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="dashboard"><span class="header-section-number">6.1</span> Dashboard</h2>
-<p><img src="./images/Dashboard.png" class="img-fluid" alt="Dashboard"> <em>The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations with real-time updates.</em></p>
+<p><img src="./images/Dashboard.png" class="img-fluid" alt="Dashboard"> <em>The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations.</em></p>
 </section>
 <section id="income-tracking" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="income-tracking"><span class="header-section-number">6.2</span> Income Tracking</h2>
-<p><img src="./images/Income.png" class="img-fluid" alt="Income Tracking"> <em>Comprehensive interface for managing multiple income sources with PAYE categorization and annual amount tracking.</em></p>
+<p><img src="./images/Income.png" class="img-fluid" alt="Income Tracking"> <em>Interface for managing multiple income sources with PAYE categorization and annual amount tracking.</em></p>
 </section>
 <section id="expense-management" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="expense-management"><span class="header-section-number">6.3</span> Expense Management</h2>
@@ -279,7 +298,7 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><strong>Component-Based Design</strong>: Reusable React components with clear separation of concerns</li>
 <li><strong>State Management</strong>: Context API for global state with local component state for UI interactions</li>
-<li><strong>Responsive Design</strong>: Mobile-first Tailwind CSS implementation for all screen sizes</li>
+<li><strong>Responsive Design</strong>: Tailwind CSS implementation for all screen sizes</li>
 <li><strong>Data Visualization</strong>: Interactive charts and graphs using Recharts library</li>
 <li><strong>API Integration</strong>: Centralized Axios configuration with error handling and retry logic</li>
 </ul>
@@ -289,18 +308,18 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><strong>Authentication Flow</strong>: JWT tokens with HTTPBearer security and automatic token refresh</li>
 <li><strong>Password Security</strong>: Bcrypt hashing with salt for secure password storage</li>
-<li><strong>Input Sanitization</strong>: Comprehensive validation at both API and database levels</li>
+<li><strong>Input Sanitization</strong>: validation at both API and database levels</li>
 <li><strong>CORS Configuration</strong>: Secure cross-origin resource sharing with whitelisted domains</li>
-<li><strong>Rate Limiting</strong>: API endpoint protection against abuse and DDoS attacks</li>
 </ul>
 </section>
 </section>
 <section id="future-enhancements" class="level1" data-number="8">
 <h1 data-number="8"><span class="header-section-number">8</span> Future Enhancements</h1>
 <ul>
-<li><p><strong>Rate Limiting</strong>: Actually implement rate limiting</p></li>
+<li><p><strong>Rate Limiting</strong>: Actually implement rate limiting (hooks in place for future development)</p></li>
 <li><p><strong>Password Updates</strong>: Updating profile data is not fully supported yet</p></li>
 <li><p><strong>Improve Standardization</strong>: For logging, error handling, user input sanitization</p></li>
+<li><p><strong>Enhanced Visualizations</strong>: Use more sophisticated charting libraries like Highchart for better visualizations</p></li>
 <li><p><strong>Improve Token Validation</strong></p></li>
 <li><p><strong>Complete Docstrings</strong></p></li>
 <li><p><strong>Write More Tests</strong></p></li>

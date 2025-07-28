@@ -1,6 +1,4 @@
 # app/api/routes/tax_calculator.py
-from typing import List, Optional
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 
@@ -46,17 +44,17 @@ def add_income_source(
         income.tax_year = get_tax_year()
 
     # Create income source
-    db_income = IncomeSource(**income.dict(), user_id=user_id)
+    db_income = IncomeSource(**income.model_dump(), user_id=user_id)
     db.add(db_income)
     db.commit()
     db.refresh(db_income)
     return db_income
 
 
-@router.get("/users/{user_id}/income/", response_model=List[IncomeResponse])
+@router.get("/users/{user_id}/income/", response_model=list[IncomeResponse])
 def get_user_income(
     user_id: int,
-    tax_year: Optional[str] = None,
+    tax_year: str | None = None,
     db: Session = Depends(get_db),
     current_user: UserProfile = Depends(get_current_user),
 ):
@@ -105,17 +103,17 @@ def add_expense(
         expense.tax_year = get_tax_year()
 
     # Create expense
-    db_expense = UserExpense(**expense.dict(), user_id=user_id)
+    db_expense = UserExpense(**expense.model_dump(), user_id=user_id)
     db.add(db_expense)
     db.commit()
     db.refresh(db_expense)
     return db_expense
 
 
-@router.get("/users/{user_id}/expenses/", response_model=List[ExpenseResponse])
+@router.get("/users/{user_id}/expenses/", response_model=list[ExpenseResponse])
 def get_user_expenses(
     user_id: int,
-    tax_year: Optional[str] = None,
+    tax_year: str | None = None,
     db: Session = Depends(get_db),
     current_user: UserProfile = Depends(get_current_user),
 ):
@@ -138,8 +136,8 @@ def get_user_expenses(
     return expenses
 
 
-@router.get("/tax-brackets/", response_model=List[TaxBracketResponse])
-def get_tax_brackets(tax_year: Optional[str] = None, db: Session = Depends(get_db)):
+@router.get("/tax-brackets/", response_model=list[TaxBracketResponse])
+def get_tax_brackets(tax_year: str | None = None, db: Session = Depends(get_db)):
     """Get tax brackets for a specific tax year."""
     if not tax_year:
         tax_year = get_tax_year()
@@ -162,7 +160,7 @@ def get_tax_brackets(tax_year: Optional[str] = None, db: Session = Depends(get_d
     return response_brackets
 
 
-@router.get("/deductible-expenses/", response_model=List[DeductibleExpenseTypeResponse])
+@router.get("/deductible-expenses/", response_model=list[DeductibleExpenseTypeResponse])
 def get_deductible_expense_types(db: Session = Depends(get_db)):
     """Get all types of deductible expenses."""
     expense_types = db.query(DeductibleExpenseType).filter(DeductibleExpenseType.is_active).all()
@@ -173,7 +171,7 @@ def get_deductible_expense_types(db: Session = Depends(get_db)):
 @router.get("/users/{user_id}/tax-calculation/", response_model=TaxCalculationResponse)
 def calculate_tax(
     user_id: int,
-    tax_year: Optional[str] = None,
+    tax_year: str | None = None,
     db: Session = Depends(get_db),
     current_user: UserProfile = Depends(get_current_user),
 ):
@@ -198,7 +196,7 @@ def calculate_tax(
 @router.get("/users/{user_id}/provisional-tax/", response_model=ProvisionalTaxResponse)
 def calculate_provisional_tax(
     user_id: int,
-    tax_year: Optional[str] = None,
+    tax_year: str | None = None,
     db: Session = Depends(get_db),
     current_user: UserProfile = Depends(get_current_user),
 ):
@@ -240,13 +238,13 @@ async def update_tax_data(db: Session = Depends(get_db), current_user: UserProfi
 def calculate_custom_tax(
     user_id: int,
     calculation_data: dict,
-    tax_year: Optional[str] = None,
+    tax_year: str | None = None,
     db: Session = Depends(get_db),
     current_user: UserProfile = Depends(get_current_user),
 ):
     """
     Calculate tax liability based on custom parameters.
-    Allows for "what-i" tax scenarios without modifying the user"s actual data.
+    Allows for "what-if" tax scenarios without modifying the user's actual data.
     """
     # Ensure users can only calculate their own tax
     if current_user.id != user_id:
