@@ -8,7 +8,7 @@ Before you begin, ensure you have the following:
 
 - **Python 3.10+** - Required for the backend
 - **Node.js 16+** - Required for the frontend  
-- **PostgreSQL** (optional) - For production-like development, or SQLite for simpler setup
+- **PostgreSQL** - Optional for production DB, or SQLite for simpler setup
 - **Git** - For version control
 
 ## Backend Setup
@@ -63,7 +63,7 @@ DATABASE_URL=sqlite:///./second_certainty.db
 
 # Security Configuration
 
-SECRET_KEY=your-super-secret-key-change-this-in-production
+SECRET_KEY=your-secret-key-change-this-in-production
 ACCESS_TOKEN_EXPIRE_MINUTES=10080  # 1 week
 
 # Application Configuration

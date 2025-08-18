@@ -1,6 +1,6 @@
 # Second Certainty - Tax Management System
 
-A comprehensive South African tax liability management system that helps users calculate and track their tax obligations throughout the fiscal year.
+A South African tax liability management system that helps users calculate and track their tax obligations throughout the fiscal year.
 
 ![*logo generated using OpenAI's DALL·E model via ChatGPT (May 2025)](docs/images/sc_logo.png)
 
@@ -37,9 +37,9 @@ This application transforms this approach by implementing a proactive, year-roun
 - **Historical Data**: Support for multiple tax years with automatic tax year detection
 - **Manual Data Entry**: Fallback to manual tax data if scraping fails
 
-### Advanced Features
+### Support Features
 
-- **Data Validation**: Comprehensive input validation and error handling
+- **Data Validation**: Input validation and error handling
 - **Database Migrations**: Alembic-powered database schema management
 - **Background Tasks**: Asynchronous tax data updates
 - **Admin Features**: Administrative endpoints for tax data management
@@ -154,7 +154,7 @@ DATABASE_URL=sqlite:///./second_certainty.db  # For development
 
 # Security Configuration
 
-SECRET_KEY=your-super-secret-key-change-this-in-production
+SECRET_KEY=your-secret-key-change-this-in-production
 ACCESS_TOKEN_EXPIRE_MINUTES=10080  # 1 week
 
 # Application Configuration
@@ -330,9 +330,9 @@ For more detailed information, refer to:
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -m 'Add new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
 5. Open a Pull Request
 
 ## License

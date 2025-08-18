@@ -181,7 +181,7 @@ PUT /api/auth/change-password
 
 {
   "current_password": "old_password",
-  "new_password": "new_secure_password"
+  "new_password": "new_password"
 }
 
 ```

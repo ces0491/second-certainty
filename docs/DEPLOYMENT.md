@@ -239,7 +239,7 @@ In your frontend repository, create a `public/_headers` file for security header
 /static/*
   Cache-Control: public, max-age=31536000, immutable
 
-```text
+```
 
 ## Custom Domain Setup (Optional)
 

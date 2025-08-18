@@ -1,17 +1,20 @@
 ---
 title: "Second Certainty: Tax Management System"
-author: "Cesaire Tobias"
+subtitle: "Financial Software Engineering Assignment (ECO5040S)"
+author: "Cesaire Tobias (TBSCES001)"
 date: "August 18, 2025"
 format: 
-  html:
+  pdf:
     toc: true
     toc-depth: 3
     number-sections: true
-    theme: cosmo
-    code-fold: true
+    documentclass: article
+    papersize: a4
+    fontsize: 11pt
+    geometry:
+      - margin=1in
+    colorlinks: true
 ---
-
-![*logo generated using OpenAI's DALL·E model via ChatGPT (May 2025)](./images/sc_logo.png)
 
 # Project Description
 
@@ -87,9 +90,9 @@ The Second Certainty application is deployed on Render's free tier, which may re
 
 **Live Application URLs:**
 
-- **Frontend Application**: [https://second-certainty.onrender.com](https://second-certainty.onrender.com){target="_blank"}
-- **Backend API**: [https://second-certainty-api.onrender.com](https://second-certainty-api.onrender.com){target="_blank"}
-- **API Documentation**: [https://second-certainty-api.onrender.com/api/docs](https://second-certainty-api.onrender.com/api/docs){target="_blank"}
+- **Frontend Application**: https://second-certainty.onrender.com
+- **Backend API**: https://second-certainty-api.onrender.com
+- **API Documentation**: https://second-certainty-api.onrender.com/api/docs
 
 **Performance Considerations:**
 
@@ -99,16 +102,16 @@ The Second Certainty application is deployed on Render's free tier, which may re
 
 For more detailed information, please refer to the following documentation:
 
-- [Installation Guide](https://github.com/ces0491/second-certainty/blob/main/docs/INSTALLATION.md){target="_blank"}: Complete setup instructions for local development
-- [Deployment Guide](https://github.com/ces0491/second-certainty/blob/main/docs/DEPLOYMENT.md){target="_blank"}: Comprehensive production deployment instructions
-- [API Documentation](https://github.com/ces0491/second-certainty/blob/main/docs/API.md){target="_blank"}: Detailed API reference with examples
+- **Installation Guide**: https://github.com/ces0491/second-certainty/blob/main/docs/INSTALLATION.md - Complete setup instructions for local development
+- **Deployment Guide**: https://github.com/ces0491/second-certainty/blob/main/docs/DEPLOYMENT.md - Comprehensive production deployment instructions
+- **API Documentation**: https://github.com/ces0491/second-certainty/blob/main/docs/API.md - Detailed API reference with examples
 
 # Code Repository
 
 The project is maintained in two separate repositories:
 
-- **Backend Repository**: [https://github.com/ces0491/second-certainty](https://github.com/ces0491/second-certainty){target="_blank"}
-- **Frontend Repository**: [https://github.com/ces0491/second-certainty-frontend](https://github.com/ces0491/second-certainty-frontend){target="_blank"}
+- **Backend Repository**: https://github.com/ces0491/second-certainty
+- **Frontend Repository**: https://github.com/ces0491/second-certainty-frontend
 
 The repositories include comprehensive documentation covering:
 
@@ -122,7 +125,7 @@ The repositories include comprehensive documentation covering:
 
 ## Dashboard
 ![Dashboard](./images/Dashboard.png)
-*The main dashboard showing key tax metrics, income/expense breakdown, and tax projection visualizations.*
+*The main dashboard showing key tax metrics and income/expense breakdown.*
 
 ## Income Tracking
 ![Income Tracking](./images/Income.png)
@@ -130,7 +133,7 @@ The repositories include comprehensive documentation covering:
 
 ## Expense Management
 ![Expense Management](./images/Expenses.png)
-*Expense tracking interface with predefined tax-deductible categories, amount validation, and documentation support.*
+*Expense tracking interface with predefined tax-deductible categories.*
 
 ## Tax Calculator
 ![Tax Calculator](./images/Calculator.png)
@@ -138,16 +141,16 @@ The repositories include comprehensive documentation covering:
 
 ## Provisional Tax Planner
 ![Provisional Tax Planner](./images/Provisional.png)
-*Specialized tool for calculating and tracking provisional tax payments throughout the fiscal year with due date management.*
+*Tool for calculating and tracking provisional tax payments throughout the fiscal year.*
 
 ## Profile Management
 ![Profile Management](./images/Profile.png)
-*User profile interface for managing personal tax information, provisional taxpayer status, and account preferences.*
+*User profile interface for managing personal information, provisional taxpayer status, and account preferences.*
 
 # Technical Architecture
 
 ## Backend Architecture
-- **RESTful API Design**: Clean, consistent endpoint structure following REST principles
+- **RESTful API Design**: Consistent endpoint structure following REST principles
 - **Modular Code Organization**: Separation of concerns with dedicated modules for authentication, tax calculations, and data management
 - **Async Processing**: Non-blocking operations for web scraping and external API calls
 - **Database Abstraction**: SQLAlchemy ORM with migration support for schema evolution
@@ -181,3 +184,5 @@ The repositories include comprehensive documentation covering:
 - **Advanced Analytics**: Machine learning-powered tax optimization recommendations
 - **Multi-User Support**: Family and business account management with role-based permissions
 - **Tax Practitioner Features**: Professional tools for accountants and tax consultants
+
+---
